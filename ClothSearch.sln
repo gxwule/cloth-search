@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWpf", "..\..\..\..\codes\forVsnet\TestWpf\TestWpf\TestWpf.csproj", "{E98D6BE5-EDF3-4F60-95C0-4909691145FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "expenseit", "..\..\..\..\codes\forVsnet\ExpenseItIntro\csharp\expenseit.csproj", "{7D176649-97CD-414F-8356-4F5C83CFA755}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClothSearch", "ClothSearch\ClothSearch.csproj", "{E629C317-FD10-45B9-81B2-7B4A3514EC7D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E98D6BE5-EDF3-4F60-95C0-4909691145FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E98D6BE5-EDF3-4F60-95C0-4909691145FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E98D6BE5-EDF3-4F60-95C0-4909691145FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E98D6BE5-EDF3-4F60-95C0-4909691145FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D176649-97CD-414F-8356-4F5C83CFA755}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D176649-97CD-414F-8356-4F5C83CFA755}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D176649-97CD-414F-8356-4F5C83CFA755}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D176649-97CD-414F-8356-4F5C83CFA755}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{E629C317-FD10-45B9-81B2-7B4A3514EC7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E629C317-FD10-45B9-81B2-7B4A3514EC7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E629C317-FD10-45B9-81B2-7B4A3514EC7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E629C317-FD10-45B9-81B2-7B4A3514EC7D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
