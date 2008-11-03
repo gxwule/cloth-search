@@ -34,6 +34,11 @@ namespace Zju.Domain
         /// Shapes description of the cloth.
         /// </summary>
         private ShapeEnum shapes;
+
+        /// <summary>
+        /// Update time of the cloth.
+        /// </summary>
+        private DateTime updateTime;
 #endregion
 
 #region getter & setter
@@ -66,6 +71,12 @@ namespace Zju.Domain
             get { return shapes; }
             set { shapes = value; }
         }
+
+        public DateTime UpdateTime
+        {
+            get { return updateTime; }
+            set { updateTime = value; }
+        }
 #endregion
         
         public Cloth()
@@ -90,6 +101,7 @@ namespace Zju.Domain
             this.path = path;
             this.colors = colors;
             this.shapes = shapes;
+            this.updateTime = DateTime.UtcNow;
         }
 
     } 

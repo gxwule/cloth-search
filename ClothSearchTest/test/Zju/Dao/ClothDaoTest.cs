@@ -40,16 +40,16 @@ namespace Zju.Dao
 
         private void print(Cloth cloth)
         {
-            Console.WriteLine(cloth.Name + "," + cloth.Pattern + "," + cloth.Oid + "," + cloth.Colors);
+            Console.WriteLine(cloth.Name + "," + cloth.UpdateTime + "," + cloth.Oid + "," + cloth.Colors);
         }
 
         [Test]
         public void TestBasicCRUD()
         {
             // save
-            print(cloth);
+            //print(cloth);
             target.SaveOrUpdate(cloth);
-            print(cloth);
+            //print(cloth);
             Assert.AreEqual(cloth, target.FindByOid(cloth.Oid));
             Assert.AreEqual(onlyList, target.FindAll());
             Assert.AreEqual(onlyList, target.FindAllByColors(ColorEnum.BLACK));
@@ -68,19 +68,20 @@ namespace Zju.Dao
             int oid = cloth.Oid;
             cloth.Path = "abcd";
             cloth.Name = "na";
+            cloth.UpdateTime = DateTime.UtcNow;
             cloth.Colors = ColorEnum.WHITE | ColorEnum.PINK;
-            print(cloth);
+            //print(cloth);
             target.SaveOrUpdate(cloth);
-            print(cloth);
+            //print(cloth);
             Assert.AreEqual(cloth, target.FindByOid(oid));
             Assert.AreEqual(onlyList, target.FindAll());
             Assert.AreEqual(onlyList, target.FindAllByColors(ColorEnum.WHITE));
             Assert.AreEqual(emptyList, target.FindAllByColors(ColorEnum.BLUE));
             Assert.AreEqual(emptyList, target.FindAllByColors(ColorEnum.BLACK | ColorEnum.BLUE));
-            print(cloth);
+            //print(cloth);
             // delete the cloth, for next test case
             target.Delete(oid);
-            print(cloth);
+            //print(cloth);
             Assert.IsNull(target.FindByOid(oid));
             Assert.AreEqual(emptyList, target.FindAll());
             Assert.AreEqual(emptyList, target.FindAllByColors(ColorEnum.WHITE));

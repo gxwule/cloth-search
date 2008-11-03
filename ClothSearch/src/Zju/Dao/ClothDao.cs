@@ -17,22 +17,7 @@ namespace Zju.Dao
             Storage storage = DaoHelper.Instance.DbStorage;
             ClothRoot root = (ClothRoot)storage.Root;
 
-            FieldIndex clothOidIndex = root.ClothOidIndex;
-            BitIndex colorIndex = root.ColorIndex;
-            BitIndex shapeIndex = root.ShapeIndex;
-            if (clothOidIndex.Contains(cloth))
-            {
-                root.ColorIndex.Remove(cloth);
-                root.ShapeIndex.Remove(cloth);
-            }
-            else
-            {
-                // this method called for generate the Oid, or the key of ClothOidIndex will always be 0.
-                storage.MakePersistent(cloth);
-                root.ClothOidIndex.Set(cloth);
-            }
-            root.ColorIndex[cloth] = (int)cloth.Colors;
-            root.ShapeIndex[cloth] = (int)cloth.Shapes;
+            saveOrUpdateWithoutCommit(storage, root, cloth);
             
             storage.Commit();
         }
@@ -42,26 +27,10 @@ namespace Zju.Dao
             Storage storage = DaoHelper.Instance.DbStorage;
             ClothRoot root = (ClothRoot)storage.Root;
 
-            FieldIndex clothOidIndex = root.ClothOidIndex;
-            BitIndex colorIndex = root.ColorIndex;
-            BitIndex shapeIndex = root.ShapeIndex;
-
             int nCloth = 0;
             foreach (Cloth cloth in clothes)
             {
-                if (clothOidIndex.Contains(cloth))
-                {
-                    root.ColorIndex.Remove(cloth);
-                    root.ShapeIndex.Remove(cloth);
-                }
-                else
-                {
-                    // this method called for generate the Oid, or the key of ClothOidIndex will always be 0.
-                    storage.MakePersistent(cloth);
-                    root.ClothOidIndex.Set(cloth);
-                }
-                root.ColorIndex[cloth] = (int)cloth.Colors;
-                root.ShapeIndex[cloth] = (int)cloth.Shapes;
+                saveOrUpdateWithoutCommit(storage, root, cloth);
 
                 if (0 == ++nCloth % Constants.ComitLimit)
                 {
@@ -141,7 +110,7 @@ namespace Zju.Dao
 
             List<Cloth> clothes = new List<Cloth>();
             BitIndex colorIndex = root.ColorIndex;
-            Console.WriteLine(colorIndex.Count);
+            // Console.WriteLine(colorIndex.Count);
             if (colorIndex.Count > 0)
             {
                 foreach (Cloth cloth in colorIndex.Select((int)colors, (int)notColors))
@@ -216,5 +185,25 @@ namespace Zju.Dao
             query.AddIndex(shapeIndex);
 
         }*/
+
+        private void saveOrUpdateWithoutCommit(Storage storage, ClothRoot root, Cloth cloth)
+        {
+            FieldIndex clothOidIndex = root.ClothOidIndex;
+            BitIndex colorIndex = root.ColorIndex;
+            BitIndex shapeIndex = root.ShapeIndex;
+            if (clothOidIndex.Contains(cloth))
+            {
+                root.ColorIndex.Remove(cloth);
+                root.ShapeIndex.Remove(cloth);
+            }
+            else
+            {
+                // this method called for generate the Oid, or the key of ClothOidIndex will always be 0.
+                storage.MakePersistent(cloth);
+                root.ClothOidIndex.Set(cloth);
+            }
+            root.ColorIndex[cloth] = (int)cloth.Colors;
+            root.ShapeIndex[cloth] = (int)cloth.Shapes;
+        }
     }
 }
