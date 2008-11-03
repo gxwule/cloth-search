@@ -1,5 +1,6 @@
 ﻿using System;
 using Perst;
+using Zju.Util;
 
 namespace Zju.Domain
 {
@@ -27,12 +28,12 @@ namespace Zju.Domain
         /// <summary>
         /// Colors description of the cloth.
         /// </summary>
-        private Link colors;
+        private ColorEnum colors;
 
         /// <summary>
         /// Shapes description of the cloth.
         /// </summary>
-        private Link shapes;
+        private ShapeEnum shapes;
 #endregion
 
 #region getter & setter
@@ -54,13 +55,13 @@ namespace Zju.Domain
             set { path = value; }
         }
 
-        public Link Colors
+        public ColorEnum Colors
         {
             get { return colors; }
             set { colors = value; }
         }
 
-        public Link Shapes
+        public ShapeEnum Shapes
         {
             get { return shapes; }
             set { shapes = value; }
@@ -71,27 +72,25 @@ namespace Zju.Domain
         {
 
         }
-/*
-        public Cloth(String name, String pattern, String path)
+
+        public Cloth(String name, String pattern, String path, ColorEnum colors, ShapeEnum shapes)
         {
-            assignFileds(name, pattern, path);
+            assignFileds(name, pattern, path, colors, shapes);
         }
-*/
-        public Cloth(Storage storage, String name, String pattern, String path) : base(storage)
+
+        public Cloth(Storage storage, String name, String pattern, String path, ColorEnum colors, ShapeEnum shapes) : base(storage)
         {
-            this.name = name;
-            this.pattern = pattern;
-            this.path = path;
-            colors = storage.CreateLink();
-            shapes = storage.CreateLink();
+            assignFileds(name, pattern, path, colors, shapes);
         }
-/*
-        private void assignFileds(String name, String pattern, String path)
+
+        private void assignFileds(String name, String pattern, String path, ColorEnum colors, ShapeEnum shapes)
         {
             this.name = name;
             this.pattern = pattern;
             this.path = path;
+            this.colors = colors;
+            this.shapes = shapes;
         }
-*/
+
     } 
 }

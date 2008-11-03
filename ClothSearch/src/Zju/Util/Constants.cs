@@ -7,11 +7,31 @@ namespace Zju.Util
 {
     public sealed class Constants
     {
-        public const String DataBaseFilePath = "DbCloth";
-        public const int PagePoolSize = 32 * 1024 * 1024;
+        public const String DataBaseFilePath = "E:\\projects\\ClothSearch\\codes\\trunk\\data\\cloth.dbs";
+        public const int PagePoolSize = 48 * 1024 * 1024;
         public const int ComitLimit = 100000;
-
-        public static readonly String[] ColorNames = { "black", "white", "blue", "red", "pink", "darkred" };
-        public static readonly String[] ShapeNames = { "stripe", "square", "circle", "triangle", "special" };
     }
+
+    [Flags]
+    public enum ColorEnum
+    {
+        NONE = 0x0,
+        BLACK = 0x1,
+        WHITE = 0x2,
+        BLUE = 0x4,
+        RED = 0x8,
+        PINK = 0x10,
+        DARKRED = 0x20,
+    };
+
+    [Flags]
+    public enum ShapeEnum
+    {
+        NONE = 0x0,
+        STRIPE = 0x1,
+        SQUARE = 0x2,
+        CIRCLE = 0x4, 
+        TRIANGLE = 0x8,
+        SPECIAL = 0x10,
+    };
 }

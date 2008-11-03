@@ -5,7 +5,10 @@ using Zju.Domain;
 
 namespace Zju.Dao
 {
-    sealed class DaoHelper
+    /// <summary>
+    /// Singleton.
+    /// </summary>
+    public sealed class DaoHelper
     {
         private Storage storage;
 
@@ -15,9 +18,8 @@ namespace Zju.Dao
         {
             get
             {
-                if (storage == null)
+                if (!storage.IsOpened())
                 {
-                    storage = StorageFactory.Instance.CreateStorage();
                     storage.Open(Constants.DataBaseFilePath, Constants.PagePoolSize);
                     ClothRoot root = (ClothRoot)storage.Root;
                     if (root == null)
@@ -25,27 +27,20 @@ namespace Zju.Dao
                         root = new ClothRoot(storage);
                         storage.Root = root;
 
-                        initData();
+                        // persist root object.
+                        storage.Commit();
                     }
                 }
                 return storage;
             }
         }
 
-        private void initData()
+        public static void CloseDb()
         {
-            ClothRoot root = (ClothRoot)storage.Root;
-            foreach (String cn in Constants.ColorNames)
+            if (helper != null && helper.storage != null && helper.storage.IsOpened())
             {
-                Color color = new Color(storage, cn);
-                root.ColorName.Put(new Key(cn), color);
+                helper.storage.Close();
             }
-            foreach (String sn in Constants.ShapeNames)
-            {
-                Shape shape = new Shape(storage, sn);
-                root.ShapeName.Put(new Key(sn), shape);
-            }
-            storage.Commit();
         }
 
         private DaoHelper()
@@ -55,7 +50,8 @@ namespace Zju.Dao
 
         ~DaoHelper()
         {
-            storage.Close();
+            // Commit modified objects and close db. The better practice is to close db explicitly.
+            CloseDb();
         }
 
         public static DaoHelper Instance
@@ -65,6 +61,7 @@ namespace Zju.Dao
                 if (helper == null)
                 {
                     helper = new DaoHelper();
+                    helper.storage = StorageFactory.Instance.CreateStorage();
                 }
                 return helper;
             }

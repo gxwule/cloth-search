@@ -2,62 +2,67 @@
 using System.Collections.Generic;
 using Perst;
 using Zju.Domain;
-using Zju.Vo;
 using Zju.Util;
 
 namespace Zju.Dao
 {
     public class ClothDao
     {
-        public void Insert(ClothVo clothVo)
-        {
-            Storage storage = DaoHelper.Instance.DbStorage;
-            ClothRoot root = (ClothRoot)storage.Root;
-
-            InsertWithoutCommit(root, clothVo);
-
-            storage.Commit();
-        }
-
-        public void InsertAll(List<ClothVo> clothVos)
-        {
-            Storage storage = DaoHelper.Instance.DbStorage;
-            ClothRoot root = (ClothRoot)storage.Root;
-
-            int nCloth = 0;
-            foreach (ClothVo clothVo in clothVos)
-            {
-                InsertWithoutCommit(root, clothVo);
-                if (0 == ++nCloth % Constants.ComitLimit)
-                {
-                    storage.Commit();
-                    root = (ClothRoot)storage.Root;
-                }
-            }
-
-            storage.Commit();
-        }
-
         /// <summary>
-        /// Insert the cloth into the database if not exit, otherwise update it.
+        /// Save or update the cloth into the database if not exit, otherwise update it.
+        /// Whethe a cloth exists is decided by the Oid of the cloth.
         /// </summary>
-        public void insertOrUpdate(ClothVo clothVo)
+        public void SaveOrUpdate(Cloth cloth)
         {
             Storage storage = DaoHelper.Instance.DbStorage;
+            ClothRoot root = (ClothRoot)storage.Root;
 
-            InsertOrUpdateWithoutCommit(DaoHelper.Instance.DbStorage, clothVo);
-
+            FieldIndex clothOidIndex = root.ClothOidIndex;
+            BitIndex colorIndex = root.ColorIndex;
+            BitIndex shapeIndex = root.ShapeIndex;
+            if (clothOidIndex.Contains(cloth))
+            {
+                root.ColorIndex.Remove(cloth);
+                root.ShapeIndex.Remove(cloth);
+            }
+            else
+            {
+                // this method called for generate the Oid, or the key of ClothOidIndex will always be 0.
+                storage.MakePersistent(cloth);
+                root.ClothOidIndex.Set(cloth);
+            }
+            root.ColorIndex[cloth] = (int)cloth.Colors;
+            root.ShapeIndex[cloth] = (int)cloth.Shapes;
+            
             storage.Commit();
         }
 
-        public void insertOrUpdateAll(List<ClothVo> clothVos)
+        public void SaveOrUpdateAll(List<Cloth> clothes)
         {
             Storage storage = DaoHelper.Instance.DbStorage;
+            ClothRoot root = (ClothRoot)storage.Root;
+
+            FieldIndex clothOidIndex = root.ClothOidIndex;
+            BitIndex colorIndex = root.ColorIndex;
+            BitIndex shapeIndex = root.ShapeIndex;
 
             int nCloth = 0;
-            foreach (ClothVo clothVo in clothVos)
+            foreach (Cloth cloth in clothes)
             {
-                InsertOrUpdateWithoutCommit(DaoHelper.Instance.DbStorage, clothVo);
+                if (clothOidIndex.Contains(cloth))
+                {
+                    root.ColorIndex.Remove(cloth);
+                    root.ShapeIndex.Remove(cloth);
+                }
+                else
+                {
+                    // this method called for generate the Oid, or the key of ClothOidIndex will always be 0.
+                    storage.MakePersistent(cloth);
+                    root.ClothOidIndex.Set(cloth);
+                }
+                root.ColorIndex[cloth] = (int)cloth.Colors;
+                root.ShapeIndex[cloth] = (int)cloth.Shapes;
+
                 if (0 == ++nCloth % Constants.ComitLimit)
                 {
                     storage.Commit();
@@ -70,191 +75,146 @@ namespace Zju.Dao
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="clothName">Name of a cloth.</param>
-        public void Delete(String clothName)
+        /// <param name="oid">Oid of a cloth.</param>
+        public void Delete(int oid)
         {
             Storage storage = DaoHelper.Instance.DbStorage;
             ClothRoot root = (ClothRoot)storage.Root;
 
-            Cloth cloth = root.ClothName.Get(clothName);
+            Cloth cloth = (Cloth)root.ClothOidIndex.Get(oid);
             if (null != cloth)
             {
-                RemoveFromColorAndShapeIndexes(root, clothName);
-                root.ClothName.Remove(cloth.Name);
+                // Console.WriteLine("delete");
+                root.ColorIndex.Remove(cloth);
+                root.ShapeIndex.Remove(cloth);
+                root.ClothOidIndex.Remove(cloth);
 
                 storage.Commit();
             }
         }
 
-        public ClothVo find(String clothName)
-        {
-            return null;
-        }
-
-        public List<ClothVo> findAll()
-        {
-            return null;
-        }
-
-        public List<ClothVo> findAllByColors(HashSet<String> colors)
-        {
-            return null;
-        }
-
-        public List<ClothVo> findAllByShapes(HashSet<String> shapes)
-        {
-            return null;
-        }
-
         /// <summary>
-        /// Insert a Cloth object into database without commit.
-        /// <code>root</code> and <code>vo</code> are not checked in the function, 
-        /// so they both cannot be null, or errors got.
+        /// Find the Cloth object by cloth name.
         /// </summary>
-        /// <param name="root">Object contains references to indexes.</param>
-        /// <param name="clothVo">ClothVo object contains a cloth to be inserted.</param>
-        private void InsertWithoutCommit(ClothRoot root, ClothVo clothVo)
+        /// <param name="oid">Oid of a cloth.</param>
+        /// <returns>Cloth with the cloth name; null if not found.</returns>
+        public Cloth FindByOid(int oid)
         {
-            Cloth cloth = convertClothVoToDomain(clothVo);
-
-            root.ClothName.Put(cloth);
-            // add colors and shapes index.
-            putColorAndShapeIndexes(root, cloth);
-        }
-
-        /// <summary>
-        /// Insert a Cloth object into database without commit if not exists, otherwise update.
-        /// <code>storage</code> and <code>vo</code> are not checked in the function, 
-        /// so they both cannot be null, or errors got.
-        /// </summary>
-        /// <param name="storage">The Storage object in Perst.</param>
-        /// <param name="clothVo">ClothVo object contains a cloth to be inserted or updated.</param>
-        private void InsertOrUpdateWithoutCommit(Storage storage, ClothVo clothVo)
-        {
+            Storage storage = DaoHelper.Instance.DbStorage;
             ClothRoot root = (ClothRoot)storage.Root;
-            Cloth cloth = root.ClothName.get(clothVo.Name);
-            if (null != cloth)
-            {
-                // update
-                // remove colors and shapes index first.
-                RemoveFromColorAndShapeIndexes(root, cloth);
 
-                updateClothVoToDomain(storage, cloth, clothVo);
-
-                cloth.Modify();
-                
-                // add colors and shapes index.
-                putColorAndShapeIndexes(root, cloth);
-            }
-            else
-            {
-                // insert
-                InsertWithoutCommit(root, clothVo);
-            }
+            return (Cloth)root.ClothOidIndex.Get(oid);
         }
 
         /// <summary>
-        /// Put entries associated with the Cloth object from the color and shape indexes.
-        /// <code>root</code> and <code>vo</code> are not checked in the function, 
-        /// so they both cannot be null, or errors got.
+        /// Find all Cloth objects.
         /// </summary>
-        /// <param name="root">Object contains references to indexes.</param>
-        /// <param name="cloth">Cloth object whose colors and shapes to be put.</param>
-        private void putColorAndShapeIndexes(ClothRoot root, Cloth cloth)
+        /// <returns>Cloth objects list; empty list if none found.</returns>
+        public List<Cloth> FindAll()
         {
-            foreach (Color color in cloth.Colors)
+            Storage storage = DaoHelper.Instance.DbStorage;
+            ClothRoot root = (ClothRoot)storage.Root;
+
+            List<Cloth> clothes = new List<Cloth>();
+            foreach (Cloth cloth in root.ClothOidIndex)
             {
-                root.ColorName.put(color.Name, cloth);
+                clothes.Add(cloth);
             }
-            foreach (Shape shape in cloth.Shapes)
-            {
-                root.ShapeName.put(shape.Name, cloth);
-            }
+            return clothes;
         }
 
         /// <summary>
-        /// Remove entries associated with the Cloth object from the color and shape indexes.
-        /// <code>root</code> and <code>vo</code> are not checked in the function, 
-        /// so they both cannot be null, or errors got.
+        /// Find list of Cloth object by colors.
+        /// NOTES: There are two rules for clothes to be selected:
+        /// <list type="number">
+        /// <item>It should contains all colors in <code>colors</code>.</item>
+        /// <item>It should not contains any colors in <code>notColors</code>.</item>
+        /// </list>
         /// </summary>
-        /// <param name="root">Object contains references to indexes.</param>
-        /// <param name="cloth">Cloth object whose colors and shapes to be removed.</param>
-        private void RemoveFromColorAndShapeIndexes(ClothRoot root, Cloth cloth)
+        /// <param name="colors">The colors contained by clothes.</param>
+        /// <param name="notColors">The colors NOT contained by clothes.</param>
+        /// <returns>Cloth objects list; empty list if none found.</returns>
+        public List<Cloth> FindAllByColors(ColorEnum colors, ColorEnum notColors)
         {
-            foreach (Color color in cloth.Colors)
+            Storage storage = DaoHelper.Instance.DbStorage;
+            ClothRoot root = (ClothRoot)storage.Root;
+
+            List<Cloth> clothes = new List<Cloth>();
+            BitIndex colorIndex = root.ColorIndex;
+            Console.WriteLine(colorIndex.Count);
+            if (colorIndex.Count > 0)
             {
-                root.ColorName.Remove(color.Name, cloth);
+                foreach (Cloth cloth in colorIndex.Select((int)colors, (int)notColors))
+                {
+                    clothes.Add(cloth);
+                }
             }
-            foreach (Shape shape in cloth.Shapes)
-            {
-                root.ShapeName.Remove(shape.Name, cloth);
-            }
+            
+            return clothes;
         }
 
         /// <summary>
-        /// Convert a ClothVo object into a Cloth domain object.
-        /// <code>storage</code> and <code>clothVo</code> are not checked in the function, 
-        /// so they both cannot be null, or errors got.
+        /// Find list of Cloth object by colors.
+        /// NOTES: The clothes to be selected should contains all colors in <code>colors</code>.
         /// </summary>
-        /// <param name="storage">The Storage object in Perst.</param>
-        /// <param name="clothVo">The ClothVo object to be converted.</param>
-        /// <returns>The Cloth domain object converted from the ClothVo object.</returns>
-        private Cloth convertClothVoToDomain(Storage storage, ClothVo clothVo)
+        /// <param name="colors">The colors contained by clothes.</param>
+        /// <returns>Cloth objects list; empty list if none found.</returns>
+        public List<Cloth> FindAllByColors(ColorEnum colors)
         {
-            Cloth cloth = new Cloth(storage, clothVo.Name, clothVo.Pattern, clothVo.Path);
-
-            if (null != clothVo.ColorNames)
-            {
-                foreach (String colorName in clothVo.ColorNames)
-                {
-                    cloth.Colors.Add(new Color(storage, colorName));
-                }
-            }
-
-            if (null != clothVo.ShapeNames)
-            {
-                foreach (String shapeName in clothVo.ShapeNames)
-                {
-                    cloth.Shapes.Add(new Shape(storage, shapeName));
-                }
-            }
-
-            return cloth;
+            return FindAllByColors(colors, 0);
         }
 
         /// <summary>
-        /// Update the Cloth object <code>cloth</code> with the ClothVo object <code>clothVo</code>.
-        /// <code>storage</code>, <code>cloth</code> and <code>clothVo</code> are not checked in the function, 
-        /// so they all cannot be null, or errors got.
+        /// Find list of Cloth object by shapes.
+        /// NOTES: There are two rules for clothes to be selected:
+        /// <list type="number">
+        /// <item>It should contains all shapes in <code>shapes</code>.</item>
+        /// <item>It should not contains any shapes in <code>notShapes</code>.</item>
+        /// </list>
         /// </summary>
-        /// <param name="storage">The Storage object in Perst.</param>
-        /// <param name="cloth">The Cloth object to be updated.</param>
-        /// <param name="clothVo">The ClothVo object contains new close information.</param>
-        /// <returns>The Cloth domain object has been updated.</returns>
-        private Cloth updateClothVoToDomain(Storage storage, Cloth cloth, ClothVo clothVo)
+        /// <param name="shapes">The shapes contained by clothes.</param>
+        /// <param name="notShapes">The shapes NOT contained by clothes.</param>
+        /// <returns>Cloth objects list; empty list if none found.</returns>
+        public List<Cloth> FindAllByShapes(ShapeEnum shapes, ShapeEnum notShapes)
         {
-            cloth.Name = clothVo.Name;
-            cloth.Pattern = clothVo.Pattern;
-            cloth.Path = clothVo.Path;
-            cloth.Colors.Clear();
-            cloth.Shapes.Clear();
-            if (null != clothVo.ColorNames)
+            Storage storage = DaoHelper.Instance.DbStorage;
+            ClothRoot root = (ClothRoot)storage.Root;
+
+            List<Cloth> clothes = new List<Cloth>();
+            BitIndex shapeIndex = root.ShapeIndex;
+            if (shapeIndex.Count > 0)
             {
-                foreach (String colorName in clothVo.ColorNames)
+                foreach (Cloth cloth in shapeIndex.Select((int)shapes, (int)notShapes))
                 {
-                    cloth.Colors.Add(new Color(storage, colorName));
+                    clothes.Add(cloth);
                 }
             }
-
-            if (null != clothVo.ShapeNames)
-            {
-                foreach (String shapeName in clothVo.ShapeNames)
-                {
-                    cloth.Shapes.Add(new Shape(storage, shapeName));
-                }
-            }
-
-            return cloth;
+            return clothes;
         }
+
+        /// <summary>
+        /// Find list of Cloth object by shapes.
+        /// NOTES: The clothes to be selected should contains all shapes in <code>shapes</code>.
+        /// <param name="shapes">The shapes contained by clothes.</param>
+        /// <returns>Cloth objects list; empty list if none found.</returns>
+        public List<Cloth> FindAllByShapes(ShapeEnum shapes)
+        {
+            return FindAllByShapes(shapes, 0);
+        }
+/*
+        public List<Cloth> FindAllByColorsAndShapes(ColorEnum colors, ColorEnum notColors, ShapeEnum shapes, ShapeEnum notShapes)
+        {
+            Storage storage = DaoHelper.Instance.DbStorage;
+            ClothRoot root = (ClothRoot)storage.Root;
+
+            BitIndex<Cloth> colorIndex = root.ColorIndex;
+            BitIndex<Cloth> shapeIndex = root.ShapeIndex;
+
+            Query<Cloth> query = storage.CreateQuery<Cloth>();
+            query.Prepare("(colors and ? = ?) and (colors and ?) = 0 and (shapes and ? = ?) and (shapes and ?) = 0");
+            query.AddIndex(colorIndex);
+            query.AddIndex(shapeIndex);
+
+        }*/
     }
 }

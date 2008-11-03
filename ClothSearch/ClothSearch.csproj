@@ -83,8 +83,6 @@
     <Compile Include="src\Zju\Dao\DaoHelper.cs" />
     <Compile Include="src\Zju\Domain\Cloth.cs" />
     <Compile Include="src\Zju\Domain\ClothRoot.cs" />
-    <Compile Include="src\Zju\Domain\Color.cs" />
-    <Compile Include="src\Zju\Domain\Shape.cs" />
     <Compile Include="src\Zju\Util\Constants.cs" />
     <Compile Include="src\Zju\Vo\ClothVo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

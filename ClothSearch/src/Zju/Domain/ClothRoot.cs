@@ -3,40 +3,37 @@ using Perst;
 
 namespace Zju.Domain
 {
-    class ClothRoot : Persistent
+    public class ClothRoot : Persistent
     {
         /// <summary>
         /// Color index to find Cloth objects.
         /// </summary>
-        private Index<String, Cloth> colorName;
+        private BitIndex colorIndex;
 
         /// <summary>
         /// Shape index to find Cloth objects.
         /// </summary>
-        private Index<String, Cloth> shapeName;
+        private BitIndex shapeIndex;
         
         /// <summary>
-        /// Unique cloth name to identify a cloth.
+        /// Unique cloth Oid to identify a cloth.
         /// </summary>
-        private FieldIndex<String, Cloth> clothName;
+        private FieldIndex clothOidIndex;
 
 
-        public Index ColorName
+        public BitIndex ColorIndex
         {
-            get { return colorName; }
-            set { colorName = value; }
+            get { return colorIndex; }
         }
 
-        public Index ShapeName
+        public BitIndex ShapeIndex
         {
-            get { return shapeName; }
-            set { shapeName = value; }
+            get { return shapeIndex; }
         }
 
-        public FieldIndex ClothName
+        public FieldIndex ClothOidIndex
         {
-            get { return clothName; }
-            set { clothName = value; }
+            get { return clothOidIndex; }
         }
 
         public ClothRoot()
@@ -46,9 +43,9 @@ namespace Zju.Domain
 
         public ClothRoot(Storage storage) : base(storage)
         {
-            colorName = storage.CreateIndex<String, Cloth>(false);
-            shapeName = storage.CreateIndex<String, Cloth>(false);
-            clothName = storage.CreateFieldIndex<String, Cloth>("name", true);
+            colorIndex = storage.CreateBitIndex();
+            shapeIndex = storage.CreateBitIndex();
+            clothOidIndex = storage.CreateFieldIndex(typeof(Cloth), "Oid", true);
         }
     }
 }
