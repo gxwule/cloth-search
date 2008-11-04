@@ -19,18 +19,11 @@ namespace ClothSearch
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class Window1 : Window
+    public partial class HomeWin : Window
     {
-        public Window1()
+        public HomeWin()
         {
             InitializeComponent();
-        }
-
-        private void button1_Click(object sender, RoutedEventArgs e)
-        {
-            Storage storage = DaoHelper.Instance.DbStorage;
-            ClothRoot root = (ClothRoot)storage.Root;
-
         }
     }
 }

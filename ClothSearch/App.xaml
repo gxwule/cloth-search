@@ -1,8 +1,12 @@
 ﻿<Application x:Class="ClothSearch.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    StartupUri="Window1.xaml">
+    StartupUri="HomeWin.xaml">
     <Application.Resources>
-         
+        <!-- default border style -->
+        <Style TargetType="{x:Type Border}">
+            <Setter Property="BorderBrush" Value="SteelBlue"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
     </Application.Resources>
 </Application>

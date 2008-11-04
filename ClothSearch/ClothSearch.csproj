@@ -96,6 +96,17 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\banner.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\about.png" />
+    <Resource Include="res\exportkey.png" />
+    <Resource Include="res\import.png" />
+    <Resource Include="res\importkey.png" />
+    <Resource Include="res\open.png" />
+    <Resource Include="res\seekey.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
