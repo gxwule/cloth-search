@@ -20,7 +20,7 @@ namespace Zju.Dao
             {
                 if (!storage.IsOpened())
                 {
-                    storage.Open(Constants.DataBaseFilePath, Constants.PagePoolSize);
+                    storage.Open(DbConstants.DataBaseFilePath, DbConstants.PagePoolSize);
                     ClothRoot root = (ClothRoot)storage.Root;
                     if (root == null)
                     {

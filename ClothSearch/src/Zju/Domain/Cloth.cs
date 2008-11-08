@@ -81,7 +81,8 @@ namespace Zju.Domain
         
         public Cloth()
         {
-
+            colors = ColorEnum.NONE;
+            shapes = ShapeEnum.NONE;
         }
 
         public Cloth(String name, String pattern, String path, ColorEnum colors, ShapeEnum shapes)

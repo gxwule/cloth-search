@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Zju.Util
 {
-    public sealed class Constants
+    public sealed class DbConstants
     {
         public const String DataBaseFilePath = "E:\\projects\\ClothSearch\\codes\\trunk\\data\\cloth.dbs";
         public const int PagePoolSize = 48 * 1024 * 1024;

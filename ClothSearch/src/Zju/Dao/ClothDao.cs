@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Perst;
 using Zju.Domain;
 using Zju.Util;
 
 namespace Zju.Dao
 {
-    public class ClothDao
+    public class ClothDao : IClothDao
     {
         /// <summary>
         /// Save or update the cloth into the database if not exit, otherwise update it.
-        /// Whethe a cloth exists is decided by the Oid of the cloth.
+        /// Whether a cloth exists is decided by the Oid of the cloth.
         /// </summary>
         public void SaveOrUpdate(Cloth cloth)
         {
@@ -32,7 +31,7 @@ namespace Zju.Dao
             {
                 saveOrUpdateWithoutCommit(storage, root, cloth);
 
-                if (0 == ++nCloth % Constants.ComitLimit)
+                if (0 == ++nCloth % DbConstants.ComitLimit)
                 {
                     storage.Commit();
                 }

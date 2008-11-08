@@ -35,6 +35,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\NUnit 2.4.6\bin\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="nunit.mocks, Version=2.4.6.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
     <Reference Include="PerstNet35, Version=1.0.3175.31529, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\PerstNet35.dll</HintPath>
@@ -50,6 +51,7 @@
     <Compile Include="test\Zju\Dao\ClothDaoTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="test\Zju\Dao\DaoHelperTest.cs" />
+    <Compile Include="test\Zju\Service\ClothLibServiceTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClothSearch\ClothSearch.csproj">

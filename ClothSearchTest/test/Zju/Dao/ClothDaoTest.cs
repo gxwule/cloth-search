@@ -12,9 +12,11 @@ namespace Zju.Dao
         private ClothDao target;
         private Cloth cloth;
         private Cloth cloth2;
+        private Cloth noneCloth;
         private List<Cloth> onlyList;
         private List<Cloth> emptyList;
         private List<Cloth> clothes;
+        private List<Cloth> noneClothList;
 
         [TestFixtureSetUp]
         public void SetUp()
@@ -25,6 +27,10 @@ namespace Zju.Dao
             cloth2 = new Cloth("nn", "pp", "pp", ColorEnum.RED | ColorEnum.DARKRED, ShapeEnum.NONE);
             onlyList = new List<Cloth>();
             onlyList.Add(cloth);
+
+            noneCloth = new Cloth();
+            noneClothList = new List<Cloth>();
+            noneClothList.Add(noneCloth);
 
             emptyList = new List<Cloth>();
 
@@ -90,6 +96,32 @@ namespace Zju.Dao
         }
 
         [Test]
+        public void TestSaveOrUpdateNull()
+        {
+            target.SaveOrUpdate(noneCloth);
+            Assert.AreEqual(noneCloth, target.FindByOid(noneCloth.Oid));
+            Assert.AreEqual(noneClothList, target.FindAll());
+            Assert.AreEqual(emptyList, target.FindAllByColors(ColorEnum.BLACK));
+
+            // update
+            int oid = noneCloth.Oid;
+            noneCloth.Path = "abcd";
+            noneCloth.Name = "na";
+            noneCloth.UpdateTime = DateTime.UtcNow;
+            noneCloth.Colors = ColorEnum.WHITE | ColorEnum.PINK;
+            //print(cloth);
+            target.SaveOrUpdate(noneCloth);
+            //print(cloth);
+            Assert.AreEqual(noneCloth, target.FindByOid(oid));
+            Assert.AreEqual(noneClothList, target.FindAll());
+            Assert.AreEqual(noneClothList, target.FindAllByColors(ColorEnum.WHITE));
+            Assert.AreEqual(emptyList, target.FindAllByColors(ColorEnum.BLUE));
+            Assert.AreEqual(emptyList, target.FindAllByColors(ColorEnum.BLACK | ColorEnum.BLUE));
+
+            target.Delete(oid);
+        }
+
+        [Test]
         public void TestSaveOrUpdateAll()
         {
             target.SaveOrUpdateAll(clothes);
@@ -101,6 +133,13 @@ namespace Zju.Dao
             }
             Assert.AreEqual(emptyList, target.FindAll());
             Assert.AreEqual(0, target.FindAllByColors(ColorEnum.BLACK).Count);
+        }
+
+        [Test]
+        public void TestSaveOrUpdateAllNull()
+        {
+            target.SaveOrUpdateAll(emptyList);
+
         }
 /*
         [Test]

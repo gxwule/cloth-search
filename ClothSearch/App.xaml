@@ -4,7 +4,7 @@
     StartupUri="HomeWin.xaml">
     <Application.Resources>
         <!-- default border style -->
-        <Style TargetType="{x:Type Border}">
+        <Style x:Key="blueBorder" TargetType="{x:Type Border}">
             <Setter Property="BorderBrush" Value="SteelBlue"/>
             <Setter Property="BorderThickness" Value="1"/>
         </Style>
