@@ -31,6 +31,8 @@ namespace ClothSearch
 
         private IClothLibService clothLibService;
 
+        private OpenFileDialog dlgOpenPic;
+
         public AddPicWin(String keyPicFileName)
         {
             colorItems = ViewHelper.NewColorItems;
@@ -48,16 +50,25 @@ namespace ClothSearch
 
             // It should be done by dependency injection here!!
             clothLibService = new ClothLibService(new ClothDao());
+
+            // initialize OpenFileDialog
+            dlgOpenPic = new OpenFileDialog();
+            dlgOpenPic.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+            dlgOpenPic.Title = "请选择新增的图片";
+            dlgOpenPic.Filter = "jpeg (*.jpg;*.jpeg;*.jpe;*.jfif)|*.jpg;*.jpeg;*.jpe;*.jfif|All Image files|*.jpg;*.jpeg;*.jpe;*.jfif;*.gif;*.png;*.bmp;*.ico;*.tif;*.tiff|All files (*.*)|*.*";
+        }
+
+        public AddPicWin() : this(null)
+        {
+
         }
 
 
         private void btnAddOpenPic_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dlgOpenFile = new OpenFileDialog();
-            dlgOpenFile.Filter = "jpeg (*.jpg;*.jpeg;*.jpe;*.jfif)|*.jpg;*.jpeg;*.jpe;*.jfif|All Image files|*.jpg;*.jpeg;*.jpe;*.jfif;*.gif;*.png;*.bmp;*.ico;*.tif;*.tiff|All files (*.*)|*.*";
-            if (dlgOpenFile.ShowDialog() == true)
+            if (dlgOpenPic.ShowDialog() == true)
             {
-                showAddPic(dlgOpenFile.FileName);
+                showAddPic(dlgOpenPic.FileName);
             }
         }
 
@@ -160,6 +171,12 @@ namespace ClothSearch
 
                 addPicFileName = fileName;
             }
+        }
+
+        public String KeyPicFileName
+        {
+            get { return this.keyPicFileName; }
+            set { this.keyPicFileName = value; }
         }
     }
 }

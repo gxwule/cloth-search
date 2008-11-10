@@ -1,0 +1,10 @@
+﻿<Window x:Class="ClothSearch.IndeterminateProgressWin"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="IndeterminateProgressWin" Height="110" Width="315" 
+    WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <Grid>
+        <Label Margin="14,11,18,35" Name="lblProgSummary">Label</Label>
+        <ProgressBar Height="20" Margin="14,0,18,11" Name="pgbProgInfo" VerticalAlignment="Bottom" IsIndeterminate="True" />
+    </Grid>
+</Window>

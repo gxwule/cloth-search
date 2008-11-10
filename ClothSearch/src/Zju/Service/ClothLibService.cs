@@ -12,7 +12,7 @@ namespace Zju.Service
 
         public ClothLibService()
         {
-            
+
         }
 
         public ClothLibService(IClothDao clothDao)
