@@ -14,6 +14,7 @@ using Zju.Domain;
 using Zju.Service;
 using Zju.Util;
 using Zju.Dao;
+using Zju.Image;
 
 namespace ClothSearch
 {
@@ -116,6 +117,9 @@ namespace ClothSearch
             if (!String.IsNullOrEmpty(addPicFileName))
             {
                 cloth.Path = addPicFileName;
+                ImageMatcher im = new ImageMatcher();
+                int[] colorVector = im.ExtractColorVector(addPicFileName);
+                cloth.ColorVector = colorVector;
             }
 
             ColorEnum colors = ColorEnum.NONE;

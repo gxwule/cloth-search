@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("ClothSearch")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("WwW.YlmF.CoM")]
+[assembly: AssemblyCompany("ZJU CS")]
 [assembly: AssemblyProduct("ClothSearch")]
-[assembly: AssemblyCopyright("Copyright © WwW.YlmF.CoM 2008")]
+[assembly: AssemblyCopyright("Copyright © ZJU CS 2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

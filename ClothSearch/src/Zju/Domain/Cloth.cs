@@ -39,6 +39,8 @@ namespace Zju.Domain
         /// Update time of the cloth.
         /// </summary>
         private DateTime updateTime;
+
+        private int[] colorVector;
 #endregion
 
 #region getter & setter
@@ -76,6 +78,12 @@ namespace Zju.Domain
         {
             get { return updateTime; }
             set { updateTime = value; }
+        }
+
+        public int[] ColorVector
+        {
+            get { return colorVector; }
+            set { colorVector = value; }
         }
 #endregion
         

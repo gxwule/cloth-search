@@ -43,6 +43,11 @@ namespace Zju.Service
             clothDao.SaveOrUpdateAll(clothes);
         }
 
+        public List<Cloth> findAll()
+        {
+            return clothDao.FindAll();
+        }
+
         #endregion
 
         public IClothDao ClothDao

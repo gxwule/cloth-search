@@ -9,5 +9,7 @@ namespace Zju.Service
         void AddCloth(Cloth cloth);
 
         void AddClothes(List<Cloth> clothes);
+
+        List<Cloth> findAll();
     }
 }

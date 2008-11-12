@@ -18,6 +18,7 @@ using Zju.View;
 using System.IO;
 using Zju.Service;
 using Zju.Util;
+using Zju.Image;
 
 namespace ClothSearch
 {
@@ -29,11 +30,23 @@ namespace ClothSearch
         private List<ColorItem> colorItems;
         private List<ShapeItem> shapeItems;
 
+        private ImageMatcher imageMatcher;
+
         private IClothLibService clothLibService;
 
         private IClothSearchService clothSearchService;
 
+        /// <summary>
+        /// The file path of opened key picture. 
+        /// If it clears, <code>keyPicFileName</code> should be set <code>null</code>.
+        /// </summary>
         private String keyPicFileName;
+
+        /// <summary>
+        /// Limit of Manhattan distance of color vectors between two cloth when searching.
+        /// The cloth as searched should less or equal to the limit.
+        /// </summary>
+        private const int colorMDLimit = int.MaxValue - 1;
 
         private OpenFileDialog dlgOpenKeyPic;
 
@@ -63,6 +76,8 @@ namespace ClothSearch
 
             InitializeComponent();
 
+            rbtnPic.IsChecked = true;
+
             dlgOpenKeyPic = newOpenFileDialog();
             dlgOpenKeyPic.Title = "请选择关键图";
 
@@ -78,6 +93,7 @@ namespace ClothSearch
             // It should be done by dependency injection here!!
             clothLibService = new ClothLibService(new ClothDao());
             clothSearchService = new ClothSearchService(new ClothDao());
+            imageMatcher = new ImageMatcher();
         }
 
         private void btnToolOpen_Click(object sender, RoutedEventArgs e)
@@ -203,8 +219,8 @@ namespace ClothSearch
             int nFinished = 0;
             foreach (String picName in picNames)
             {
-                Cloth cloth = new Cloth();
-                cloth.Path = picName;
+                Cloth cloth = generateClothObject(picName);
+                
                 clothes.Add(cloth);
                 if (++nFinished % step == 0)
                 {
@@ -221,6 +237,18 @@ namespace ClothSearch
 
             this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
                 new AsynUpdateUI(closeProgressWin), nFinished);
+        }
+
+        private Cloth generateClothObject(string picName)
+        {
+            Cloth cloth = new Cloth();
+
+            cloth.Path = picName;
+
+            int[] colorVector = imageMatcher.ExtractColorVector(picName);
+            cloth.ColorVector = colorVector;
+
+            return cloth;
         }
 
         private void showProgressDialog(int nTotal)
@@ -284,11 +312,91 @@ namespace ClothSearch
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
             lblSearchResultInfo.Content = "正在搜索请稍候...";
-            searchedClothes = searchByText();
+            
+            if (true == rbtnPic.IsChecked)
+            {
+                if (null == keyPicFileName)
+                {
+                    MessageBox.Show("图片搜索必须先指定关键图.", "温馨提醒");
+                    return;
+                }
+                searchedClothes = searchByPic();
+            }
+            else if (true == rbtnText.IsChecked)
+            {
 
+                searchedClothes = searchByText();
+            }
+            else if (true == rbtnCombine.IsChecked)
+            {
+                // do nothing
+                return;
+            }
+            
             updatePicResults();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>Result list. Null if no search executed.</returns>
+        private List<Cloth> searchByPic()
+        {
+            if (null == keyPicFileName)
+            {
+                return null;
+            }
+            int[] colorVector = imageMatcher.ExtractColorVector(keyPicFileName);
+            if (colorVector == null)
+            {
+                return null;
+            }
+
+            SortedDictionary<int, List<Cloth>> sortClothes = new SortedDictionary<int, List<Cloth>>();
+            List<Cloth> allClothes = clothLibService.findAll();
+            foreach (Cloth cloth in allClothes)
+            {
+                int md = calcManhattanDistance(colorVector, cloth.ColorVector);
+                if (md <= colorMDLimit)
+                {
+                    if (!sortClothes.ContainsKey(md))
+                    {
+                        sortClothes[md] = new List<Cloth>();
+                    }
+                    sortClothes[md].Add(cloth);
+                }
+            }
+
+            List<Cloth> clothes = new List<Cloth>();
+            foreach (List<Cloth> cs in sortClothes.Values)
+            {
+                clothes.AddRange(cs);
+            }
+
+            return clothes;
+        }
+
+        private int calcManhattanDistance(int[] v1, int[] v2)
+        {
+            if (v1 == null || v2 == null || v1.Length != v2.Length)
+            {
+                return int.MaxValue;
+            }
+
+            int md = 0;
+            int n = v1.Length;
+            for (int i=0; i<n; ++i)
+            {
+                md += (v1[i] >= v2[i] ? v1[i] - v2[i] : v2[i] - v1[i]);
+            }
+
+            return md;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         private List<Cloth> searchByText()
         {
             string words = string.IsNullOrEmpty(txtSearchInput.Text) ? null : txtSearchInput.Text;
