@@ -39,6 +39,7 @@
       <HintPath>..\lib\PerstNet35.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -80,6 +81,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="MatchAlgorithmWin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -118,6 +123,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="MatchAlgorithmWin.xaml.cs">
+      <DependentUpon>MatchAlgorithmWin.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\Zju\Dao\ClothDao.cs" />
     <Compile Include="src\Zju\Dao\DaoHelper.cs" />
     <Compile Include="src\Zju\Dao\IClothDao.cs" />
@@ -128,6 +136,8 @@
     <Compile Include="src\Zju\Service\IClothLibService.cs" />
     <Compile Include="src\Zju\Service\IClothSearchService.cs" />
     <Compile Include="src\Zju\Util\Constants.cs" />
+    <Compile Include="src\Zju\View\AlgorithmDesc.cs" />
+    <Compile Include="src\Zju\View\ViewConstants.cs" />
     <Compile Include="src\Zju\View\ViewHelper.cs" />
     <Compile Include="src\Zju\Vo\ClothVo.cs" />
     <EmbeddedResource Include="ClothSearchAboutBox.resx">
@@ -170,6 +180,9 @@
       <Project>{0C390870-2B41-4661-BEFA-FBCC40037753}</Project>
       <Name>ImageMatcher</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\configure.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

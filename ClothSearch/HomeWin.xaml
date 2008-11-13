@@ -45,10 +45,11 @@
                 <Label Canvas.Left="474" Canvas.Top="13" Height="28" Name="label3" Width="40">颜色:</Label>
                 <Label Canvas.Left="602" Canvas.Top="13" Height="28" Name="label4" Width="37">形状:</Label>
                 <!--  ItemsSource="{Binding Source={StaticResource shapeItems}}" -->
+                <!-- MouseEnter ="cmbInput_MouseEnter" -->
                 <ComboBox Canvas.Left="640" Canvas.Top="13" Height="24" Width="71" Name="cmbShapeInput" 
                     ItemsSource="{Binding Source={StaticResource shapeItems}}"
-                    HorizontalContentAlignment="Stretch"
-                    IsEditable="True" ToolTip="形状描述">
+                    HorizontalContentAlignment="Stretch" ToolTip="形状描述"
+                    IsEditable="True" IsReadOnly="True">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>
@@ -65,10 +66,11 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
                 <!--  ItemsSource="{Binding Source={StaticResource colorItems}}" -->
+                <!-- MouseEnter ="cmbInput_MouseEnter" -->
                 <ComboBox Canvas.Left="512" Canvas.Top="13" Height="24" Width="71" Name="cmbColorInput" 
                     ItemsSource="{Binding Source={StaticResource colorItems}}"
-                    HorizontalContentAlignment="Stretch"
-                    IsEditable="True" ToolTip="颜色描述">
+                    HorizontalContentAlignment="Stretch" ToolTip="颜色描述"
+                    IsEditable="True" IsReadOnly="True">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>

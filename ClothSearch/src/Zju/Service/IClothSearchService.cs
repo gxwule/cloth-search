@@ -8,5 +8,9 @@ namespace Zju.Service
     public interface IClothSearchService
     {
         List<Cloth> SearchByText(String words, ColorEnum colors, ShapeEnum shapes);
+
+        List<Cloth> SearchByPicColor(int[] colorVector);
+
+        List<Cloth> SearchByPicTexture(float[] textureVector);
     }
 }

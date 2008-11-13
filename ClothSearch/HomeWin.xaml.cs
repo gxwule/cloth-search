@@ -1,24 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Microsoft.Win32;
-using Perst;
 using Zju.Dao;
 using Zju.Domain;
-using Zju.View;
-using System.IO;
+using Zju.Image;
 using Zju.Service;
 using Zju.Util;
-using Zju.Image;
+using Zju.View;
 
 namespace ClothSearch
 {
@@ -30,29 +25,27 @@ namespace ClothSearch
         private List<ColorItem> colorItems;
         private List<ShapeItem> shapeItems;
 
-        private ImageMatcher imageMatcher;
-
         private IClothLibService clothLibService;
 
         private IClothSearchService clothSearchService;
 
-        /// <summary>
-        /// The file path of opened key picture. 
-        /// If it clears, <code>keyPicFileName</code> should be set <code>null</code>.
-        /// </summary>
-        private String keyPicFileName;
+        private ImageMatcher imageMatcher;
 
         /// <summary>
-        /// Limit of Manhattan distance of color vectors between two cloth when searching.
-        /// The cloth as searched should less or equal to the limit.
+        /// The Cloth object of opened key picture. Its property <code>Path</code> should be assigned.
+        /// If it clears, <code>keyCloth</code> should be set <code>null</code>.
         /// </summary>
-        private const int colorMDLimit = int.MaxValue - 1;
+        private Cloth keyCloth;
+
+        private AlgorithmDesc aDesc;
 
         private OpenFileDialog dlgOpenKeyPic;
 
         private OpenFileDialog dlgOpenPics;
 
         private ProgressWin progressWin;
+
+        private MatchAlgorithmWin matchAlgorithmWin;
 
         private delegate void AsynUpdateUI(int nFinished);
 
@@ -93,12 +86,14 @@ namespace ClothSearch
             // It should be done by dependency injection here!!
             clothLibService = new ClothLibService(new ClothDao());
             clothSearchService = new ClothSearchService(new ClothDao());
-            imageMatcher = new ImageMatcher();
+            imageMatcher = ViewHelper.ImageMatcher;
+
+            aDesc = new AlgorithmDesc();
         }
 
         private void btnToolOpen_Click(object sender, RoutedEventArgs e)
         {
-            AddPicWin addPicWin = new AddPicWin(keyPicFileName);
+            AddPicWin addPicWin = new AddPicWin(keyCloth);
             addPicWin.Owner = this;
             addPicWin.ShowDialog();
         }
@@ -114,7 +109,8 @@ namespace ClothSearch
                 bi.EndInit();
                 imgKeyPic.Source = bi;
 
-                keyPicFileName = dlgOpenKeyPic.FileName;
+                keyCloth = new Cloth();
+                keyCloth.Path = dlgOpenKeyPic.FileName;
             }
         }
 
@@ -124,36 +120,6 @@ namespace ClothSearch
             dlgOpenFile.Filter = "jpeg (*.jpg;*.jpeg;*.jpe;*.jfif)|*.jpg;*.jpeg;*.jpe;*.jfif|All Image files|*.jpg;*.jpeg;*.jpe;*.jfif;*.gif;*.png;*.bmp;*.ico;*.tif;*.tiff|All files (*.*)|*.*";
             dlgOpenFile.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
             return dlgOpenFile;
-        }
-
-        private void chkColorInput_Click(object sender, RoutedEventArgs e)
-        {
-            String Values = "";
-
-            foreach (ColorItem ci in colorItems)
-            {
-                if (ci.Selected)
-                {
-                    Values += String.IsNullOrEmpty(Values) ? ci.Name : "," + ci.Name;
-                }
-            }
-
-            cmbColorInput.Text = Values;
-        }
-
-        private void chkShapeInput_Click(object sender, RoutedEventArgs e)
-        {
-            String Values = "";
-
-            foreach (ShapeItem ci in shapeItems)
-            {
-                if (ci.Selected)
-                {
-                    Values += String.IsNullOrEmpty(Values) ? ci.Name : "," + ci.Name;
-                }
-            }
-
-            cmbShapeInput.Text = Values;
         }
 
         private void btnToolImport_Click(object sender, RoutedEventArgs e)
@@ -245,8 +211,7 @@ namespace ClothSearch
 
             cloth.Path = picName;
 
-            int[] colorVector = imageMatcher.ExtractColorVector(picName);
-            cloth.ColorVector = colorVector;
+            ViewHelper.ExtractFeatures(cloth);
 
             return cloth;
         }
@@ -304,9 +269,10 @@ namespace ClothSearch
 
         private void btnMatchAlgorithm_Click(object sender, RoutedEventArgs e)
         {
-            IndeterminateProgressWin progressWin = new IndeterminateProgressWin("不用傻等", "正在开发中, 请直接关闭本对话框.");
-            progressWin.Owner = this;
-            progressWin.ShowDialog();
+            // window for selecting match algorithms.
+            matchAlgorithmWin = new MatchAlgorithmWin(aDesc);
+            matchAlgorithmWin.Owner = this;
+            matchAlgorithmWin.ShowDialog();
         }
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
@@ -315,7 +281,7 @@ namespace ClothSearch
             
             if (true == rbtnPic.IsChecked)
             {
-                if (null == keyPicFileName)
+                if (null == keyCloth || string.IsNullOrEmpty(keyCloth.Path))
                 {
                     MessageBox.Show("图片搜索必须先指定关键图.", "温馨提醒");
                     return;
@@ -342,55 +308,36 @@ namespace ClothSearch
         /// <returns>Result list. Null if no search executed.</returns>
         private List<Cloth> searchByPic()
         {
-            if (null == keyPicFileName)
+            if (null == keyCloth || string.IsNullOrEmpty(keyCloth.Path))
             {
                 return null;
-            }
-            int[] colorVector = imageMatcher.ExtractColorVector(keyPicFileName);
-            if (colorVector == null)
-            {
-                return null;
-            }
-
-            SortedDictionary<int, List<Cloth>> sortClothes = new SortedDictionary<int, List<Cloth>>();
-            List<Cloth> allClothes = clothLibService.findAll();
-            foreach (Cloth cloth in allClothes)
-            {
-                int md = calcManhattanDistance(colorVector, cloth.ColorVector);
-                if (md <= colorMDLimit)
-                {
-                    if (!sortClothes.ContainsKey(md))
-                    {
-                        sortClothes[md] = new List<Cloth>();
-                    }
-                    sortClothes[md].Add(cloth);
-                }
             }
 
             List<Cloth> clothes = new List<Cloth>();
-            foreach (List<Cloth> cs in sortClothes.Values)
+            switch (aDesc.AType)
             {
-                clothes.AddRange(cs);
+                case AlgorithmType.Color1:
+                    int[] colorVector = imageMatcher.ExtractColorVector(keyCloth.Path);
+                    if (colorVector == null)
+                    {
+                        return null;
+                    }
+                    clothes = clothSearchService.SearchByPicColor(colorVector);
+                    break;
+                case AlgorithmType.Texture1:
+                case AlgorithmType.Texture2:
+                case AlgorithmType.Texture3:
+                default:
+                    float[] textureVector = imageMatcher.ExtractTextureVector(keyCloth.Path);
+                    if (null == textureVector)
+                    {
+                        return null;
+                    }
+                    clothes = clothSearchService.SearchByPicTexture(textureVector);
+                    break;
             }
 
             return clothes;
-        }
-
-        private int calcManhattanDistance(int[] v1, int[] v2)
-        {
-            if (v1 == null || v2 == null || v1.Length != v2.Length)
-            {
-                return int.MaxValue;
-            }
-
-            int md = 0;
-            int n = v1.Length;
-            for (int i=0; i<n; ++i)
-            {
-                md += (v1[i] >= v2[i] ? v1[i] - v2[i] : v2[i] - v1[i]);
-            }
-
-            return md;
         }
 
         /// <summary>
@@ -510,7 +457,7 @@ namespace ClothSearch
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
             imgKeyPic.Source = null;
-            keyPicFileName = null;
+            keyCloth = null;
         }
 
         private void btnResultDelete_Click(object sender, RoutedEventArgs e)
@@ -549,6 +496,44 @@ namespace ClothSearch
         {
             curPage = totalPage > 0 ? totalPage - 1 : 0;
             updatePageOfPicResults();
+        }
+
+        private void chkColorInput_Click(object sender, RoutedEventArgs e)
+        {
+            String Values = "";
+
+            foreach (ColorItem ci in colorItems)
+            {
+                if (ci.Selected)
+                {
+                    Values += String.IsNullOrEmpty(Values) ? ci.Name : "," + ci.Name;
+                }
+            }
+
+            cmbColorInput.Text = Values;
+        }
+
+        private void chkShapeInput_Click(object sender, RoutedEventArgs e)
+        {
+            String Values = "";
+
+            foreach (ShapeItem ci in shapeItems)
+            {
+                if (ci.Selected)
+                {
+                    Values += String.IsNullOrEmpty(Values) ? ci.Name : "," + ci.Name;
+                }
+            }
+
+            cmbShapeInput.Text = Values;
+        }
+
+        private void cmbInput_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (sender is ComboBox)
+            {
+                ((ComboBox)sender).IsDropDownOpen = true;
+            }
         }
 
     }

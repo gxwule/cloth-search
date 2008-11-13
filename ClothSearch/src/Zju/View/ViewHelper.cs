@@ -1,27 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Zju.Util;
+using Zju.Image;
+using Zju.Domain;
 
 namespace Zju.View
 {
-    public sealed class ViewConstants
-    {
-        public static KeyValuePair<String, ColorEnum>[] Colors
-            = { new KeyValuePair<String, ColorEnum>("黑", ColorEnum.BLACK),
-                  new KeyValuePair<String, ColorEnum>("白", ColorEnum.WHITE),
-                  new KeyValuePair<String, ColorEnum>("蓝", ColorEnum.BLUE),
-                  new KeyValuePair<String, ColorEnum>("红", ColorEnum.RED),
-                  new KeyValuePair<String, ColorEnum>("粉红", ColorEnum.PINK),
-                  new KeyValuePair<String, ColorEnum>("暗红", ColorEnum.DARKRED)};
-
-        public static KeyValuePair<String, ShapeEnum>[] Shapes
-            = { new KeyValuePair<String, ShapeEnum>("条纹", ShapeEnum.STRIPE),
-                  new KeyValuePair<String, ShapeEnum>("方格", ShapeEnum.SQUARE),
-                  new KeyValuePair<String, ShapeEnum>("圆形", ShapeEnum.CIRCLE),
-                  new KeyValuePair<String, ShapeEnum>("三角形", ShapeEnum.TRIANGLE),
-                  new KeyValuePair<String, ShapeEnum>("特殊形状", ShapeEnum.SPECIAL) };
-    }
-
     public class ColorItem
     {
         public String Name { get; set; }
@@ -38,6 +22,8 @@ namespace Zju.View
 
     public sealed class ViewHelper
     {
+        public static ImageMatcher ImageMatcher = new ImageMatcher();
+
         public static List<ColorItem> NewColorItems
         {
             get
@@ -66,6 +52,25 @@ namespace Zju.View
                 return shapeItems;
             }
 
+        }
+
+        /// <summary>
+        /// Extract color and texture features for the cloth picture.
+        /// And save the features back into the <code>cloth</code> objects.
+        /// </summary>
+        /// <param name="cloth"></param>
+        public static void ExtractFeatures(Cloth cloth)
+        {
+            if (String.IsNullOrEmpty(cloth.Path))
+            {
+                return;
+            }
+
+            int[] colorVector = ImageMatcher.ExtractColorVector(cloth.Path);
+            cloth.ColorVector = colorVector;
+
+            float[] textureVector = ImageMatcher.ExtractTextureVector(cloth.Path);
+            cloth.TextureVector = textureVector;
         }
     }
 }

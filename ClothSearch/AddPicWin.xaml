@@ -30,10 +30,11 @@
                 <TextBox Canvas.Left="114" Canvas.Top="32" Height="23" Name="txtAddName" Width="120" />
                 <TextBox Canvas.Left="114" Canvas.Top="69" Height="23" Name="txtAddPattern" Width="120" />
                 <!-- ItemsSource="{Binding Source={StaticResource shapeItems}}" -->
+                <!-- MouseEnter ="cmbInput_MouseEnter" -->
                 <ComboBox Canvas.Left="114" Canvas.Top="179" Height="23" Name="cmbAddShapes" Width="364" 
                     ItemsSource="{Binding Source={StaticResource shapeItems}}"
-                    HorizontalContentAlignment="Stretch"
-                    IsEditable="True">
+                    HorizontalContentAlignment="Stretch" ToolTip="形状描述"
+                    IsEditable="True" IsReadOnly="True">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>
@@ -50,10 +51,11 @@
                     </ComboBox.ItemTemplate>
                 </ComboBox>
                 <!-- ItemsSource="{Binding Source={StaticResource colorItems}}" -->
+                <!-- MouseEnter ="cmbInput_MouseEnter" -->
                 <ComboBox Canvas.Left="114" Canvas.Top="210" Height="23" Name="cmbAddColors" Width="364" 
                     ItemsSource="{Binding Source={StaticResource colorItems}}"
-                    HorizontalContentAlignment="Stretch"
-                    IsEditable="True">
+                    HorizontalContentAlignment="Stretch" ToolTip="颜色描述"
+                    IsEditable="True" IsReadOnly="True">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>

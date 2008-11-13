@@ -186,6 +186,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GetFeature.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ImageMatcher.cpp"
 				>
 			</File>
@@ -215,6 +219,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\GetFeature.h"
+				>
+			</File>
 			<File
 				RelativePath=".\ImageMatcher.h"
 				>

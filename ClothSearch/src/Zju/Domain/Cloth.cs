@@ -41,6 +41,8 @@ namespace Zju.Domain
         private DateTime updateTime;
 
         private int[] colorVector;
+
+        private float[] textureVector;
 #endregion
 
 #region getter & setter
@@ -84,6 +86,12 @@ namespace Zju.Domain
         {
             get { return colorVector; }
             set { colorVector = value; }
+        }
+
+        public float[] TextureVector
+        {
+            get { return textureVector; }
+            set { textureVector = value; }
         }
 #endregion
         

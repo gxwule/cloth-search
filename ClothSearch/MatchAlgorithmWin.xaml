@@ -1,0 +1,76 @@
+﻿<Window x:Class="ClothSearch.MatchAlgorithmWin"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="选择匹配算法" Height="350" Width="550"
+    WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <DockPanel LastChildFill="True">
+        <Border DockPanel.Dock="Top" Style="{StaticResource blueBorder}">
+            <Canvas Height="51">
+                <Image Stretch="Fill" Width="48" Height="42" Source="/ClothSearch;component/res/configure.png" Canvas.Left="12" Canvas.Top="5" />
+                <TextBlock Canvas.Left="76" Canvas.Top="10" Height="32" Width="214" TextWrapping="Wrap">
+                    选择需要检索的匹配算法查全率,　　　匹配算法查全率不同检索的结果就不同
+                </TextBlock>
+            </Canvas>
+        </Border>
+        <Border DockPanel.Dock="Bottom" Style="{StaticResource blueBorder}">
+            <Canvas Height="40">
+                <Button Canvas.Left="321" Canvas.Top="9" Height="23" Name="btnOptionSave" Width="51" Click="btnOptionSave_Click">保存</Button>
+                <Button Canvas.Left="414" Canvas.Top="9" Height="23" Name="btnOptionCancel" Width="51" Click="btnOptionCancel_Click">取消</Button>
+            </Canvas>
+        </Border>
+        <Border Style="{StaticResource blueBorder}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Canvas Grid.Row="0" Grid.Column="0">
+                    <Label Canvas.Left="41" Canvas.Top="14" Width="106">纹理3号匹配算法:</Label>
+                    <RadioButton Canvas.Left="154" Canvas.Top="19" Height="16" Name="rbtnTexture3" GroupName="grbtnSearchAlgo" Width="75">更高查全率</RadioButton>
+                    <ComboBox Canvas.Left="154" Canvas.Top="44" Name="cmbRecall3" SelectedIndex="0" Width="78">
+                        <Label>默认</Label>
+                        <Label>更高1</Label>
+                        <Label>更高2</Label>
+                        <Label>更高3</Label>
+                    </ComboBox>
+                </Canvas>
+                <Canvas Grid.Row="1" Grid.Column="0">
+                    <Label Canvas.Left="41" Canvas.Top="14" Width="106">纹理3号匹配算法:</Label>
+                    <RadioButton Canvas.Left="154" Canvas.Top="19" Height="16" Name="rbtnTexture2" GroupName="grbtnSearchAlgo" Width="75">更高查全率</RadioButton>
+                    <ComboBox Canvas.Left="154" Canvas.Top="44" Name="cmbRecall2" SelectedIndex="0" Width="78">
+                        <Label>默认</Label>
+                        <Label>更高1</Label>
+                        <Label>更高2</Label>
+                        <Label>更高3</Label>
+                    </ComboBox>
+                </Canvas>
+                <Canvas Grid.Row="2" Grid.Column="0">
+                    <Label Canvas.Left="41" Canvas.Top="14" Width="106">纹理3号匹配算法:</Label>
+                    <RadioButton Canvas.Left="154" Canvas.Top="19" Height="16" Name="rbtnTexture1" GroupName="grbtnSearchAlgo" Width="75">更高查全率</RadioButton>
+                    <ComboBox Canvas.Left="154" Canvas.Top="44" Name="cmbRecall1" SelectedIndex="0" Width="78">
+                        <Label>默认</Label>
+                        <Label>更高1</Label>
+                        <Label>更高2</Label>
+                        <Label>更高3</Label>
+                    </ComboBox>
+                </Canvas>
+                <Canvas Grid.Row="0" Grid.Column="1">
+                    <Label Canvas.Left="41" Canvas.Top="14" Width="106">颜色1号匹配算法:</Label>
+                    <RadioButton Canvas.Left="154" Canvas.Top="19" Height="16" Name="rbtnColor1" GroupName="grbtnSearchAlgo" Width="75">更高查全率</RadioButton>
+                    <ComboBox Canvas.Left="154" Canvas.Top="44" Name="cmbColor1" SelectedIndex="0" Width="78">
+                        <Label>默认</Label>
+                        <Label>更高1</Label>
+                        <Label>更高2</Label>
+                        <Label>更高3</Label>
+                    </ComboBox>
+                </Canvas>
+            </Grid>
+        </Border>
+    </DockPanel>
+</Window>
+

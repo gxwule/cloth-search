@@ -7,9 +7,20 @@ namespace Zju.Util
 {
     public sealed class DbConstants
     {
-        public const String DataBaseFilePath = "E:\\projects\\ClothSearch\\codes\\trunk\\data\\cloth.dbs";
+        public const String DataBaseFilePath = "E:/projects/ClothSearch/codes/trunk/data/cloth.dbs";
         public const int PagePoolSize = 48 * 1024 * 1024;
         public const int ComitLimit = 100000;
+    }
+
+    public sealed class SearchConstants
+    {
+        /// <summary>
+        /// Limit of Manhattan distance of color vectors between two cloth when searching.
+        /// The cloth as searched should less or equal to the limit.
+        /// </summary>
+        public const int ColorMDLimit = int.MaxValue - 1;
+
+        public const float TextureMDLimit = float.MaxValue - 1;
     }
 
     [Flags]

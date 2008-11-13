@@ -2,19 +2,14 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Microsoft.Win32;
-using Zju.View;
+using Zju.Dao;
 using Zju.Domain;
 using Zju.Service;
 using Zju.Util;
-using Zju.Dao;
-using Zju.Image;
+using Zju.View;
 
 namespace ClothSearch
 {
@@ -26,7 +21,7 @@ namespace ClothSearch
         private List<ColorItem> colorItems;
         private List<ShapeItem> shapeItems;
 
-        private String keyPicFileName;
+        private Cloth keyCloth;
 
         private String addPicFileName;
 
@@ -34,7 +29,7 @@ namespace ClothSearch
 
         private OpenFileDialog dlgOpenPic;
 
-        public AddPicWin(String keyPicFileName)
+        public AddPicWin(Cloth keyCloth)
         {
             colorItems = ViewHelper.NewColorItems;
             shapeItems = ViewHelper.NewShapeItems;
@@ -43,8 +38,8 @@ namespace ClothSearch
 
             InitializeComponent();
 
-            this.keyPicFileName = keyPicFileName;
-            if (String.IsNullOrEmpty(this.keyPicFileName))
+            this.keyCloth = keyCloth;
+            if (null == keyCloth || String.IsNullOrEmpty(this.keyCloth.Path))
             {
                 btnAddImportKeyPic.IsEnabled = false;
             }
@@ -117,9 +112,8 @@ namespace ClothSearch
             if (!String.IsNullOrEmpty(addPicFileName))
             {
                 cloth.Path = addPicFileName;
-                ImageMatcher im = new ImageMatcher();
-                int[] colorVector = im.ExtractColorVector(addPicFileName);
-                cloth.ColorVector = colorVector;
+
+                ViewHelper.ExtractFeatures(cloth);
             }
 
             ColorEnum colors = ColorEnum.NONE;
@@ -150,7 +144,7 @@ namespace ClothSearch
 
         private void btnAddImportKeyPic_Click(object sender, RoutedEventArgs e)
         {
-            showAddPic(keyPicFileName);
+            showAddPic(keyCloth.Path);
         }
 
         private void btnAddFileCancel_Click(object sender, RoutedEventArgs e)
@@ -177,10 +171,18 @@ namespace ClothSearch
             }
         }
 
-        public String KeyPicFileName
+        public Cloth KeyCloth
         {
-            get { return this.keyPicFileName; }
-            set { this.keyPicFileName = value; }
+            get { return this.keyCloth; }
+            set { this.keyCloth = value; }
+        }
+
+        private void cmbInput_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (sender is ComboBox)
+            {
+                ((ComboBox)sender).IsDropDownOpen = true;
+            }
         }
     }
 }

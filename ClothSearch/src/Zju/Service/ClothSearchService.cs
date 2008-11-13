@@ -34,7 +34,93 @@ namespace Zju.Service
             return intersectClothLists(clothLists);
         }
 
+        public List<Cloth> SearchByPicColor(int[] colorVector)
+        {
+            SortedDictionary<int, List<Cloth>> sortClothes = new SortedDictionary<int, List<Cloth>>();
+            List<Cloth> allClothes = clothDao.FindAll();
+            foreach (Cloth cloth in allClothes)
+            {
+                int md = calcManhattanDistance(colorVector, cloth.ColorVector);
+                if (md <= SearchConstants.ColorMDLimit)
+                {
+                    if (!sortClothes.ContainsKey(md))
+                    {
+                        sortClothes[md] = new List<Cloth>();
+                    }
+                    sortClothes[md].Add(cloth);
+                }
+            }
+
+            List<Cloth> clothes = new List<Cloth>();
+            foreach (List<Cloth> cs in sortClothes.Values)
+            {
+                clothes.AddRange(cs);
+            }
+
+            return clothes;
+        }
+
+        public List<Cloth> SearchByPicTexture(float[] textureVector)
+        {
+            SortedDictionary<float, List<Cloth>> sortClothes = new SortedDictionary<float, List<Cloth>>();
+            List<Cloth> allClothes = clothDao.FindAll();
+            foreach (Cloth cloth in allClothes)
+            {
+                float md = calcManhattanDistance(textureVector, cloth.TextureVector);
+                if (md <= SearchConstants.TextureMDLimit)
+                {
+                    if (!sortClothes.ContainsKey(md))
+                    {
+                        sortClothes[md] = new List<Cloth>();
+                    }
+                    sortClothes[md].Add(cloth);
+                }
+            }
+
+            List<Cloth> clothes = new List<Cloth>();
+            foreach (List<Cloth> cs in sortClothes.Values)
+            {
+                clothes.AddRange(cs);
+            }
+
+            return clothes;
+        }
+
         #endregion
+
+        private int calcManhattanDistance(int[] v1, int[] v2)
+        {
+            if (v1 == null || v2 == null || v1.Length != v2.Length)
+            {
+                return int.MaxValue;
+            }
+
+            int md = 0;
+            int n = v1.Length;
+            for (int i = 0; i < n; ++i)
+            {
+                md += (v1[i] >= v2[i] ? v1[i] - v2[i] : v2[i] - v1[i]);
+            }
+
+            return md;
+        }
+
+        private float calcManhattanDistance(float[] v1, float[] v2)
+        {
+            if (v1 == null || v2 == null || v1.Length != v2.Length)
+            {
+                return float.MaxValue;
+            }
+
+            float md = 0.0f;
+            int n = v1.Length;
+            for (int i = 0; i < n; ++i)
+            {
+                md += (v1[i] >= v2[i] ? v1[i] - v2[i] : v2[i] - v1[i]);
+            }
+
+            return md;
+        }
 
         /// <summary>
         /// Each cloth list in <code>clothLists</code> should not contain duplicate element, or the algorithm will be acted correctly.
