@@ -56,6 +56,7 @@ namespace Zju.Dao
                 root.ColorIndex.Remove(cloth);
                 root.ShapeIndex.Remove(cloth);
                 root.ClothOidIndex.Remove(cloth);
+                root.PatternIndex.Remove(cloth);
 
                 storage.Commit();
             }
@@ -88,6 +89,24 @@ namespace Zju.Dao
             {
                 clothes.Add(cloth);
             }
+            return clothes;
+        }
+
+        public List<Cloth> FindAllByPattern(string pattern)
+        {
+            List<Cloth> clothes = new List<Cloth>();
+
+            if (!string.IsNullOrEmpty(pattern))
+            {
+                Storage storage = DaoHelper.Instance.DbStorage;
+                ClothRoot root = (ClothRoot)storage.Root;
+
+                foreach (Cloth cloth in root.PatternIndex.GetPrefix(pattern))
+                {
+                    clothes.Add(cloth);
+                }
+            }
+            
             return clothes;
         }
 
@@ -188,21 +207,24 @@ namespace Zju.Dao
         private void saveOrUpdateWithoutCommit(Storage storage, ClothRoot root, Cloth cloth)
         {
             FieldIndex clothOidIndex = root.ClothOidIndex;
+            FieldIndex patternIndex = root.PatternIndex;
             BitIndex colorIndex = root.ColorIndex;
             BitIndex shapeIndex = root.ShapeIndex;
             if (clothOidIndex.Contains(cloth))
             {
-                root.ColorIndex.Remove(cloth);
-                root.ShapeIndex.Remove(cloth);
+                colorIndex.Remove(cloth);
+                shapeIndex.Remove(cloth);
+                patternIndex.Remove(cloth);
             }
             else
             {
                 // this method called for generate the Oid, or the key of ClothOidIndex will always be 0.
                 storage.MakePersistent(cloth);
-                root.ClothOidIndex.Set(cloth);
+                clothOidIndex.Set(cloth);
             }
-            root.ColorIndex[cloth] = (int)cloth.Colors;
-            root.ShapeIndex[cloth] = (int)cloth.Shapes;
+            colorIndex[cloth] = (int)cloth.Colors;
+            shapeIndex[cloth] = (int)cloth.Shapes;
+            patternIndex.Put(cloth);
         }
     }
 }

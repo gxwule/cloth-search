@@ -22,7 +22,7 @@ namespace Zju.Service
 
         #region IClothLibService Members
 
-        public void AddCloth(Cloth cloth)
+        public void SaveOrUpdate(Cloth cloth)
         {
             if (0 == cloth.UpdateTime.Ticks)
             {
@@ -31,7 +31,7 @@ namespace Zju.Service
             clothDao.SaveOrUpdate(cloth);
         }
 
-        public void AddClothes(List<Cloth> clothes)
+        public void SaveOrUpdate(List<Cloth> clothes)
         {
             foreach (Cloth cloth in clothes)
             {
@@ -41,6 +41,14 @@ namespace Zju.Service
                 }
             }
             clothDao.SaveOrUpdateAll(clothes);
+        }
+
+        public void Delete(int oid)
+        {
+            if (oid > 0)
+            {
+                clothDao.Delete(oid);
+            }
         }
 
         public List<Cloth> findAll()

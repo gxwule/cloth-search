@@ -14,14 +14,15 @@ namespace Zju
 		{
 		public:
 			// Extract 24-v color vector for a image.
-			array<int>^ ExtractColorVector(String^ imageFileName);
+			// Format of ingoreColors is as: 0xffffff.s
+			array<int>^ ExtractColorVector(String^ imageFileName, array<int>^ ignoreColors);
 
 			// Extract 64-v texture vector for a image.
 			array<float>^ ExtractTextureVector(String^ imageFileName);
 
 			// It should be called before get_waveletfeature.
 			// It can be called just once before several "get_waveletfeature"
-			int luvInit();
+			int luvInit(String^ luvFileName);
 
 			ImageMatcher();
 		private:

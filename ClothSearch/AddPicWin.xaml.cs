@@ -38,11 +38,16 @@ namespace ClothSearch
 
             InitializeComponent();
 
+            txtAddName.Text = "自动";
+            txtAddName.IsEnabled = false;
+
             this.keyCloth = keyCloth;
             if (null == keyCloth || String.IsNullOrEmpty(this.keyCloth.Path))
             {
                 btnAddImportKeyPic.IsEnabled = false;
             }
+
+            btnAddFileSave.IsEnabled = false;
 
             // It should be done by dependency injection here!!
             clothLibService = new ClothLibService(new ClothDao());
@@ -64,7 +69,7 @@ namespace ClothSearch
         {
             if (dlgOpenPic.ShowDialog() == true)
             {
-                showAddPic(dlgOpenPic.FileName);
+                showAddPicInfo(dlgOpenPic.FileName);
             }
         }
 
@@ -100,21 +105,24 @@ namespace ClothSearch
 
         private void btnAddFileSave_Click(object sender, RoutedEventArgs e)
         {
-            Cloth cloth = new Cloth();
-            if (!String.IsNullOrEmpty(txtAddName.Text))
+            if (String.IsNullOrEmpty(addPicFileName))
             {
-                cloth.Name = txtAddName.Text;
+                // should not be here.
+                MessageBox.Show("请先选择一张图片.", "温馨提醒");
+                return;
             }
+            Cloth cloth = new Cloth();
+
+            // whether use the key cloth.
+            bool useKeyPic = (null != keyCloth && keyCloth.Path == addPicFileName);
+
+            cloth.Path = addPicFileName;
+
             if (!String.IsNullOrEmpty(txtAddPattern.Text))
             {
                 cloth.Pattern = txtAddPattern.Text;
             }
-            if (!String.IsNullOrEmpty(addPicFileName))
-            {
-                cloth.Path = addPicFileName;
-
-                ViewHelper.ExtractFeatures(cloth);
-            }
+            cloth.Name =  useKeyPic && keyCloth.Name != null ? keyCloth.Name : ViewHelper.ExtractPattern(addPicFileName);
 
             ColorEnum colors = ColorEnum.NONE;
             foreach (ColorItem ci in colorItems)
@@ -136,7 +144,13 @@ namespace ClothSearch
             }
             cloth.Shapes = shapes;
 
-            clothLibService.AddCloth(cloth);
+            // feature vectors
+            cloth.ColorVector = (useKeyPic && keyCloth.ColorVector != null)
+                ? keyCloth.ColorVector : ViewHelper.ImageMatcher.ExtractColorVector(cloth.Path, ViewConstants.IgnoreColors);
+            cloth.TextureVector = (useKeyPic && keyCloth.TextureVector != null)
+                ? keyCloth.TextureVector : ViewHelper.ImageMatcher.ExtractTextureVector(cloth.Path);
+
+            clothLibService.SaveOrUpdate(cloth);
 
             // close the window.
             this.Close();
@@ -144,7 +158,7 @@ namespace ClothSearch
 
         private void btnAddImportKeyPic_Click(object sender, RoutedEventArgs e)
         {
-            showAddPic(keyCloth.Path);
+            showAddPicInfo(keyCloth.Path, keyCloth.Pattern);
         }
 
         private void btnAddFileCancel_Click(object sender, RoutedEventArgs e)
@@ -156,7 +170,17 @@ namespace ClothSearch
         /// Show a picture in the <code>imgAdded</code> Image control with the file <code>fileName</code>.
         /// </summary>
         /// <param name="fileName"></param>
-        private void showAddPic(String fileName)
+        private void showAddPicInfo(String fileName)
+        {
+            if (!String.IsNullOrEmpty(fileName))
+            {
+                string pattern = ViewHelper.ExtractPattern(fileName);
+                // use pattern as name currently.
+                showAddPicInfo(fileName, pattern);
+            }
+        }
+
+        private void showAddPicInfo(String fileName, String pattern)
         {
             if (!String.IsNullOrEmpty(fileName))
             {
@@ -168,8 +192,13 @@ namespace ClothSearch
                 imgAdded.Source = bi;
 
                 addPicFileName = fileName;
+
+                txtAddPattern.Text = pattern;
+
+                btnAddFileSave.IsEnabled = true;
             }
         }
+
 
         public Cloth KeyCloth
         {

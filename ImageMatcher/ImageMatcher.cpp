@@ -7,8 +7,6 @@
 #include "ImageMatcher.h"
 #include "GetFeature.h"
 
-#define LUV_FILE_NAME "E:\\projects\\ClothSearch\\codes\\trunk\\data\\luv.dat"
-
 #pragma comment(lib, "cxcore.lib")
 #pragma comment(lib, "highgui.lib")
 
@@ -21,12 +19,22 @@ namespace Zju
 
 		}
 
-		int ImageMatcher::luvInit()
+		int ImageMatcher::luvInit(String^ luvFileName)
 		{
-			return luv_init(LUV_FILE_NAME);
+			char* fileName = nullptr;
+			if (!to_CharStar(luvFileName, fileName))
+			{
+				// error, exception should be thrown out here.
+				return -1;
+			}
+
+			int re = luv_init(fileName);
+			delete[] fileName;
+
+			return re;
 		}
 
-		array<int>^ ImageMatcher::ExtractColorVector(String^ imageFileName)
+		array<int>^ ImageMatcher::ExtractColorVector(String^ imageFileName, array<int>^ ignoreColors)
 		{
 			array<int>^ v = gcnew array<int>(24) {0};
 
@@ -41,6 +49,15 @@ namespace Zju
 
 			imgRgb = cvLoadImage(fileName, CV_LOAD_IMAGE_COLOR);
 			delete[] fileName;
+			
+			System::Collections::Generic::HashSet<int> ignoreColorSet;
+			if (ignoreColors != nullptr && ignoreColors->Length > 0)
+			{
+				for (int i=0; i<ignoreColors->Length; ++i)
+				{
+					ignoreColorSet.Add(ignoreColors[i]);
+				}
+			}
 
 			BYTE b, g, r;
 			for( int h = 0; h < imgRgb->height; ++h ) {
@@ -48,10 +65,12 @@ namespace Zju
 					b  = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+0];
 					g = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+1];
 					r = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+2];
-					
-					++v[r/32];
-					++v[g/32+8];
-					++v[b/32+16];
+					if (!ignoreColorSet.Contains(((int)r) << 16 + ((int)g) << 8 + b))
+					{
+						++v[r/32];
+						++v[g/32+8];
+						++v[b/32+16];
+					}
 				}
 			}
 

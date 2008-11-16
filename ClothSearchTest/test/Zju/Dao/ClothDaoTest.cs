@@ -23,7 +23,7 @@ namespace Zju.Dao
         {
             target = new ClothDao();
 
-            cloth = new Cloth("n", "p", "p", ColorEnum.BLACK | ColorEnum.BLUE, ShapeEnum.CIRCLE | ShapeEnum.SQUARE);
+            cloth = new Cloth("n", "pattern", "p", ColorEnum.BLACK | ColorEnum.BLUE, ShapeEnum.CIRCLE | ShapeEnum.SQUARE);
             cloth2 = new Cloth("nn", "pp", "pp", ColorEnum.RED | ColorEnum.DARKRED, ShapeEnum.NONE);
             onlyList = new List<Cloth>();
             onlyList.Add(cloth);
@@ -58,6 +58,13 @@ namespace Zju.Dao
             //print(cloth);
             Assert.AreEqual(cloth, target.FindByOid(cloth.Oid));
             Assert.AreEqual(onlyList, target.FindAll());
+
+            Assert.AreEqual(onlyList, target.FindAllByPattern("pattern"));
+            Assert.AreEqual(onlyList, target.FindAllByPattern("pa"));
+            Assert.AreEqual(emptyList, target.FindAllByPattern("ap"));
+            Assert.AreEqual(emptyList, target.FindAllByPattern(null));
+            Assert.AreEqual(emptyList, target.FindAllByPattern(""));
+
             Assert.AreEqual(onlyList, target.FindAllByColors(ColorEnum.BLACK));
             Assert.AreEqual(onlyList, target.FindAllByColors(ColorEnum.BLUE));
             Assert.AreEqual(onlyList, target.FindAllByColors(ColorEnum.BLACK | ColorEnum.BLUE));
@@ -76,11 +83,14 @@ namespace Zju.Dao
             cloth.Name = "na";
             cloth.UpdateTime = DateTime.UtcNow;
             cloth.Colors = ColorEnum.WHITE | ColorEnum.PINK;
+            cloth.Pattern = "aaaaaa";
             //print(cloth);
             target.SaveOrUpdate(cloth);
             //print(cloth);
             Assert.AreEqual(cloth, target.FindByOid(oid));
             Assert.AreEqual(onlyList, target.FindAll());
+            //Assert.AreEqual(emptyList, target.FindAllByPattern("p"));
+            //Assert.AreEqual(onlyList, target.FindAllByPattern("a"));
             Assert.AreEqual(onlyList, target.FindAllByColors(ColorEnum.WHITE));
             Assert.AreEqual(emptyList, target.FindAllByColors(ColorEnum.BLUE));
             Assert.AreEqual(emptyList, target.FindAllByColors(ColorEnum.BLACK | ColorEnum.BLUE));
@@ -90,6 +100,7 @@ namespace Zju.Dao
             //print(cloth);
             Assert.IsNull(target.FindByOid(oid));
             Assert.AreEqual(emptyList, target.FindAll());
+            Assert.AreEqual(emptyList, target.FindAllByPattern("p"));
             Assert.AreEqual(emptyList, target.FindAllByColors(ColorEnum.WHITE));
             Assert.AreEqual(emptyList, target.FindAllByColors(ColorEnum.BLUE));
             Assert.AreEqual(emptyList, target.FindAllByColors(ColorEnum.BLACK | ColorEnum.BLUE));

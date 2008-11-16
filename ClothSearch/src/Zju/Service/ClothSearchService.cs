@@ -24,13 +24,65 @@ namespace Zju.Service
 
         public List<Cloth> SearchByText(string words, ColorEnum colors, ShapeEnum shapes)
         {
-            List<Cloth> clothesByColor = clothDao.FindAllByColors(colors);
-            List<Cloth> clothesByShape = clothDao.FindAllByShapes(shapes);
-
             List<List<Cloth>> clothLists = new List<List<Cloth>>();
-            clothLists.Add(clothesByColor);
-            clothLists.Add(clothesByShape);
 
+            if (colors != ColorEnum.NONE)
+            {
+                List<Cloth> clothesByColor = clothDao.FindAllByColors(colors);
+                if (clothesByColor.Count > 0)
+                {
+                    clothLists.Add(clothesByColor);
+                }
+                else
+                {
+                    // empty list
+                    return clothesByColor;
+                }
+            }
+
+
+            if (shapes != ShapeEnum.NONE)
+            {
+                List<Cloth> clothesByShape = clothDao.FindAllByShapes(shapes);
+                if (clothesByShape.Count > 0)
+                {
+                    clothLists.Add(clothesByShape);
+                }
+                else
+                {
+                    // empty list
+                    return clothesByShape;
+                }
+            }
+            
+
+            if (!String.IsNullOrEmpty(words))
+            {
+                string[] patterns = words.Split(new char[] { ',', ' ', '\t' });
+                List<List<Cloth>> clothListsByWords = new List<List<Cloth>>();
+                foreach (string pattern in patterns)
+                {
+                    if (!string.IsNullOrEmpty(pattern))
+                    {
+                        List<Cloth> clothesByPattern = clothDao.FindAllByPattern(pattern);
+
+                        if (clothesByPattern.Count > 0)
+                        {
+                            clothListsByWords.Add(clothesByPattern);
+                        }
+                    }
+                }
+                if (clothListsByWords.Count > 0)
+                {
+                    clothLists.Add(unionClothLists(clothListsByWords));
+                }
+                else
+                {
+                    // empty list
+                    return new List<Cloth>();
+                }
+            }
+            
             return intersectClothLists(clothLists);
         }
 
@@ -129,6 +181,15 @@ namespace Zju.Service
         /// <returns></returns>
         private List<Cloth> intersectClothLists(List<List<Cloth>> clothLists)
         {
+            if (clothLists.Count == 0)
+            {
+                return new List<Cloth>();
+            }
+            if (clothLists.Count == 1)
+            {
+                return clothLists[0];
+            }
+
             Dictionary<Cloth, int> tc = new Dictionary<Cloth, int>();
             foreach (List<Cloth> clothList in clothLists)
             {
@@ -160,6 +221,15 @@ namespace Zju.Service
 
         private List<Cloth> unionClothLists(List<List<Cloth>> clothLists)
         {
+            if (clothLists.Count == 0)
+            {
+                return new List<Cloth>();
+            }
+            if (clothLists.Count == 1)
+            {
+                return clothLists[0];
+            }
+
             HashSet<Cloth> hs = new HashSet<Cloth>();
             foreach (List<Cloth> clothList in clothLists)
             {

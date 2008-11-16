@@ -40,6 +40,13 @@ namespace Zju.Dao
         List<Cloth> FindAll();
 
         /// <summary>
+        /// Find list of Cloth objects by the prefix of pattern.
+        /// </summary>
+        /// <param name="pattern">The prefix of pattern.</param>
+        /// <returns></returns>
+        List<Cloth> FindAllByPattern(string pattern);
+
+        /// <summary>
         /// Find list of Cloth object by colors.
         /// NOTES: There are two rules for clothes to be selected:
         /// <list type="number">

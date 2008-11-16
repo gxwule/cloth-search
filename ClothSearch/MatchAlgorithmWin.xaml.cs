@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using Zju.View;
+using System.Windows.Controls;
 
 namespace ClothSearch
 {
@@ -10,41 +11,65 @@ namespace ClothSearch
     {
         private AlgorithmDesc aDesc;
 
+        private RecallLevel[] rLevels;
+
+        private AlgorithmType[] aTypes;
+
+        private RadioButton[] rbtns;
+
+        private ComboBox[] cmbs;
+
         public MatchAlgorithmWin(AlgorithmDesc aDesc)
         {
             InitializeComponent();
 
             this.aDesc = aDesc;
-            rbtnTexture3.IsChecked = true;
+
+            // the first elements of these arrays are always the default ones.
+            rLevels = new RecallLevel[] { RecallLevel.Default, RecallLevel.Recall1, RecallLevel.Recall2, RecallLevel.Recall3 };
+            aTypes = new AlgorithmType[] { AlgorithmType.Texture3, AlgorithmType.Texture2, AlgorithmType.Texture1, AlgorithmType.Color1 };
+            rbtns = new RadioButton[] { rbtnTexture3, rbtnTexture2, rbtnTexture1, rbtnColor1 };
+            cmbs = new ComboBox[] { cmbTexture3, cmbTexture2, cmbTexture1, cmbColor1 };
+
+
+            int rLevelIndex = 0;
+            for (int i = 0; i < rLevels.Length; ++i)
+            {
+                if (aDesc.RLevel == rLevels[i])
+                {
+                    rLevelIndex = i;
+                    break;
+                }
+            }
+
+            int aTypeIndex = 0;
+            for (int i = 0; i < aTypes.Length; ++i)
+            {
+                if (aDesc.AType == aTypes[i])
+                {
+                    aTypeIndex = i;
+                    break;
+                }
+            }
+
+            rbtns[aTypeIndex].IsChecked = true;
+            cmbs[aTypeIndex].SelectedIndex = rLevelIndex;
         }
 
         private void btnOptionSave_Click(object sender, RoutedEventArgs e)
         {
-            int selectedIndex = 0;
-            if (true == rbtnColor1.IsChecked)
+            int aTypeIndex = 0;
+            for (int i = 0; i < rbtns.Length; ++i)
             {
-                selectedIndex = cmbColor1.SelectedIndex;
-                aDesc.AType = AlgorithmType.Color1;
-            }
-            else if (true == rbtnTexture1.IsChecked)
-            {
-                selectedIndex = cmbRecall1.SelectedIndex;
-                aDesc.AType = AlgorithmType.Texture1;
-            }
-            else if (true == rbtnTexture2.IsChecked)
-            {
-                selectedIndex = cmbRecall2.SelectedIndex;
-                aDesc.AType = AlgorithmType.Texture2;
-            }
-            else
-            {
-                // default
-                selectedIndex = cmbRecall3.SelectedIndex;
-                aDesc.AType = AlgorithmType.Texture3;
+                if (true == rbtns[i].IsChecked)
+                {
+                    aTypeIndex = i;
+                    break;
+                }
             }
 
-            RecallLevel[] rLevels = new RecallLevel[4] { RecallLevel.Default, RecallLevel.Recall1, RecallLevel.Recall2, RecallLevel.Recall3 };
-            aDesc.RLevel = rLevels[selectedIndex];
+            aDesc.AType = aTypes[aTypeIndex];
+            aDesc.RLevel = rLevels[cmbs[aTypeIndex].SelectedIndex];
 
             this.Close();
         }

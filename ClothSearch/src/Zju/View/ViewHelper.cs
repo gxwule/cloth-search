@@ -22,7 +22,20 @@ namespace Zju.View
 
     public sealed class ViewHelper
     {
-        public static ImageMatcher ImageMatcher = new ImageMatcher();
+        private static ImageMatcher imageMatcher;
+
+        public static ImageMatcher ImageMatcher
+        {
+            get
+            {
+                if (imageMatcher == null)
+                {
+                    imageMatcher = new ImageMatcher();
+                    imageMatcher.luvInit(ViewConstants.LuvFileName);
+                }
+                return imageMatcher;
+            }
+        }
 
         public static List<ColorItem> NewColorItems
         {
@@ -66,11 +79,37 @@ namespace Zju.View
                 return;
             }
 
-            int[] colorVector = ImageMatcher.ExtractColorVector(cloth.Path);
-            cloth.ColorVector = colorVector;
+            if (cloth.ColorVector == null)
+            {
+                cloth.ColorVector = ImageMatcher.ExtractColorVector(cloth.Path, ViewConstants.IgnoreColors);
+            }
+            
+            if (cloth.TextureVector == null)
+            {
+                cloth.TextureVector = ImageMatcher.ExtractTextureVector(cloth.Path);
+            }
+        }
 
-            float[] textureVector = ImageMatcher.ExtractTextureVector(cloth.Path);
-            cloth.TextureVector = textureVector;
+        /// <summary>
+        /// Extract pattern string from the picture name. I.e.
+        /// C;\a\bcd.jpg -> bcd
+        /// </summary>
+        /// <param name="picName"></param>
+        /// <returns></returns>
+        public static string ExtractPattern(string picName)
+        {
+            if (string.IsNullOrEmpty(picName))
+            {
+                return null;
+            }
+
+            int i = picName.LastIndexOf('.');
+            int j = picName.LastIndexOfAny(new char[] {'/', '\\'});
+
+            j = j == -1 ? 0 : j;
+            i = i == -1 ? picName.Length : i;
+
+            return i - j - 1 > 0 ? picName.Substring(j + 1, i - j - 1) : null;
         }
     }
 }

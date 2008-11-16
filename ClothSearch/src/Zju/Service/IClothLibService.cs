@@ -6,9 +6,11 @@ namespace Zju.Service
 {
     public interface IClothLibService
     {
-        void AddCloth(Cloth cloth);
+        void SaveOrUpdate(Cloth cloth);
 
-        void AddClothes(List<Cloth> clothes);
+        void SaveOrUpdate(List<Cloth> clothes);
+
+        void Delete(int oid);
 
         List<Cloth> findAll();
     }

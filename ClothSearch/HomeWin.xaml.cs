@@ -60,6 +60,9 @@ namespace ClothSearch
         // totalPage = (seachedClothes.Count + picsPerPage - 1) / picsPerPage
         private int totalPage;
 
+        private const string imageNamePrefix = "img";
+        private const string reImageNamePrefix = "r";
+
         public HomeWin()
         {
             colorItems = ViewHelper.NewColorItems;
@@ -69,6 +72,7 @@ namespace ClothSearch
 
             InitializeComponent();
 
+            btnSearch.IsEnabled = false;
             rbtnPic.IsChecked = true;
 
             dlgOpenKeyPic = newOpenFileDialog();
@@ -111,6 +115,13 @@ namespace ClothSearch
 
                 keyCloth = new Cloth();
                 keyCloth.Path = dlgOpenKeyPic.FileName;
+                keyCloth.Pattern = ViewHelper.ExtractPattern(keyCloth.Path);
+                keyCloth.Name = keyCloth.Pattern;
+
+                keyCloth.ColorVector = imageMatcher.ExtractColorVector(keyCloth.Path, ViewConstants.IgnoreColors);
+                keyCloth.TextureVector = imageMatcher.ExtractTextureVector(keyCloth.Path);
+
+                updateSearchButton();
             }
         }
 
@@ -190,7 +201,7 @@ namespace ClothSearch
                 clothes.Add(cloth);
                 if (++nFinished % step == 0)
                 {
-                    clothLibService.AddClothes(clothes);
+                    clothLibService.SaveOrUpdate(clothes);
                     this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
                         new AsynUpdateUI(updateProgressWin), nFinished);
                     clothes.Clear();
@@ -198,7 +209,7 @@ namespace ClothSearch
             }
             if (clothes.Count > 0)
             {
-                clothLibService.AddClothes(clothes);
+                clothLibService.SaveOrUpdate(clothes);
             }
 
             this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
@@ -277,8 +288,6 @@ namespace ClothSearch
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
-            lblSearchResultInfo.Content = "正在搜索请稍候...";
-            
             if (true == rbtnPic.IsChecked)
             {
                 if (null == keyCloth || string.IsNullOrEmpty(keyCloth.Path))
@@ -286,16 +295,18 @@ namespace ClothSearch
                     MessageBox.Show("图片搜索必须先指定关键图.", "温馨提醒");
                     return;
                 }
+                lblSearchResultInfo.Content = "正在通过图片内容搜索请稍候...";
                 searchedClothes = searchByPic();
             }
             else if (true == rbtnText.IsChecked)
             {
-
+                lblSearchResultInfo.Content = "正在通过文字搜索请稍候...";
                 searchedClothes = searchByText();
             }
             else if (true == rbtnCombine.IsChecked)
             {
                 // do nothing
+                lblSearchResultInfo.Content = "正在进行联合搜索请稍候...";
                 return;
             }
             
@@ -317,7 +328,8 @@ namespace ClothSearch
             switch (aDesc.AType)
             {
                 case AlgorithmType.Color1:
-                    int[] colorVector = imageMatcher.ExtractColorVector(keyCloth.Path);
+                    int[] colorVector = keyCloth.ColorVector != null ? keyCloth.ColorVector
+                        : imageMatcher.ExtractColorVector(keyCloth.Path, ViewConstants.IgnoreColors);
                     if (colorVector == null)
                     {
                         return null;
@@ -328,7 +340,8 @@ namespace ClothSearch
                 case AlgorithmType.Texture2:
                 case AlgorithmType.Texture3:
                 default:
-                    float[] textureVector = imageMatcher.ExtractTextureVector(keyCloth.Path);
+                    float[] textureVector = keyCloth.TextureVector != null ? keyCloth.TextureVector
+                        : imageMatcher.ExtractTextureVector(keyCloth.Path);
                     if (null == textureVector)
                     {
                         return null;
@@ -395,7 +408,7 @@ namespace ClothSearch
             }
 
             // update text info
-            if (searchedClothes.Count == 0)
+            if (null == searchedClothes || searchedClothes.Count == 0)
             {
                 lblSearchResultInfo.Content = "未搜索到任何结果.";
             }
@@ -412,22 +425,22 @@ namespace ClothSearch
                 int num = isLast ? searchedClothes.Count - begin : picsPerPage;
                 for (int i = 0; i < num; ++i)
                 {
-                    wpanResultPics.Children.Add(newBorder(searchedClothes[begin+i].Path, 100, 100));
+                    wpanResultPics.Children.Add(newBorder(searchedClothes[begin+i].Path, begin+i, 100, 100));
                 }
             }
         }
 
-        private Border newBorder(String picName, int weight, int height)
+        private Border newBorder(String picName, int index, int weight, int height)
         {
             Border border = new Border();
             border.BorderThickness = new Thickness(1);
             border.BorderBrush = Brushes.SteelBlue;
-            border.Child = newImage(picName, weight, height);
+            border.Child = newImage(picName, index, weight, height);
 
             return border;
         }
 
-        private Image newImage(String picName, int weight, int height)
+        private Image newImage(String picName, int index, int weight, int height)
         {
             Image img = new Image();
             img.Stretch = Stretch.Uniform;
@@ -443,6 +456,7 @@ namespace ClothSearch
                 bi.EndInit();
                 img.Source = bi;
 
+                img.Name = imageNamePrefix + index.ToString();
                 img.MouseDown += new MouseButtonEventHandler(resultImg_MouseDown);
             }
 
@@ -451,27 +465,51 @@ namespace ClothSearch
 
         private void resultImg_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            imgCurrentResult.Source = ((Image)sender).Source;
+            Image image = (Image)sender;
+            imgCurrentResult.Source = image.Source;
+            imgCurrentResult.Name = reImageNamePrefix + image.Name;
+
+            Cloth cloth = searchedClothes[int.Parse(image.Name.Substring(imageNamePrefix.Length))];
+            if (!string.IsNullOrEmpty(cloth.Name))
+            {
+                txtModifyName.Text = cloth.Name;
+            }
+            if (!string.IsNullOrEmpty(cloth.Pattern))
+            {
+                txtModifyPattern.Text = cloth.Pattern;
+            }
+            
+            txtModifyName.IsEnabled = true;
+            txtModifyPattern.IsEnabled = true;
+            btnResultDelete.IsEnabled = true;
+            btnResultModify.IsEnabled = true;
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
             imgKeyPic.Source = null;
             keyCloth = null;
+
+            updateSearchButton();
         }
 
         private void btnResultDelete_Click(object sender, RoutedEventArgs e)
         {
-            IndeterminateProgressWin progressWin = new IndeterminateProgressWin("不用傻等", "正在开发中, 请直接关闭本对话框.");
-            progressWin.Owner = this;
-            progressWin.ShowDialog();
+            Cloth cloth = searchedClothes[int.Parse(imgCurrentResult.Name.Substring(reImageNamePrefix.Length + imageNamePrefix.Length))];
+            searchedClothes.Remove(cloth);
+            clothLibService.Delete(cloth.Oid);
+
+            updatePicResults();
         }
 
         private void btnResultModify_Click(object sender, RoutedEventArgs e)
         {
-            IndeterminateProgressWin progressWin = new IndeterminateProgressWin("不用傻等", "正在开发中, 请直接关闭本对话框.");
-            progressWin.Owner = this;
-            progressWin.ShowDialog();
+            Cloth cloth = searchedClothes[int.Parse(imgCurrentResult.Name.Substring(reImageNamePrefix.Length + imageNamePrefix.Length))];
+
+            cloth.Name = string.IsNullOrEmpty(txtModifyName.Text) ? null : txtModifyName.Text;
+            cloth.Pattern = string.IsNullOrEmpty(txtModifyPattern.Text) ? null : txtModifyPattern.Text;
+
+            clothLibService.SaveOrUpdate(cloth);
         }
 
         private void btnFirstPage_Click(object sender, RoutedEventArgs e)
@@ -511,6 +549,8 @@ namespace ClothSearch
             }
 
             cmbColorInput.Text = Values;
+
+            updateSearchButton();
         }
 
         private void chkShapeInput_Click(object sender, RoutedEventArgs e)
@@ -526,15 +566,130 @@ namespace ClothSearch
             }
 
             cmbShapeInput.Text = Values;
+
+            updateSearchButton();
+        }
+        /*
+                private void cmbInput_MouseEnter(object sender, MouseEventArgs e)
+                {
+                    if (sender is ComboBox)
+                    {
+                        ((ComboBox)sender).IsDropDownOpen = true;
+                    }
+                }
+        */
+        private void rbtnCombine_Checked(object sender, RoutedEventArgs e)
+        {
+            updateSearchButtonByCombine();
         }
 
-        private void cmbInput_MouseEnter(object sender, MouseEventArgs e)
+        private void rbtnText_Checked(object sender, RoutedEventArgs e)
         {
-            if (sender is ComboBox)
+            updateSearchButtonByText();
+        }
+
+        private bool canSearchByText()
+        {
+            bool cando = false;
+
+            if (!string.IsNullOrEmpty(txtSearchInput.Text))
             {
-                ((ComboBox)sender).IsDropDownOpen = true;
+                cando = true;
+            }
+
+            if (!cando)
+            {
+                foreach (ColorItem ci in colorItems)
+                {
+                    if (ci.Selected)
+                    {
+                        cando = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!cando)
+            {
+                foreach (ShapeItem si in shapeItems)
+                {
+                    if (si.Selected)
+                    {
+                        cando = true;
+                        break;
+                    }
+                }
+            }
+
+            return cando;
+        }
+
+        private void rbtnPic_Checked(object sender, RoutedEventArgs e)
+        {
+            updateSearchButtonByPic();
+        }
+
+        private bool canSearchByPic()
+        {
+            bool cando = false;
+
+            if (null != keyCloth && !string.IsNullOrEmpty(keyCloth.Path))
+            {
+                cando = true;
+            }
+
+            return cando;
+        }
+
+        private void txtSearchInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            updateSearchButton();
+        }
+
+        private void updateSearchButtonByText()
+        {
+            bool cando = canSearchByText();
+
+            if (btnSearch.IsEnabled != cando)
+            {
+                btnSearch.IsEnabled = cando;
             }
         }
 
+        private void updateSearchButtonByPic()
+        {
+            bool cando = canSearchByPic();
+
+            if (btnSearch.IsEnabled != cando)
+            {
+                btnSearch.IsEnabled = cando;
+            }
+        }
+
+        private void updateSearchButtonByCombine()
+        {
+            bool cando = canSearchByText() && canSearchByPic();
+
+            if (btnSearch.IsEnabled != cando)
+            {
+                btnSearch.IsEnabled = cando;
+            }
+        }
+
+        private void updateSearchButton()
+        {
+            if (true == rbtnPic.IsChecked)
+            {
+                updateSearchButtonByPic();
+            }
+            else if (true == rbtnText.IsChecked)
+            {
+                updateSearchButtonByText();
+            }
+            else if (true == rbtnCombine.IsChecked)
+            {
+                updateSearchButtonByCombine();
+            }
+        }
     }
 }

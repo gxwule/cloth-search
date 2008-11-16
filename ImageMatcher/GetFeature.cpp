@@ -35,18 +35,10 @@ void wtou(unsigned int *step,unsigned char *bytebuf,int pos)
 
 void daub4(float a[], unsigned long n, int isign)
 {
-	float wksp[16*16];
+	float* wksp = new float[n+1];
 	unsigned long dstart,dstart1,i,j;
 	
 	if (n < 4) return;
-
-	if(!wksp) 
-	{
-		//printf("out of memory");
-		//exit(0);
-		// TODO log
-		return;
-	}
 	
 	dstart1=(dstart=n>>1)+1;
 	if (isign >= 0)
@@ -71,6 +63,7 @@ void daub4(float a[], unsigned long n, int isign)
     }
 	for (i=1;i<=n;i++) a[i]=wksp[i];
 
+	delete[] wksp;
 }
 
 
@@ -81,14 +74,6 @@ void wtn(float *a, unsigned long nn[], int isign, int iter,
 	int count,counter,n1,n2,n1min,n2min,n1max,n2max,j;
 	ntot = nn[1] * nn[2];
 	float* wksp = new float[ntot];
-
-	if(!wksp) 
-	{
-		//printf("out of memory");
-		//exit(0);
-		// TODO log
-		return;
-	}
 	
 	if(isign>=0)
     {
@@ -164,7 +149,7 @@ void wtn(float *a, unsigned long nn[], int isign, int iter,
 void get_waveletfeature(char* filename, float* feature)
 {
 	int i,j,nL,t;
-	BYTE r,g,b;
+	double r,g,b;
 	double l,u,v;
 	double x,y,z;
 	double deno,up,vp;
@@ -183,15 +168,17 @@ void get_waveletfeature(char* filename, float* feature)
 	unsigned long nn[3] = {0, imgSize.height, imgSize.width};
 
 	float* picluv = new float[imgSize.width * imgSize.height];
+	memset(picluv, 0.0f, sizeof(float) * imgSize.width * imgSize.height);
 
 	for( int h = 0; h < imgSize.height; ++h ) 
 	{
 		for ( int w = 0; w < imgSize.width * 3; w += 3 ) 
 		{
 			l=u=v=0;
-			b  = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+0];
-			g = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+1];
-			r = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+2];
+			b  = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+0] / 255.0;
+			g = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+1] / 255.0;
+			r = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+2] / 255.0;
+
 			if(r!=0.0 || g!=0.0 || b!=0.0){
 				x=matRGBtoXYZ[0][0]*r + matRGBtoXYZ[0][1]*g + matRGBtoXYZ[0][2]*b;
 				y=matRGBtoXYZ[1][0]*r + matRGBtoXYZ[1][1]*g + matRGBtoXYZ[1][2]*b;
@@ -217,7 +204,7 @@ void get_waveletfeature(char* filename, float* feature)
 			for (t=Lindex[nL][0]; t<Lindex[nL][1]; t++) {
 				if (u <= luv[t][1]) {
 					if (v <= luv[t][2]) {
-						picluv[h*imgSize.width+w] = t;
+						picluv[h*imgSize.width+w/3] = t;
 						break;
 					}
 				}
