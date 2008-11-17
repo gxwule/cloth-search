@@ -65,7 +65,7 @@ namespace Zju
 					b  = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+0];
 					g = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+1];
 					r = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+2];
-					if (!ignoreColorSet.Contains(((int)r) << 16 + ((int)g) << 8 + b))
+					if (!ignoreColorSet.Contains((((int)r) << 16) + (((int)g) << 8) + b))
 					{
 						++v[r/32];
 						++v[g/32+8];
