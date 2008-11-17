@@ -23,6 +23,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageMatcher", "ImageMatche
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCppDll", "TestCppDll\TestCppDll.csproj", "{59FA4686-19C9-4C19-87AF-9EAB3B0EB382}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestObjectSize", "TestObjectSize\TestObjectSize.csproj", "{6E5A6B60-C9A1-4432-9CA4-3E492F762D06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -133,6 +135,16 @@ Global
 		{59FA4686-19C9-4C19-87AF-9EAB3B0EB382}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{59FA4686-19C9-4C19-87AF-9EAB3B0EB382}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{59FA4686-19C9-4C19-87AF-9EAB3B0EB382}.Release|Win32.ActiveCfg = Release|Any CPU
+		{6E5A6B60-C9A1-4432-9CA4-3E492F762D06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E5A6B60-C9A1-4432-9CA4-3E492F762D06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E5A6B60-C9A1-4432-9CA4-3E492F762D06}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6E5A6B60-C9A1-4432-9CA4-3E492F762D06}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6E5A6B60-C9A1-4432-9CA4-3E492F762D06}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{6E5A6B60-C9A1-4432-9CA4-3E492F762D06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E5A6B60-C9A1-4432-9CA4-3E492F762D06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E5A6B60-C9A1-4432-9CA4-3E492F762D06}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6E5A6B60-C9A1-4432-9CA4-3E492F762D06}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6E5A6B60-C9A1-4432-9CA4-3E492F762D06}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -10,7 +10,11 @@ namespace Zju.Service
     {
         private IClothDao clothDao;
 
-        public ClothSearchService()
+        private float colorMDLimit;
+
+        private float textureMDLimit;
+
+        public ClothSearchService() : this(null)
         {
 
         }
@@ -18,6 +22,8 @@ namespace Zju.Service
         public ClothSearchService(IClothDao clothDao)
         {
             this.clothDao = clothDao;
+            colorMDLimit = SearchConstants.DefaultColorMDLimit;
+            textureMDLimit = SearchConstants.DefaultTextureMDLimit;
         }
 
         #region IClothSearchService Members
@@ -88,12 +94,12 @@ namespace Zju.Service
 
         public List<Cloth> SearchByPicColor(int[] colorVector)
         {
-            SortedDictionary<int, List<Cloth>> sortClothes = new SortedDictionary<int, List<Cloth>>();
+            SortedDictionary<float, List<Cloth>> sortClothes = new SortedDictionary<float, List<Cloth>>();
             List<Cloth> allClothes = clothDao.FindAll();
             foreach (Cloth cloth in allClothes)
             {
-                int md = calcManhattanDistance(colorVector, cloth.ColorVector);
-                if (md <= SearchConstants.ColorMDLimit)
+                float md = calcManhattanDistance(colorVector, cloth.ColorVector);
+                if (md <= colorMDLimit)
                 {
                     if (!sortClothes.ContainsKey(md))
                     {
@@ -119,7 +125,7 @@ namespace Zju.Service
             foreach (Cloth cloth in allClothes)
             {
                 float md = calcManhattanDistance(textureVector, cloth.TextureVector);
-                if (md <= SearchConstants.TextureMDLimit)
+                if (md <= textureMDLimit)
                 {
                     if (!sortClothes.ContainsKey(md))
                     {
@@ -140,21 +146,21 @@ namespace Zju.Service
 
         #endregion
 
-        private int calcManhattanDistance(int[] v1, int[] v2)
+        private float calcManhattanDistance(int[] v1, int[] v2)
         {
             if (v1 == null || v2 == null || v1.Length != v2.Length)
             {
                 return int.MaxValue;
             }
 
-            int md = 0;
+            float mds = 0.0f;
             int n = v1.Length;
             for (int i = 0; i < n; ++i)
             {
-                md += (v1[i] >= v2[i] ? v1[i] - v2[i] : v2[i] - v1[i]);
+                mds += (v1[i] >= v2[i] ? v1[i] - v2[i] : v2[i] - v1[i]);
             }
 
-            return md;
+            return mds / n;
         }
 
         private float calcManhattanDistance(float[] v1, float[] v2)
@@ -164,14 +170,14 @@ namespace Zju.Service
                 return float.MaxValue;
             }
 
-            float md = 0.0f;
+            float mds = 0.0f;
             int n = v1.Length;
             for (int i = 0; i < n; ++i)
             {
-                md += (v1[i] >= v2[i] ? v1[i] - v2[i] : v2[i] - v1[i]);
+                mds += (v1[i] >= v2[i] ? v1[i] - v2[i] : v2[i] - v1[i]);
             }
 
-            return md;
+            return mds / n;
         }
 
         /// <summary>
@@ -251,6 +257,18 @@ namespace Zju.Service
         public IClothDao ClothDao
         {
             set { this.clothDao = value; }
+        }
+
+        public float ColorMDLimit
+        {
+            get { return colorMDLimit; }
+            set { colorMDLimit = value; }
+        }
+
+        public float TextureMDLimit
+        {
+            get { return textureMDLimit; }
+            set { textureMDLimit = value; }
         }
     }
 }

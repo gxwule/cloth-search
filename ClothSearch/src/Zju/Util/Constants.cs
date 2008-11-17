@@ -18,9 +18,9 @@ namespace Zju.Util
         /// Limit of Manhattan distance of color vectors between two cloth when searching.
         /// The cloth as searched should less or equal to the limit.
         /// </summary>
-        public const int ColorMDLimit = int.MaxValue - 1;
+        public const float DefaultColorMDLimit = float.MaxValue - 1;
 
-        public const float TextureMDLimit = float.MaxValue - 1;
+        public const float DefaultTextureMDLimit = float.MaxValue - 1;
     }
 
     [Flags]
