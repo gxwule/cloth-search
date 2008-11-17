@@ -150,7 +150,7 @@ namespace ClothSearch
             cloth.TextureVector = (useKeyPic && keyCloth.TextureVector != null)
                 ? keyCloth.TextureVector : ViewHelper.ImageMatcher.ExtractTextureVector(cloth.Path);
 
-            clothLibService.SaveOrUpdate(cloth);
+            clothLibService.Insert(cloth);
 
             // close the window.
             this.Close();

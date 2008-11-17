@@ -2,6 +2,7 @@
 using Perst;
 using Zju.Domain;
 using Zju.Util;
+using System;
 
 namespace Zju.Dao
 {
@@ -11,17 +12,17 @@ namespace Zju.Dao
         /// Save or update the cloth into the database if not exit, otherwise update it.
         /// Whether a cloth exists is decided by the Oid of the cloth.
         /// </summary>
-        public void SaveOrUpdate(Cloth cloth)
+        public void Insert(Cloth cloth)
         {
             Storage storage = DaoHelper.Instance.DbStorage;
             ClothRoot root = (ClothRoot)storage.Root;
 
-            saveOrUpdateWithoutCommit(storage, root, cloth);
+            insertWithoutCommit(storage, root, cloth);
             
             storage.Commit();
         }
 
-        public void SaveOrUpdateAll(List<Cloth> clothes)
+        public void InsertAll(List<Cloth> clothes)
         {
             Storage storage = DaoHelper.Instance.DbStorage;
             ClothRoot root = (ClothRoot)storage.Root;
@@ -29,7 +30,7 @@ namespace Zju.Dao
             int nCloth = 0;
             foreach (Cloth cloth in clothes)
             {
-                saveOrUpdateWithoutCommit(storage, root, cloth);
+                insertWithoutCommit(storage, root, cloth);
 
                 if (0 == ++nCloth % DbConstants.ComitLimit)
                 {
@@ -40,26 +41,114 @@ namespace Zju.Dao
             storage.Commit();
         }
 
+        public void Update(Cloth cloth, Cloth newCloth)
+        {
+            Storage storage = DaoHelper.Instance.DbStorage;
+            ClothRoot root = (ClothRoot)storage.Root;
+
+            FieldIndex clothOidIndex = root.ClothOidIndex;
+            
+            if (null == cloth || !clothOidIndex.Contains(cloth))
+            {
+                return;
+            }
+
+            FieldIndex patternIndex = root.PatternIndex;
+            BitIndex colorIndex = root.ColorIndex;
+            BitIndex shapeIndex = root.ShapeIndex;
+
+            if (cloth.Pattern != newCloth.Pattern)
+            {
+                patternIndex.Remove(cloth);
+                cloth.Pattern = newCloth.Pattern;
+                if (cloth.Pattern != null)
+                {
+                    patternIndex.Put(cloth);
+                }
+            }
+
+            if (cloth.Colors != newCloth.Colors)
+            {
+                colorIndex.Remove(cloth);
+                cloth.Colors = newCloth.Colors;
+                colorIndex[cloth] = (int)cloth.Colors;
+            }
+
+            if (cloth.Shapes != newCloth.Shapes)
+            {
+                shapeIndex.Remove(cloth);
+                cloth.Shapes = newCloth.Shapes;
+                shapeIndex[cloth] = (int)cloth.Shapes;
+            }
+
+            if (cloth.Name != newCloth.Name)
+            {
+                cloth.Name = newCloth.Name;
+            }
+            
+            if (newCloth.Path != null && cloth.Path != newCloth.Path)
+            {
+                cloth.Path = newCloth.Path;
+            }
+            
+            if (newCloth.ColorVector != null && cloth.ColorVector != newCloth.ColorVector)
+            {
+                cloth.ColorVector = newCloth.ColorVector;
+            }
+
+            if (newCloth.TextureVector != null && cloth.TextureVector != newCloth.TextureVector)
+            {
+                cloth.TextureVector = newCloth.TextureVector;
+            }
+
+            cloth.UpdateTime = (0 == newCloth.UpdateTime.Ticks) ? DateTime.UtcNow : newCloth.UpdateTime;
+
+            cloth.Modify();
+
+            storage.Commit();
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="oid">Oid of a cloth.</param>
         public void Delete(int oid)
         {
-            Storage storage = DaoHelper.Instance.DbStorage;
-            ClothRoot root = (ClothRoot)storage.Root;
-
-            Cloth cloth = (Cloth)root.ClothOidIndex.Get(oid);
-            if (null != cloth)
+            if (oid > 0)
             {
-                // Console.WriteLine("delete");
-                root.ColorIndex.Remove(cloth);
-                root.ShapeIndex.Remove(cloth);
-                root.ClothOidIndex.Remove(cloth);
-                root.PatternIndex.Remove(cloth);
+                Storage storage = DaoHelper.Instance.DbStorage;
+                ClothRoot root = (ClothRoot)storage.Root;
+
+                Cloth cloth = (Cloth)root.ClothOidIndex.Get(oid);
+                if (null != cloth)
+                {
+                    removeFromIndexes(cloth, root);
+
+                    storage.Commit();
+                }
+            }
+            
+        }
+
+        public void Delete(Cloth cloth)
+        {
+            if (null != cloth && cloth.Oid > 0)
+            {
+                Storage storage = DaoHelper.Instance.DbStorage;
+                ClothRoot root = (ClothRoot)storage.Root;
+
+                removeFromIndexes(cloth, root);
 
                 storage.Commit();
             }
+        }
+
+        private void removeFromIndexes(Cloth cloth, ClothRoot root)
+        {
+            root.ColorIndex.Remove(cloth);
+            root.ShapeIndex.Remove(cloth);
+            root.ClothOidIndex.Remove(cloth);
+            root.PatternIndex.Remove(cloth);
         }
 
         /// <summary>
@@ -204,27 +293,24 @@ namespace Zju.Dao
 
         }*/
 
-        private void saveOrUpdateWithoutCommit(Storage storage, ClothRoot root, Cloth cloth)
+        private void insertWithoutCommit(Storage storage, ClothRoot root, Cloth cloth)
         {
             FieldIndex clothOidIndex = root.ClothOidIndex;
-            FieldIndex patternIndex = root.PatternIndex;
-            BitIndex colorIndex = root.ColorIndex;
-            BitIndex shapeIndex = root.ShapeIndex;
-            if (clothOidIndex.Contains(cloth))
+            if (cloth == null || clothOidIndex.Contains(cloth))
             {
-                colorIndex.Remove(cloth);
-                shapeIndex.Remove(cloth);
-                patternIndex.Remove(cloth);
+                return;
             }
-            else
+
+            // this method called for generate the Oid, or the key of ClothOidIndex will always be 0.
+            storage.MakePersistent(cloth);
+            clothOidIndex.Put(cloth);
+            if (cloth.Pattern != null)
             {
-                // this method called for generate the Oid, or the key of ClothOidIndex will always be 0.
-                storage.MakePersistent(cloth);
-                clothOidIndex.Set(cloth);
+                root.PatternIndex.Put(cloth);
             }
-            colorIndex[cloth] = (int)cloth.Colors;
-            shapeIndex[cloth] = (int)cloth.Shapes;
-            patternIndex.Put(cloth);
+            
+            root.ColorIndex[cloth] = (int)cloth.Colors;
+            root.ShapeIndex[cloth] = (int)cloth.Shapes;
         }
     }
 }

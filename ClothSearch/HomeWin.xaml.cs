@@ -201,7 +201,7 @@ namespace ClothSearch
                 clothes.Add(cloth);
                 if (++nFinished % step == 0)
                 {
-                    clothLibService.SaveOrUpdate(clothes);
+                    clothLibService.InsertAll(clothes);
                     this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
                         new AsynUpdateUI(updateProgressWin), nFinished);
                     clothes.Clear();
@@ -209,7 +209,7 @@ namespace ClothSearch
             }
             if (clothes.Count > 0)
             {
-                clothLibService.SaveOrUpdate(clothes);
+                clothLibService.InsertAll(clothes);
             }
 
             this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
@@ -221,6 +221,8 @@ namespace ClothSearch
             Cloth cloth = new Cloth();
 
             cloth.Path = picName;
+            cloth.Pattern = ViewHelper.ExtractPattern(cloth.Path);
+            cloth.Name = cloth.Pattern;
 
             ViewHelper.ExtractFeatures(cloth);
 
@@ -470,14 +472,10 @@ namespace ClothSearch
             imgCurrentResult.Name = reImageNamePrefix + image.Name;
 
             Cloth cloth = searchedClothes[int.Parse(image.Name.Substring(imageNamePrefix.Length))];
-            if (!string.IsNullOrEmpty(cloth.Name))
-            {
-                txtModifyName.Text = cloth.Name;
-            }
-            if (!string.IsNullOrEmpty(cloth.Pattern))
-            {
-                txtModifyPattern.Text = cloth.Pattern;
-            }
+
+            txtModifyName.Text = string.IsNullOrEmpty(cloth.Name) ? "" : cloth.Name;
+
+            txtModifyPattern.Text = string.IsNullOrEmpty(cloth.Pattern) ? "" : cloth.Pattern;
             
             txtModifyName.IsEnabled = true;
             txtModifyPattern.IsEnabled = true;
@@ -499,6 +497,17 @@ namespace ClothSearch
             searchedClothes.Remove(cloth);
             clothLibService.Delete(cloth.Oid);
 
+            imgCurrentResult.Source = null;
+
+            txtModifyName.Text = "";
+            txtModifyName.IsEnabled = false;
+
+            txtModifyPattern.Text = "";
+            txtModifyPattern.IsEnabled = false;
+
+            btnResultDelete.IsEnabled = false;
+            btnResultModify.IsEnabled = false;
+
             updatePicResults();
         }
 
@@ -506,10 +515,11 @@ namespace ClothSearch
         {
             Cloth cloth = searchedClothes[int.Parse(imgCurrentResult.Name.Substring(reImageNamePrefix.Length + imageNamePrefix.Length))];
 
-            cloth.Name = string.IsNullOrEmpty(txtModifyName.Text) ? null : txtModifyName.Text;
-            cloth.Pattern = string.IsNullOrEmpty(txtModifyPattern.Text) ? null : txtModifyPattern.Text;
+            Cloth newCloth = new Cloth(cloth);
+            newCloth.Name = string.IsNullOrEmpty(txtModifyName.Text) ? null : txtModifyName.Text;
+            newCloth.Pattern = string.IsNullOrEmpty(txtModifyPattern.Text) ? null : txtModifyPattern.Text;
 
-            clothLibService.SaveOrUpdate(cloth);
+            clothLibService.Update(cloth, newCloth);
         }
 
         private void btnFirstPage_Click(object sender, RoutedEventArgs e)

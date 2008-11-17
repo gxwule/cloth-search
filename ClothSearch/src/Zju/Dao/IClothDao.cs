@@ -12,19 +12,23 @@ namespace Zju.Dao
         /// Whether a cloth exists is decided by the Oid of the cloth.
         /// NOTES: The <code>cloth</code> should NOT be null.
         /// </summary>
-        void SaveOrUpdate(Cloth cloth);
+        void Insert(Cloth cloth);
 
         /// <summary>
         /// NOTES: The <code>clothes</code> should NOT be null.
         /// </summary>
         /// <param name="clothes"></param>
-        void SaveOrUpdateAll(List<Cloth> clothes);
+        void InsertAll(List<Cloth> clothes);
+
+        void Update(Cloth oldCloth, Cloth newCloth);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="oid">Oid of a cloth.</param>
         void Delete(int oid);
+
+        void Delete(Cloth cloth);
 
         /// <summary>
         /// Find the Cloth object by cloth name.

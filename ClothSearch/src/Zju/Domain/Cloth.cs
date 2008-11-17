@@ -101,6 +101,18 @@ namespace Zju.Domain
             shapes = ShapeEnum.NONE;
         }
 
+        public Cloth(Cloth cloth)
+        {
+            this.name = cloth.Name;
+            this.pattern = cloth.Pattern;
+            this.path = cloth.Path;
+            this.colors = cloth.Colors;
+            this.shapes = cloth.Shapes;
+            this.colorVector = cloth.ColorVector;
+            this.textureVector = cloth.TextureVector;
+            this.updateTime = cloth.UpdateTime;
+        }
+
         public Cloth(String name, String pattern, String path, ColorEnum colors, ShapeEnum shapes)
         {
             assignFileds(name, pattern, path, colors, shapes);

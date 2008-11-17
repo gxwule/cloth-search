@@ -54,7 +54,7 @@ namespace Zju.Dao
         {
             // save
             //print(cloth);
-            target.SaveOrUpdate(cloth);
+            target.Insert(cloth);
             //print(cloth);
             Assert.AreEqual(cloth, target.FindByOid(cloth.Oid));
             Assert.AreEqual(onlyList, target.FindAll());
@@ -79,13 +79,14 @@ namespace Zju.Dao
             
             // update
             int oid = cloth.Oid;
-            cloth.Path = "abcd";
-            cloth.Name = "na";
-            cloth.UpdateTime = DateTime.UtcNow;
-            cloth.Colors = ColorEnum.WHITE | ColorEnum.PINK;
-            cloth.Pattern = "aaaaaa";
+            Cloth newCloth = new Cloth();
+            newCloth.Path = "abcd";
+            newCloth.Name = "na";
+            newCloth.UpdateTime = DateTime.UtcNow;
+            newCloth.Colors = ColorEnum.WHITE | ColorEnum.PINK;
+            newCloth.Pattern = "aaaaaa";
             //print(cloth);
-            target.SaveOrUpdate(cloth);
+            target.Update(cloth, newCloth);
             //print(cloth);
             Assert.AreEqual(cloth, target.FindByOid(oid));
             Assert.AreEqual(onlyList, target.FindAll());
@@ -109,19 +110,20 @@ namespace Zju.Dao
         [Test]
         public void TestSaveOrUpdateNull()
         {
-            target.SaveOrUpdate(noneCloth);
+            target.Insert(noneCloth);
             Assert.AreEqual(noneCloth, target.FindByOid(noneCloth.Oid));
             Assert.AreEqual(noneClothList, target.FindAll());
             Assert.AreEqual(emptyList, target.FindAllByColors(ColorEnum.BLACK));
 
             // update
             int oid = noneCloth.Oid;
-            noneCloth.Path = "abcd";
-            noneCloth.Name = "na";
-            noneCloth.UpdateTime = DateTime.UtcNow;
-            noneCloth.Colors = ColorEnum.WHITE | ColorEnum.PINK;
+            Cloth newCloth = new Cloth();
+            newCloth.Path = "abcd";
+            newCloth.Name = "na";
+            newCloth.UpdateTime = DateTime.UtcNow;
+            newCloth.Colors = ColorEnum.WHITE | ColorEnum.PINK;
             //print(cloth);
-            target.SaveOrUpdate(noneCloth);
+            target.Update(noneCloth, newCloth);
             //print(cloth);
             Assert.AreEqual(noneCloth, target.FindByOid(oid));
             Assert.AreEqual(noneClothList, target.FindAll());
@@ -135,7 +137,7 @@ namespace Zju.Dao
         [Test]
         public void TestSaveOrUpdateAll()
         {
-            target.SaveOrUpdateAll(clothes);
+            target.InsertAll(clothes);
             Assert.AreEqual(clothes, target.FindAll());
             Assert.AreEqual((clothes.Count + 5) / 6, target.FindAllByColors(ColorEnum.BLACK).Count);
             foreach (Cloth cloth in clothes)
@@ -149,7 +151,7 @@ namespace Zju.Dao
         [Test]
         public void TestSaveOrUpdateAllNull()
         {
-            target.SaveOrUpdateAll(emptyList);
+            target.InsertAll(emptyList);
 
         }
 /*
