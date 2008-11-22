@@ -106,11 +106,13 @@ namespace ClothSearch
         {
             if (dlgOpenKeyPic.ShowDialog() == true)
             {
-                BitmapImage bi = new BitmapImage();
-                // BitmapImage.UriSource must be in a BeginInit/EndInit block.
-                bi.BeginInit();
-                bi.UriSource = new Uri(dlgOpenKeyPic.FileName, UriKind.RelativeOrAbsolute);
-                bi.EndInit();
+                BitmapImage bi = ViewHelper.NewBitmapImage(dlgOpenKeyPic.FileName);
+                if (bi == null)
+                {
+                    MessageBox.Show("您选择的不是图片文件, 请重新选择.", "温馨提示");
+                    return;
+                }
+
                 imgKeyPic.Source = bi;
 
                 keyCloth = new Cloth();
@@ -286,6 +288,16 @@ namespace ClothSearch
             matchAlgorithmWin = new MatchAlgorithmWin(aDesc);
             matchAlgorithmWin.Owner = this;
             matchAlgorithmWin.ShowDialog();
+
+            int index = ViewHelper.RecallLevelToIndex(aDesc.RLevel);
+            if (clothSearchService.GetColorMDLimit() != SearchConstants.ColorMDLimits[index])
+            {
+                clothSearchService.SetColorMDLimit(SearchConstants.ColorMDLimits[index]);
+            }
+            if (clothSearchService.GetTextureMDLimit() != SearchConstants.TextureMDLimits[index])
+            {
+                clothSearchService.SetTextureMDLimit(SearchConstants.TextureMDLimits[index]);
+            }
         }
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
@@ -307,9 +319,8 @@ namespace ClothSearch
             }
             else if (true == rbtnCombine.IsChecked)
             {
-                // do nothing
                 lblSearchResultInfo.Content = "正在进行联合搜索请稍候...";
-                return;
+                searchedClothes = searchByCombine();
             }
             
             updatePicResults();
@@ -334,6 +345,7 @@ namespace ClothSearch
                         : imageMatcher.ExtractColorVector(keyCloth.Path, ViewConstants.IgnoreColors);
                     if (colorVector == null)
                     {
+                        MessageBox.Show("您指定的关键图可能是动画图片文件, 无法提取颜色特征.", "温馨提醒");
                         return null;
                     }
                     clothes = clothSearchService.SearchByPicColor(colorVector);
@@ -346,6 +358,7 @@ namespace ClothSearch
                         : imageMatcher.ExtractTextureVector(keyCloth.Path);
                     if (null == textureVector)
                     {
+                        MessageBox.Show("您指定的关键图可能是动画图片文件, 无法提取纹理特征.", "温馨提醒");
                         return null;
                     }
                     clothes = clothSearchService.SearchByPicTexture(textureVector);
@@ -382,6 +395,22 @@ namespace ClothSearch
             }
 
             return clothSearchService.SearchByText(words, colors, shapes);
+        }
+
+        private List<Cloth> searchByCombine()
+        {
+            List<List<Cloth>> clothLists = new List<List<Cloth>>();
+            List<Cloth> clothesByText = searchByText();
+            if (clothesByText == null || clothesByText.Count == 0)
+            {
+                return new List<Cloth>();
+            }
+
+            clothLists.Add(clothesByText);
+
+            clothLists.Add(searchByPic());
+
+            return ClothUtil.IntersectClothLists(clothLists);
         }
 
         /// <summary>
@@ -451,15 +480,12 @@ namespace ClothSearch
 
             if (!String.IsNullOrEmpty(picName))
             {
-                BitmapImage bi = new BitmapImage();
-                // BitmapImage.UriSource must be in a BeginInit/EndInit block.
-                bi.BeginInit();
-                bi.UriSource = new Uri(picName, UriKind.RelativeOrAbsolute);
-                bi.EndInit();
-                img.Source = bi;
-
+                img.Source = ViewHelper.NewBitmapImage(picName);
                 img.Name = imageNamePrefix + index.ToString();
-                img.MouseDown += new MouseButtonEventHandler(resultImg_MouseDown);
+                if (img.Source != null)
+                {
+                    img.MouseDown += new MouseButtonEventHandler(resultImg_MouseDown);
+                }
             }
 
             return img;

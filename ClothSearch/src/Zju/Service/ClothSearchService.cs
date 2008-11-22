@@ -22,8 +22,8 @@ namespace Zju.Service
         public ClothSearchService(IClothDao clothDao)
         {
             this.clothDao = clothDao;
-            colorMDLimit = SearchConstants.DefaultColorMDLimit;
-            textureMDLimit = SearchConstants.DefaultTextureMDLimit;
+            colorMDLimit = SearchConstants.ColorMDLimits[0];
+            textureMDLimit = SearchConstants.TextureMDLimits[0];
         }
 
         #region IClothSearchService Members
@@ -80,7 +80,7 @@ namespace Zju.Service
                 }
                 if (clothListsByWords.Count > 0)
                 {
-                    clothLists.Add(unionClothLists(clothListsByWords));
+                    clothLists.Add(ClothUtil.UnionClothLists(clothListsByWords));
                 }
                 else
                 {
@@ -88,8 +88,8 @@ namespace Zju.Service
                     return new List<Cloth>();
                 }
             }
-            
-            return intersectClothLists(clothLists);
+
+            return ClothUtil.IntersectClothLists(clothLists);
         }
 
         public List<Cloth> SearchByPicColor(int[] colorVector)
@@ -98,7 +98,7 @@ namespace Zju.Service
             List<Cloth> allClothes = clothDao.FindAll();
             foreach (Cloth cloth in allClothes)
             {
-                float md = calcManhattanDistance(colorVector, cloth.ColorVector);
+                float md = ClothUtil.CalcManhattanDistance(colorVector, cloth.ColorVector);
                 if (md <= colorMDLimit)
                 {
                     if (!sortClothes.ContainsKey(md))
@@ -124,7 +124,7 @@ namespace Zju.Service
             List<Cloth> allClothes = clothDao.FindAll();
             foreach (Cloth cloth in allClothes)
             {
-                float md = calcManhattanDistance(textureVector, cloth.TextureVector);
+                float md = ClothUtil.CalcManhattanDistance(textureVector, cloth.TextureVector);
                 if (md <= textureMDLimit)
                 {
                     if (!sortClothes.ContainsKey(md))
@@ -144,131 +144,69 @@ namespace Zju.Service
             return clothes;
         }
 
+        public List<Cloth> SearchByTextAndPicColor(String words, ColorEnum colors, ShapeEnum shapes, int[] colorVector)
+        {
+            List<List<Cloth>> clothLists = new List<List<Cloth>>();
+
+            List<Cloth> clothesByText = SearchByText(words, colors, shapes);
+            if (clothesByText != null && clothesByText.Count > 0)
+            {
+                clothLists.Add(clothesByText);
+            }
+
+            List<Cloth> clothesByPicColor = SearchByPicColor(colorVector);
+            if (clothesByPicColor != null && clothesByPicColor.Count > 0)
+            {
+                clothLists.Add(clothesByPicColor);
+            }
+
+            return ClothUtil.IntersectClothLists(clothLists);
+        }
+
+        public List<Cloth> SearchByTextAndPicTexture(String words, ColorEnum colors, ShapeEnum shapes, float[] textureVector)
+        {
+            List<List<Cloth>> clothLists = new List<List<Cloth>>();
+
+            List<Cloth> clothesByText = SearchByText(words, colors, shapes);
+            if (clothesByText != null && clothesByText.Count > 0)
+            {
+                clothLists.Add(clothesByText);
+            }
+
+            List<Cloth> clothesByTexture = SearchByPicTexture(textureVector);
+            if (clothesByTexture != null && clothesByTexture.Count > 0)
+            {
+                clothLists.Add(clothesByTexture);
+            }
+
+            return ClothUtil.IntersectClothLists(clothLists);
+        }
+
+        public float GetColorMDLimit()
+        {
+            return colorMDLimit;
+        }
+
+        public void SetColorMDLimit(float colorMDLimit)
+        {
+            this.colorMDLimit = colorMDLimit;
+        }
+
+        public float GetTextureMDLimit()
+        {
+            return textureMDLimit;
+        }
+
+        public void SetTextureMDLimit(float textureMDLimit)
+        {
+            this.textureMDLimit = textureMDLimit;
+        }
+
         #endregion
-
-        private float calcManhattanDistance(int[] v1, int[] v2)
-        {
-            if (v1 == null || v2 == null || v1.Length != v2.Length)
-            {
-                return int.MaxValue;
-            }
-
-            float mds = 0.0f;
-            int n = v1.Length;
-            for (int i = 0; i < n; ++i)
-            {
-                mds += (v1[i] >= v2[i] ? v1[i] - v2[i] : v2[i] - v1[i]);
-            }
-
-            return mds / n;
-        }
-
-        private float calcManhattanDistance(float[] v1, float[] v2)
-        {
-            if (v1 == null || v2 == null || v1.Length != v2.Length)
-            {
-                return float.MaxValue;
-            }
-
-            float mds = 0.0f;
-            int n = v1.Length;
-            for (int i = 0; i < n; ++i)
-            {
-                mds += (v1[i] >= v2[i] ? v1[i] - v2[i] : v2[i] - v1[i]);
-            }
-
-            return mds / n;
-        }
-
-        /// <summary>
-        /// Each cloth list in <code>clothLists</code> should not contain duplicate element, or the algorithm will be acted correctly.
-        /// </summary>
-        /// <param name="clothLists"></param>
-        /// <returns></returns>
-        private List<Cloth> intersectClothLists(List<List<Cloth>> clothLists)
-        {
-            if (clothLists.Count == 0)
-            {
-                return new List<Cloth>();
-            }
-            if (clothLists.Count == 1)
-            {
-                return clothLists[0];
-            }
-
-            Dictionary<Cloth, int> tc = new Dictionary<Cloth, int>();
-            foreach (List<Cloth> clothList in clothLists)
-            {
-                foreach (Cloth cloth in clothList)
-                {
-                    if (!tc.ContainsKey(cloth))
-                    {
-                        tc[cloth] = 1;
-                    }
-                    else
-                    {
-                        tc[cloth]++;
-                    }
-                }
-            }
-
-            int nLists = clothLists.Count;
-            List<Cloth> result = new List<Cloth>();
-            foreach (KeyValuePair<Cloth, int> kvp in tc)
-            {
-                if (kvp.Value == nLists)
-                {
-                    result.Add(kvp.Key);
-                }
-            }
-
-            return result;
-        }
-
-        private List<Cloth> unionClothLists(List<List<Cloth>> clothLists)
-        {
-            if (clothLists.Count == 0)
-            {
-                return new List<Cloth>();
-            }
-            if (clothLists.Count == 1)
-            {
-                return clothLists[0];
-            }
-
-            HashSet<Cloth> hs = new HashSet<Cloth>();
-            foreach (List<Cloth> clothList in clothLists)
-            {
-                foreach (Cloth cloth in clothList)
-                {
-                    hs.Add(cloth);
-                }
-            }
-
-            List<Cloth> result = new List<Cloth>();
-            foreach (Cloth cloth in hs)
-            {
-                result.Add(cloth);
-            }
-
-            return result;
-        }
 
         public IClothDao ClothDao
         {
             set { this.clothDao = value; }
-        }
-
-        public float ColorMDLimit
-        {
-            get { return colorMDLimit; }
-            set { colorMDLimit = value; }
-        }
-
-        public float TextureMDLimit
-        {
-            get { return textureMDLimit; }
-            set { textureMDLimit = value; }
         }
     }
 }

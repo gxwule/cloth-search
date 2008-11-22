@@ -14,23 +14,24 @@ namespace Zju
 {
 	namespace Image
 	{
-		ImageMatcher::ImageMatcher()
+		ImageMatcher::ImageMatcher() : isLuvInited(false)
 		{
 
 		}
 
-		int ImageMatcher::luvInit(String^ luvFileName)
+		bool ImageMatcher::luvInit(String^ luvFileName)
 		{
 			char* fileName = nullptr;
 			if (!to_CharStar(luvFileName, fileName))
 			{
 				// error, exception should be thrown out here.
-				return -1;
+				return false;
 			}
 
-			int re = luv_init(fileName);
+			bool re = luv_init(fileName);
 			delete[] fileName;
 
+			isLuvInited = true;
 			return re;
 		}
 
@@ -49,6 +50,11 @@ namespace Zju
 
 			imgRgb = cvLoadImage(fileName, CV_LOAD_IMAGE_COLOR);
 			delete[] fileName;
+
+			if (imgRgb == NULL)
+			{
+				return nullptr;
+			}
 			
 			System::Collections::Generic::HashSet<int> ignoreColorSet;
 			if (ignoreColors != nullptr && ignoreColors->Length > 0)
@@ -81,6 +87,11 @@ namespace Zju
 
 		array<float>^ ImageMatcher::ExtractTextureVector(String^ imageFileName)
 		{
+			if (!isLuvInited)
+			{
+				return nullptr;
+			}
+
 			char* fileName = nullptr;
 			if (!to_CharStar(imageFileName, fileName))
 			{
@@ -90,8 +101,13 @@ namespace Zju
 
 			int n = DIM * DIM;
 			float* pVector = new float[n];
-			get_waveletfeature(fileName, pVector);
-			delete fileName;
+			bool re = get_waveletfeature(fileName, pVector);
+			delete[] fileName;
+
+			if (!re)
+			{
+				return nullptr;
+			}
 
 			array<float>^ textureVector = to_array(pVector, n);
 			delete[] pVector;
@@ -109,6 +125,7 @@ namespace Zju
 		}
 
 		// no memory delete need outside the method.
+		/*
 		bool ImageMatcher::to_string(String^ source, std::string &target)
 		{    
 			pin_ptr<const wchar_t> wch = PtrToStringChars(source);    
@@ -119,6 +136,7 @@ namespace Zju
 			delete[] ch;    
 			return result;
 		}
+		*/
 
 		array<float>^ ImageMatcher::to_array(float* pf, int n)
 		{

@@ -144,9 +144,9 @@ void wtn(float *a, unsigned long nn[], int isign, int iter,
 
 
 /*
- *	得到16*16维小波特征向量
+ *	得到8*8维小波特征向量
  */
-void get_waveletfeature(char* filename, float* feature)
+bool get_waveletfeature(char* filename, float* feature)
 {
 	int i,j,nL,t;
 	double r,g,b;
@@ -159,7 +159,7 @@ void get_waveletfeature(char* filename, float* feature)
 	if (imgRgb == NULL)
 	{
 		// log error
-		return;
+		return false;
 	}
 	CvSize imgSize;
 	imgSize.width = imgRgb->width;
@@ -225,12 +225,14 @@ void get_waveletfeature(char* filename, float* feature)
 	}
 	
 	delete[] picluv;
+
+	return true;
 }
 
 /*
  * 初始化 luv[][], LLindex[], Lindex[][]以及matRGBtoXYZ[3][3],Wx,Wy,Wz,u0,v0
  */
-int luv_init(char* luvFile)
+bool luv_init(char* luvFile)
 {
   FILE *indexFile;
   int i;
@@ -242,10 +244,10 @@ int luv_init(char* luvFile)
   if (indexFile == NULL) {
      //printf ("Error in opening luv file <%s> in class LuvIndexing\n", "luv.dat");
      // TODO log
-	  return (-1);
+	  return false;
   }
 
-  if (feof(indexFile)) return (-1);
+  if (feof(indexFile)) return false;
 
   // read in sizes of luv and Lindex arrays and allocate storages
   for (i=0; i<159; i++) {
@@ -308,5 +310,5 @@ int luv_init(char* luvFile)
   u0 = 4.0*Wx / deno;
   v0 = 9.0*Wy / deno;
   
-  return (0);
+  return true;
 }

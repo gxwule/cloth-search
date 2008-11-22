@@ -184,11 +184,14 @@ namespace ClothSearch
         {
             if (!String.IsNullOrEmpty(fileName))
             {
-                BitmapImage bi = new BitmapImage();
-                // BitmapImage.UriSource must be in a BeginInit/EndInit block.
-                bi.BeginInit();
-                bi.UriSource = new Uri(fileName, UriKind.RelativeOrAbsolute);
-                bi.EndInit();
+
+                BitmapImage bi = ViewHelper.NewBitmapImage(fileName);
+                if (bi == null)
+                {
+                    MessageBox.Show("您选择的不是图片文件, 请重新选择.", "温馨提示");
+                    return;
+                }
+
                 imgAdded.Source = bi;
 
                 addPicFileName = fileName;

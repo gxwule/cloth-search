@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Zju.Util;
 using Zju.Image;
 using Zju.Domain;
+using System.Windows.Media.Imaging;
 
 namespace Zju.View
 {
@@ -23,6 +24,8 @@ namespace Zju.View
     public sealed class ViewHelper
     {
         private static ImageMatcher imageMatcher;
+
+        private static Dictionary<RecallLevel, int> recallLevelToIndexMap; 
 
         public static ImageMatcher ImageMatcher
         {
@@ -68,6 +71,31 @@ namespace Zju.View
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="picName"></param>
+        /// <returns>null if any errors.</returns>
+        public static BitmapImage NewBitmapImage(string picName)
+        {
+            BitmapImage bi = null;
+            try
+            {
+                bi = new BitmapImage();
+                // BitmapImage.UriSource must be in a BeginInit/EndInit block.
+                bi.BeginInit();
+                bi.UriSource = new Uri(picName, UriKind.RelativeOrAbsolute);
+                bi.EndInit();
+            }
+            catch (System.Exception e)
+            {
+                // maybe log something here.
+                bi = null;
+            }
+
+            return bi;
+        }
+
+        /// <summary>
         /// Extract color and texture features for the cloth picture.
         /// And save the features back into the <code>cloth</code> objects.
         /// </summary>
@@ -110,6 +138,26 @@ namespace Zju.View
             i = i == -1 ? picName.Length : i;
 
             return i - j - 1 > 0 ? picName.Substring(j + 1, i - j - 1) : null;
+        }
+
+        public static int RecallLevelToIndex(RecallLevel rLevel)
+        {
+            if (recallLevelToIndexMap == null)
+            {
+                recallLevelToIndexMap = new Dictionary<RecallLevel,int>();
+                recallLevelToIndexMap[RecallLevel.Default] = 0;
+                recallLevelToIndexMap[RecallLevel.Recall1] = 1;
+                recallLevelToIndexMap[RecallLevel.Recall2] = 2;
+                recallLevelToIndexMap[RecallLevel.Recall3] = 3;
+            }
+
+            int index = 0;
+            if (recallLevelToIndexMap.ContainsKey(rLevel))
+            {
+                index = recallLevelToIndexMap[rLevel];
+            }
+
+            return index;
         }
     }
 }

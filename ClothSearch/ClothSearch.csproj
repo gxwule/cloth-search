@@ -135,8 +135,9 @@
     <Compile Include="src\Zju\Service\ClothSearchService.cs" />
     <Compile Include="src\Zju\Service\IClothLibService.cs" />
     <Compile Include="src\Zju\Service\IClothSearchService.cs" />
+    <Compile Include="src\Zju\Util\ClothUtil.cs" />
     <Compile Include="src\Zju\Util\Constants.cs" />
-    <Compile Include="src\Zju\View\AlgorithmDesc.cs" />
+    <Compile Include="src\Zju\Util\AlgorithmDesc.cs" />
     <Compile Include="src\Zju\View\ViewConstants.cs" />
     <Compile Include="src\Zju\View\ViewHelper.cs" />
     <Compile Include="src\Zju\Vo\ClothVo.cs" />

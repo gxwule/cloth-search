@@ -1,4 +1,4 @@
-﻿namespace Zju.View
+﻿namespace Zju.Util
 {
     public enum AlgorithmType
     {

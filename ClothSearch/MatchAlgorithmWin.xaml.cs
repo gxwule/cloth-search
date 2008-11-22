@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using Zju.View;
+using Zju.Util;
 using System.Windows.Controls;
 
 namespace ClothSearch
