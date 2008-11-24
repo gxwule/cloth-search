@@ -3,6 +3,8 @@
 #pragma once
 
 //#include <string>
+#include "Gabor.h"
+#include "Cooccurrence.h"
 
 using namespace System;
 
@@ -26,14 +28,28 @@ namespace Zju
 			// Return null if failed.
 			bool luvInit(String^ luvFileName);
 
+			array<float>^ ExtractGaborVector(String^ imageFileName);
+
+			array<float>^ ExtractCooccurrenceVector(String^ imageFileName);
+
 			ImageMatcher();
+
+			~ImageMatcher();
 		private:
 			// mark if lvuInit method called.
 			bool isLuvInited;
+
+			Gabor* pGabor;
+
+			Cooccurrence* pCoocc;
 		private:
 			bool ImageMatcher::to_CharStar(String^ source, char*& target);
 			//bool ImageMatcher::to_string(String^ source, std::string &target);
 			array<float>^ to_array(float* pf, int n);
+
+			array<float>^ to_array(Gabor::Pic_GaborWL* picwl);
+
+			array<float>^ to_array(Cooccurrence::Pic_WLType* picwl);
 		};
 	}
 }

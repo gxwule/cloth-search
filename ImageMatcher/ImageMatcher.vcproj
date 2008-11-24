@@ -191,6 +191,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Cooccurrence.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Gabor.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GetFeature.cpp"
 				>
 			</File>
@@ -224,6 +232,22 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\Cooccurrence.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Gabor.h"
+				>
+			</File>
+			<File
+				RelativePath=".\gaborfilterdll.h"
+				>
+			</File>
+			<File
+				RelativePath=".\gaborkerneldll.h"
+				>
+			</File>
 			<File
 				RelativePath=".\GetFeature.h"
 				>
