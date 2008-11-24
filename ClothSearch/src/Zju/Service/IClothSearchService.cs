@@ -13,6 +13,10 @@ namespace Zju.Service
 
         List<Cloth> SearchByPicTexture(float[] textureVector);
 
+        List<Cloth> SearchByPicGabor(float[] gaborVector);
+
+        List<Cloth> SearchByPicCooccurrence(float[] cooccurrenceVector);
+
         List<Cloth> SearchByTextAndPicColor(String words, ColorEnum colors, ShapeEnum shapes, int[] colorVector);
 
         List<Cloth> SearchByTextAndPicTexture(String words, ColorEnum colors, ShapeEnum shapes, float[] textureVector);
@@ -22,5 +26,11 @@ namespace Zju.Service
 
         float GetTextureMDLimit();
         void SetTextureMDLimit(float textureMDLimit);
+
+        float GetGaborMDLimit();
+        void SetGaborMDLimit(float gaborMDLimit);
+
+        float GetCooccurrenceMDLimit();
+        void SetCooccurrenceMDLimit(float cooccurrenceMDLimit);
     }
 }

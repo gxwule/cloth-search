@@ -117,7 +117,7 @@ namespace Zju
 
 			int n = DIM * DIM;
 			float* pVector = new float[n];
-			memset(pVector, 0.0f, sizeof(float) * n);
+			//memset(pVector, 0.0f, sizeof(float) * n);
 			bool re = get_waveletfeature(fileName, pVector);
 			delete[] fileName;
 

@@ -43,6 +43,11 @@ namespace Zju.Domain
         private int[] colorVector;
 
         private float[] textureVector;
+
+        private float[] gaborVector;
+
+        private float[] cooccurrenceVector;
+
 #endregion
 
 #region getter & setter
@@ -93,6 +98,18 @@ namespace Zju.Domain
             get { return textureVector; }
             set { textureVector = value; }
         }
+
+        public float[] GaborVector
+        {
+            get { return gaborVector; }
+            set { gaborVector = value; }
+        }
+
+        public float[] CooccurrenceVector
+        {
+            get { return cooccurrenceVector; }
+            set { cooccurrenceVector = value; }
+        }
 #endregion
         
         public Cloth()
@@ -110,6 +127,8 @@ namespace Zju.Domain
             this.shapes = cloth.Shapes;
             this.colorVector = cloth.ColorVector;
             this.textureVector = cloth.TextureVector;
+            this.gaborVector = cloth.GaborVector;
+            this.cooccurrenceVector = cloth.CooccurrenceVector;
             this.updateTime = cloth.UpdateTime;
         }
 

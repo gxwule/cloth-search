@@ -149,6 +149,10 @@ namespace ClothSearch
                 ? keyCloth.ColorVector : ViewHelper.ImageMatcher.ExtractColorVector(cloth.Path, ViewConstants.IgnoreColors);
             cloth.TextureVector = (useKeyPic && keyCloth.TextureVector != null)
                 ? keyCloth.TextureVector : ViewHelper.ImageMatcher.ExtractTextureVector(cloth.Path);
+            cloth.GaborVector = (useKeyPic && keyCloth.GaborVector != null)
+                ? keyCloth.GaborVector : ViewHelper.ImageMatcher.ExtractGaborVector(cloth.Path);
+            cloth.CooccurrenceVector = (useKeyPic && keyCloth.CooccurrenceVector != null)
+                ? keyCloth.CooccurrenceVector : ViewHelper.ImageMatcher.ExtractCooccurrenceVector(cloth.Path);
 
             clothLibService.Insert(cloth);
 

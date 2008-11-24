@@ -21,6 +21,10 @@ namespace Zju.Util
         public static float[] ColorMDLimits = {600.0f, 800.0f, 1000.0f, 1500.0f, float.MaxValue - 1};
 
         public static float[] TextureMDLimits = { 70.0f, 120.0f, 180.0f, 300.0f, float.MaxValue - 1 };
+
+        public static float[] GaborMDLimits = { 10000.0f, 30000.0f, 80000.0f, 300000.0f, float.MaxValue - 1 };
+
+        public static float[] CooccurrenceMDLimits = { 0.5f, 0.9f, 1.2f, 2.0f, float.MaxValue - 1 };
     }
 
     [Flags]

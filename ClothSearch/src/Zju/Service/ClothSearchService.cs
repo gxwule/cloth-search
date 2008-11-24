@@ -14,6 +14,10 @@ namespace Zju.Service
 
         private float textureMDLimit;
 
+        private float gaborMDLimit;
+
+        private float cooccurrenceMDLimit;
+
         public ClothSearchService() : this(null)
         {
 
@@ -144,6 +148,58 @@ namespace Zju.Service
             return clothes;
         }
 
+        public List<Cloth> SearchByPicGabor(float[] gaborVector)
+        {
+            SortedDictionary<float, List<Cloth>> sortClothes = new SortedDictionary<float, List<Cloth>>();
+            List<Cloth> allClothes = clothDao.FindAll();
+            foreach (Cloth cloth in allClothes)
+            {
+                float md = ClothUtil.CalcManhattanDistance(gaborVector, cloth.GaborVector);
+                if (md <= gaborMDLimit)
+                {
+                    if (!sortClothes.ContainsKey(md))
+                    {
+                        sortClothes[md] = new List<Cloth>();
+                    }
+                    sortClothes[md].Add(cloth);
+                }
+            }
+
+            List<Cloth> clothes = new List<Cloth>();
+            foreach (List<Cloth> cs in sortClothes.Values)
+            {
+                clothes.AddRange(cs);
+            }
+
+            return clothes;
+        }
+
+        public List<Cloth> SearchByPicCooccurrence(float[] cooccurrenceVector)
+        {
+            SortedDictionary<float, List<Cloth>> sortClothes = new SortedDictionary<float, List<Cloth>>();
+            List<Cloth> allClothes = clothDao.FindAll();
+            foreach (Cloth cloth in allClothes)
+            {
+                float md = ClothUtil.CalcManhattanDistance(cooccurrenceVector, cloth.CooccurrenceVector);
+                if (md <= cooccurrenceMDLimit)
+                {
+                    if (!sortClothes.ContainsKey(md))
+                    {
+                        sortClothes[md] = new List<Cloth>();
+                    }
+                    sortClothes[md].Add(cloth);
+                }
+            }
+
+            List<Cloth> clothes = new List<Cloth>();
+            foreach (List<Cloth> cs in sortClothes.Values)
+            {
+                clothes.AddRange(cs);
+            }
+
+            return clothes;
+        }
+
         public List<Cloth> SearchByTextAndPicColor(String words, ColorEnum colors, ShapeEnum shapes, int[] colorVector)
         {
             List<List<Cloth>> clothLists = new List<List<Cloth>>();
@@ -200,6 +256,26 @@ namespace Zju.Service
         public void SetTextureMDLimit(float textureMDLimit)
         {
             this.textureMDLimit = textureMDLimit;
+        }
+
+        public float GetGaborMDLimit()
+        {
+            return gaborMDLimit;
+        }
+
+        public void SetGaborMDLimit(float gaborMDLimit)
+        {
+            this.gaborMDLimit = gaborMDLimit;
+        }
+
+        public float GetCooccurrenceMDLimit()
+        {
+            return cooccurrenceMDLimit;
+        }
+
+        public void SetCooccurrenceMDLimit(float cooccurrenceMDLimit)
+        {
+            this.cooccurrenceMDLimit = cooccurrenceMDLimit;
         }
 
         #endregion

@@ -122,6 +122,8 @@ namespace ClothSearch
 
                 keyCloth.ColorVector = imageMatcher.ExtractColorVector(keyCloth.Path, ViewConstants.IgnoreColors);
                 keyCloth.TextureVector = imageMatcher.ExtractTextureVector(keyCloth.Path);
+                keyCloth.GaborVector = imageMatcher.ExtractGaborVector(keyCloth.Path);
+                keyCloth.CooccurrenceVector = imageMatcher.ExtractCooccurrenceVector(keyCloth.Path);
 
                 updateSearchButton();
             }
@@ -192,7 +194,7 @@ namespace ClothSearch
             this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
                 new AsynUpdateUI(showProgressDialog), picNames.Count);
             // batch add pictures: add 10 pictures every time.
-            int step = 10;
+            int step = 1;
             List<Cloth> clothes = new List<Cloth>(step);
             // finished pictures
             int nFinished = 0;
@@ -288,16 +290,6 @@ namespace ClothSearch
             matchAlgorithmWin = new MatchAlgorithmWin(aDesc);
             matchAlgorithmWin.Owner = this;
             matchAlgorithmWin.ShowDialog();
-
-            int index = ViewHelper.RecallLevelToIndex(aDesc.RLevel);
-            if (clothSearchService.GetColorMDLimit() != SearchConstants.ColorMDLimits[index])
-            {
-                clothSearchService.SetColorMDLimit(SearchConstants.ColorMDLimits[index]);
-            }
-            if (clothSearchService.GetTextureMDLimit() != SearchConstants.TextureMDLimits[index])
-            {
-                clothSearchService.SetTextureMDLimit(SearchConstants.TextureMDLimits[index]);
-            }
         }
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
@@ -338,6 +330,7 @@ namespace ClothSearch
             }
 
             List<Cloth> clothes = new List<Cloth>();
+            int index = ViewHelper.RecallLevelToIndex(aDesc.RLevel);
             switch (aDesc.AType)
             {
                 case AlgorithmType.Color1:
@@ -348,10 +341,40 @@ namespace ClothSearch
                         MessageBox.Show("您指定的关键图可能是动画图片文件, 无法提取颜色特征.", "温馨提醒");
                         return null;
                     }
+                    if (clothSearchService.GetColorMDLimit() != SearchConstants.ColorMDLimits[index])
+                    {
+                        clothSearchService.SetColorMDLimit(SearchConstants.ColorMDLimits[index]);
+                    }
                     clothes = clothSearchService.SearchByPicColor(colorVector);
                     break;
                 case AlgorithmType.Texture1:
+                    float[] gaborVector = keyCloth.GaborVector != null ? keyCloth.GaborVector
+                        : imageMatcher.ExtractGaborVector(keyCloth.Path);
+                    if (null == gaborVector)
+                    {
+                        MessageBox.Show("您指定的关键图可能是动画图片文件, 无法提取纹理特征.", "温馨提醒");
+                        return null;
+                    }
+                    clothes = clothSearchService.SearchByPicGabor(gaborVector);
+                    if (clothSearchService.GetGaborMDLimit() != SearchConstants.GaborMDLimits[index])
+                    {
+                        clothSearchService.SetGaborMDLimit(SearchConstants.GaborMDLimits[index]);
+                    }
+                    break;
                 case AlgorithmType.Texture2:
+                    float[] cooccurrenceVector = keyCloth.CooccurrenceVector != null ? keyCloth.CooccurrenceVector
+                        : imageMatcher.ExtractCooccurrenceVector(keyCloth.Path);
+                    if (null == cooccurrenceVector)
+                    {
+                        MessageBox.Show("您指定的关键图可能是动画图片文件, 无法提取纹理特征.", "温馨提醒");
+                        return null;
+                    }
+                    clothes = clothSearchService.SearchByPicCooccurrence(cooccurrenceVector);
+                    if (clothSearchService.GetCooccurrenceMDLimit() != SearchConstants.CooccurrenceMDLimits[index])
+                    {
+                        clothSearchService.SetCooccurrenceMDLimit(SearchConstants.CooccurrenceMDLimits[index]);
+                    }
+                    break;
                 case AlgorithmType.Texture3:
                 default:
                     float[] textureVector = keyCloth.TextureVector != null ? keyCloth.TextureVector
@@ -360,6 +383,10 @@ namespace ClothSearch
                     {
                         MessageBox.Show("您指定的关键图可能是动画图片文件, 无法提取纹理特征.", "温馨提醒");
                         return null;
+                    }
+                    if (clothSearchService.GetTextureMDLimit() != SearchConstants.TextureMDLimits[index])
+                    {
+                        clothSearchService.SetTextureMDLimit(SearchConstants.TextureMDLimits[index]);
                     }
                     clothes = clothSearchService.SearchByPicTexture(textureVector);
                     break;

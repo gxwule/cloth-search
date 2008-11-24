@@ -101,6 +101,16 @@ namespace Zju.Dao
                 cloth.TextureVector = newCloth.TextureVector;
             }
 
+            if (newCloth.GaborVector != null && cloth.GaborVector != newCloth.GaborVector)
+            {
+                cloth.GaborVector = newCloth.GaborVector;
+            }
+
+            if (newCloth.CooccurrenceVector != null && cloth.CooccurrenceVector != newCloth.CooccurrenceVector)
+            {
+                cloth.CooccurrenceVector = newCloth.CooccurrenceVector;
+            }
+
             cloth.UpdateTime = (0 == newCloth.UpdateTime.Ticks) ? DateTime.UtcNow : newCloth.UpdateTime;
 
             cloth.Modify();

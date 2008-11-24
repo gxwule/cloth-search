@@ -19,9 +19,9 @@ int Gabor::Init()
 	int row = 0, col = 0;
 	int i = 0;
 	// 生成一组核函数
-	for (int j = 0; j < 16; j+=2)
+	for (int j = 0; j < FREQ_NUM * 2; j+=2)
 	{
-		for (int k = 0; k < 4; k+=1)
+		for (int k = 0; k < ORIE_NUM; k+=1)
 		{
 			CalculateKernel(2, 4, j, k, i, &row, &col);	
 			//printf("%d kernel generated\n", i);

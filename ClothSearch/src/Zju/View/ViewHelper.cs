@@ -116,6 +116,16 @@ namespace Zju.View
             {
                 cloth.TextureVector = ImageMatcher.ExtractTextureVector(cloth.Path);
             }
+
+            if (cloth.GaborVector == null)
+            {
+                cloth.GaborVector = ImageMatcher.ExtractGaborVector(cloth.Path);
+            }
+
+            if (cloth.CooccurrenceVector == null)
+            {
+                cloth.CooccurrenceVector = ImageMatcher.ExtractCooccurrenceVector(cloth.Path);
+            }
         }
 
         /// <summary>
