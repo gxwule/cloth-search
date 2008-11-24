@@ -34,7 +34,7 @@ namespace Zju.View
                 if (imageMatcher == null)
                 {
                     imageMatcher = new ImageMatcher();
-                    imageMatcher.luvInit(ViewConstants.LuvFileName);
+                    imageMatcher.LuvInit(ViewConstants.LuvFileName);
                 }
                 return imageMatcher;
             }

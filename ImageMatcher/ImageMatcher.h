@@ -26,7 +26,9 @@ namespace Zju
 			// It should be called before get_waveletfeature.
 			// It can be called just once before several "get_waveletfeature"
 			// Return null if failed.
-			bool luvInit(String^ luvFileName);
+			bool LuvInit(String^ luvFileName);
+
+			//bool GaborKernelInit(String^ gaborKernelFileName);
 
 			array<float>^ ExtractGaborVector(String^ imageFileName);
 

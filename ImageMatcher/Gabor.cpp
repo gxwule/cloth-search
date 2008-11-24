@@ -19,9 +19,9 @@ int Gabor::Init()
 	int row = 0, col = 0;
 	int i = 0;
 	// 生成一组核函数
-	for (int j = 0; j < FREQ_NUM * 2; j+=2)
+	for (int j = 0; j < frequency * 2; j+=2)
 	{
-		for (int k = 0; k < ORIE_NUM; k+=1)
+		for (int k = 0; k < oriention; k+=1)
 		{
 			CalculateKernel(2, 4, j, k, i, &row, &col);	
 			//printf("%d kernel generated\n", i);
@@ -79,6 +79,12 @@ int Gabor::CalculateKernel(double Sx, double Sy, double f, double theta, int ind
 
 	kernel[index] = k;
 	
+	mxDestroyArray(ax);
+	mxDestroyArray(bx);
+	mxDestroyArray(cx);
+	mxDestroyArray(dx);
+	mxDestroyArray(g);
+
 	return(1);
 }
 
@@ -132,6 +138,8 @@ int Gabor::OnWenLi(char *fname, Pic_GaborWL *pic_gaborWL)
 
 		pic_gaborWL->wenli[index++] = avg;
 		pic_gaborWL->wenli[index++] = deta;
+
+		mxDestroyArray(gabout);
 	}
 	
 	return 0;

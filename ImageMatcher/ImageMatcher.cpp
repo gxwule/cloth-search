@@ -35,7 +35,7 @@ namespace Zju
 			delete pGabor;
 		}
 
-		bool ImageMatcher::luvInit(String^ luvFileName)
+		bool ImageMatcher::LuvInit(String^ luvFileName)
 		{
 			char* fileName = nullptr;
 			if (!to_CharStar(luvFileName, fileName))
@@ -50,7 +50,23 @@ namespace Zju
 			isLuvInited = true;
 			return re;
 		}
+/*
+		bool ImageMatcher::GaborKernelInit(String^ gaborKernelFileName)
+		{
+			char* fileName = nullptr;
+			if (!to_CharStar(gaborKernelFileName, fileName))
+			{
+				// error, exception should be thrown out here.
+				return false;
+			}
 
+			bool re = luv_init(fileName);
+			delete[] fileName;
+
+			isLuvInited = true;
+			return re;
+		}
+*/
 		array<int>^ ImageMatcher::ExtractColorVector(String^ imageFileName, array<int>^ ignoreColors)
 		{
 			array<int>^ v = gcnew array<int>(24) {0};
