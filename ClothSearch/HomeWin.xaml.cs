@@ -60,6 +60,9 @@ namespace ClothSearch
         // totalPage = (seachedClothes.Count + picsPerPage - 1) / picsPerPage
         private int totalPage;
 
+        // the selected cloth in the result clothes.
+        private Cloth selectedCloth;
+
         private const string imageNamePrefix = "img";
         private const string reImageNamePrefix = "r";
 
@@ -341,6 +344,7 @@ namespace ClothSearch
                         MessageBox.Show("您指定的关键图可能是动画图片文件, 无法提取颜色特征.", "温馨提醒");
                         return null;
                     }
+
                     if (clothSearchService.GetColorMDLimit() != SearchConstants.ColorMDLimits[index])
                     {
                         clothSearchService.SetColorMDLimit(SearchConstants.ColorMDLimits[index]);
@@ -355,28 +359,14 @@ namespace ClothSearch
                         MessageBox.Show("您指定的关键图可能是动画图片文件, 无法提取纹理特征.", "温馨提醒");
                         return null;
                     }
-                    clothes = clothSearchService.SearchByPicGabor(gaborVector);
+                    
                     if (clothSearchService.GetGaborMDLimit() != SearchConstants.GaborMDLimits[index])
                     {
                         clothSearchService.SetGaborMDLimit(SearchConstants.GaborMDLimits[index]);
                     }
+                    clothes = clothSearchService.SearchByPicGabor(gaborVector);
                     break;
                 case AlgorithmType.Texture2:
-                    float[] cooccurrenceVector = keyCloth.CooccurrenceVector != null ? keyCloth.CooccurrenceVector
-                        : imageMatcher.ExtractCooccurrenceVector(keyCloth.Path);
-                    if (null == cooccurrenceVector)
-                    {
-                        MessageBox.Show("您指定的关键图可能是动画图片文件, 无法提取纹理特征.", "温馨提醒");
-                        return null;
-                    }
-                    clothes = clothSearchService.SearchByPicCooccurrence(cooccurrenceVector);
-                    if (clothSearchService.GetCooccurrenceMDLimit() != SearchConstants.CooccurrenceMDLimits[index])
-                    {
-                        clothSearchService.SetCooccurrenceMDLimit(SearchConstants.CooccurrenceMDLimits[index]);
-                    }
-                    break;
-                case AlgorithmType.Texture3:
-                default:
                     float[] textureVector = keyCloth.TextureVector != null ? keyCloth.TextureVector
                         : imageMatcher.ExtractTextureVector(keyCloth.Path);
                     if (null == textureVector)
@@ -384,11 +374,28 @@ namespace ClothSearch
                         MessageBox.Show("您指定的关键图可能是动画图片文件, 无法提取纹理特征.", "温馨提醒");
                         return null;
                     }
+
                     if (clothSearchService.GetTextureMDLimit() != SearchConstants.TextureMDLimits[index])
                     {
                         clothSearchService.SetTextureMDLimit(SearchConstants.TextureMDLimits[index]);
                     }
                     clothes = clothSearchService.SearchByPicTexture(textureVector);
+                    break;
+                case AlgorithmType.Texture3:
+                default:
+                    float[] cooccurrenceVector = keyCloth.CooccurrenceVector != null ? keyCloth.CooccurrenceVector
+                        : imageMatcher.ExtractCooccurrenceVector(keyCloth.Path);
+                    if (null == cooccurrenceVector)
+                    {
+                        MessageBox.Show("您指定的关键图可能是动画图片文件, 无法提取纹理特征.", "温馨提醒");
+                        return null;
+                    }
+                    
+                    if (clothSearchService.GetCooccurrenceMDLimit() != SearchConstants.CooccurrenceMDLimits[index])
+                    {
+                        clothSearchService.SetCooccurrenceMDLimit(SearchConstants.CooccurrenceMDLimits[index]);
+                    }
+                    clothes = clothSearchService.SearchByPicCooccurrence(cooccurrenceVector);
                     break;
             }
 
@@ -522,13 +529,13 @@ namespace ClothSearch
         {
             Image image = (Image)sender;
             imgCurrentResult.Source = image.Source;
-            imgCurrentResult.Name = reImageNamePrefix + image.Name;
+            //imgCurrentResult.Name = reImageNamePrefix + image.Name;
 
-            Cloth cloth = searchedClothes[int.Parse(image.Name.Substring(imageNamePrefix.Length))];
+            selectedCloth = searchedClothes[int.Parse(image.Name.Substring(imageNamePrefix.Length))];
 
-            txtModifyName.Text = string.IsNullOrEmpty(cloth.Name) ? "" : cloth.Name;
+            txtModifyName.Text = string.IsNullOrEmpty(selectedCloth.Name) ? "" : selectedCloth.Name;
 
-            txtModifyPattern.Text = string.IsNullOrEmpty(cloth.Pattern) ? "" : cloth.Pattern;
+            txtModifyPattern.Text = string.IsNullOrEmpty(selectedCloth.Pattern) ? "" : selectedCloth.Pattern;
             
             txtModifyName.IsEnabled = true;
             txtModifyPattern.IsEnabled = true;
@@ -546,9 +553,9 @@ namespace ClothSearch
 
         private void btnResultDelete_Click(object sender, RoutedEventArgs e)
         {
-            Cloth cloth = searchedClothes[int.Parse(imgCurrentResult.Name.Substring(reImageNamePrefix.Length + imageNamePrefix.Length))];
-            searchedClothes.Remove(cloth);
-            clothLibService.Delete(cloth.Oid);
+            //Cloth cloth = searchedClothes[int.Parse(imgCurrentResult.Name.Substring(reImageNamePrefix.Length + imageNamePrefix.Length))];
+            bool isIn = searchedClothes.Remove(selectedCloth);
+            clothLibService.Delete(selectedCloth.Oid);
 
             imgCurrentResult.Source = null;
 
@@ -561,18 +568,21 @@ namespace ClothSearch
             btnResultDelete.IsEnabled = false;
             btnResultModify.IsEnabled = false;
 
-            updatePicResults();
+            if (isIn)
+            {   // the removed selected cloth is in the searched clothes
+                updatePicResults();
+            }
         }
 
         private void btnResultModify_Click(object sender, RoutedEventArgs e)
         {
-            Cloth cloth = searchedClothes[int.Parse(imgCurrentResult.Name.Substring(reImageNamePrefix.Length + imageNamePrefix.Length))];
+            //Cloth cloth = searchedClothes[int.Parse(imgCurrentResult.Name.Substring(reImageNamePrefix.Length + imageNamePrefix.Length))];
 
-            Cloth newCloth = new Cloth(cloth);
+            Cloth newCloth = new Cloth(selectedCloth);
             newCloth.Name = string.IsNullOrEmpty(txtModifyName.Text) ? null : txtModifyName.Text;
             newCloth.Pattern = string.IsNullOrEmpty(txtModifyPattern.Text) ? null : txtModifyPattern.Text;
 
-            clothLibService.Update(cloth, newCloth);
+            clothLibService.Update(selectedCloth, newCloth);
         }
 
         private void btnFirstPage_Click(object sender, RoutedEventArgs e)

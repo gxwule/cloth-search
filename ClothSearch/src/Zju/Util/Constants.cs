@@ -17,14 +17,15 @@ namespace Zju.Util
         /// <summary>
         /// Limit of Manhattan distance of color vectors between two cloth when searching.
         /// The cloth as searched should less or equal to the limit.
+        /// 500, 2000, 6000
         /// </summary>
-        public static float[] ColorMDLimits = {600.0f, 800.0f, 1000.0f, 1500.0f, float.MaxValue - 1};
+        public static float[] ColorMDLimits = { 686.0f, 1064.0f, 1656.0f, float.MaxValue - 1, float.MaxValue - 1 };
 
-        public static float[] TextureMDLimits = { 70.0f, 120.0f, 180.0f, 300.0f, float.MaxValue - 1 };
+        public static float[] TextureMDLimits = { 80.5f, 132.6f, 220.8f, float.MaxValue - 1, float.MaxValue - 1 };
 
-        public static float[] GaborMDLimits = { 10000.0f, 30000.0f, 80000.0f, 300000.0f, float.MaxValue - 1 };
+        public static float[] GaborMDLimits = { 10700.0f, 42500.0f, 135000.0f, float.MaxValue - 1, float.MaxValue - 1 };
 
-        public static float[] CooccurrenceMDLimits = { 0.5f, 0.9f, 1.2f, 2.0f, float.MaxValue - 1 };
+        public static float[] CooccurrenceMDLimits = { 0.6f, 0.94f, 1.59f, float.MaxValue - 1, float.MaxValue - 1 };
     }
 
     [Flags]

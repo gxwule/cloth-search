@@ -3,8 +3,8 @@
 #include "stdafx.h"
 #include "matlab.h"
 
-#define FREQ_NUM 8 // 可调的频率数
-#define ORIE_NUM 4 // 可调的方向数
+#define FREQ_NUM 4 // 可调的频率数
+#define ORIE_NUM 2 // 可调的方向数
 #define KERNEL_NUM (FREQ_NUM * ORIE_NUM) // 核函数总数
 #define GABOR_TEXTURE_SIZE (KERNEL_NUM * 2)
 
