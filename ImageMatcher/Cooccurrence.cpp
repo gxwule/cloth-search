@@ -57,27 +57,25 @@ int Cooccurrence::OnWenLi(const char *fname, Pic_WLType *Pic_WenLi)
 		// log error, cannot open file
 		return 1;
 	}
+	CvSize imgSize;
+	imgSize.width = imgRgb->width;
+	imgSize.height = imgRgb->height;
 
-	unsigned char *imageY = new unsigned char[imgRgb->width * imgRgb->height];
+	unsigned char *imageY = new unsigned char[imgSize.width * imgSize.height];
+	memset(imageY, 0, sizeof(unsigned char) * imgSize.width * imgSize.height);
 	
 	unsigned char b, g, r;
-	int max = 0;
-	for( int h = 0; h < imgRgb->height; ++h ) {
-		for ( int w = 0; w < imgRgb->width * 3; w += 3 ) {
+	for( int h = 0; h < imgSize.height; ++h ) {
+		for ( int w = 0; w < imgSize.width * 3; w += 3 ) {
 			b  = ((unsigned char*)(imgRgb->imageData + imgRgb->widthStep * h))[w+0];
 			g = ((unsigned char*)(imgRgb->imageData + imgRgb->widthStep * h))[w+1];
 			r = ((unsigned char*)(imgRgb->imageData + imgRgb->widthStep * h))[w+2];
-			imageY[imgRgb->width * h + w / 3] = (unsigned char)(0.299*r + 0.587*g + 0.114*b); //得到灰度分量
-			if (max < imgRgb->width * h + w / 3)
-			{
-				max = imgRgb->width * h + w / 3;
-			}
+			imageY[imgSize.width * h + w / 3] = (unsigned char)(0.299*r + 0.587*g + 0.114*b); //得到灰度分量
 		}
 	}
+	cvReleaseImage(&imgRgb);
 
-	GetDivision(imgRgb->height, imgRgb->width, imageY, Pic_WenLi); //得到25个分块0,45,90,135度共生矩阵的8个特征值，生成纹理特征
-	
-	cvReleaseImage( &imgRgb );
+	GetDivision(imgSize.height, imgSize.width, imageY, Pic_WenLi); //得到25个分块0,45,90,135度共生矩阵的8个特征值，生成纹理特征
 	delete[] imageY;
 	
 	return 0;
@@ -191,7 +189,11 @@ int Cooccurrence::GetCoMatrix(int Col,int RowX,int ColY,int p,int q,unsigned lon
 				  int CMatrix_90[64][64],int CMatrix_135[64][64])
 {   
 	int i,j,k,Newlevel,m,n;
-	char GrayMatrix[600][500];
+	char** GrayMatrix = new char*[RowX];
+	for (i=0; i<RowX; ++i)
+	{
+		GrayMatrix[i] = new char[ColY];
+	}
 	
 	for(i=p;i<p+RowX;i++)
 	{
@@ -199,7 +201,7 @@ int Cooccurrence::GetCoMatrix(int Col,int RowX,int ColY,int p,int q,unsigned lon
 		{   
 			k=BufY[Index]%4;
 			Newlevel=(BufY[Index]-k)/4;
-			GrayMatrix[i][j]=Newlevel;
+			GrayMatrix[i-p][j-q]=Newlevel;
 			Index++;
 		}
 		Index=Index+(Col-ColY);
@@ -217,14 +219,14 @@ int Cooccurrence::GetCoMatrix(int Col,int RowX,int ColY,int p,int q,unsigned lon
 	{
 		for(j=q;j<q+ColY-1;j++)
 		{   
-			m=GrayMatrix[i][j];
-			n=GrayMatrix[i][j+1];
+			m=GrayMatrix[i-p][j-q];
+			n=GrayMatrix[i-p][j-q+1];
 			CMatrix_0[m][n]++;
 		}
 		for(j=q+ColY-1;j>q;j--)
 		{
-			m=GrayMatrix[i][j];
-			n=GrayMatrix[i][j-1];
+			m=GrayMatrix[i-p][j-q];
+			n=GrayMatrix[i-p][j-q-1];
 			CMatrix_0[m][n]++;
 		}
 	}//生成0度共生矩阵
@@ -241,8 +243,8 @@ int Cooccurrence::GetCoMatrix(int Col,int RowX,int ColY,int p,int q,unsigned lon
 	{
 		for(j=q+1;j<q+ColY;j++)
 		{   
-			m=GrayMatrix[i][j];
-			n=GrayMatrix[i+1][j-1];
+			m=GrayMatrix[i-p][j-q];
+			n=GrayMatrix[i-p+1][j-q-1];
 			CMatrix_45[m][n]++;
 		}
 	}
@@ -250,8 +252,8 @@ int Cooccurrence::GetCoMatrix(int Col,int RowX,int ColY,int p,int q,unsigned lon
 	{
 		for(j=q;j<q+ColY-1;j++)
 		{
-			m=GrayMatrix[i][j];
-			n=GrayMatrix[i-1][j+1];
+			m=GrayMatrix[i-p][j-q];
+			n=GrayMatrix[i-p-1][j-q+1];
 			CMatrix_45[m][n]++;
 		}
 	}//生成45度共生矩阵
@@ -269,14 +271,14 @@ int Cooccurrence::GetCoMatrix(int Col,int RowX,int ColY,int p,int q,unsigned lon
 	{
 		for(i=p;i<p+RowX-1;i++)
 		{   
-			m=GrayMatrix[i][j];
-			n=GrayMatrix[i+1][j];
+			m=GrayMatrix[i-p][j-q];
+			n=GrayMatrix[i-p+1][j-q];
 			CMatrix_90[m][n]++;
 		}
 		for(i=p+RowX-1;i>p;i--)
 		{
-			m=GrayMatrix[i][j];
-			n=GrayMatrix[i-1][j];
+			m=GrayMatrix[i-p][j-q];
+			n=GrayMatrix[i-p-1][j-q];
 			CMatrix_90[m][n]++;
 		}
 	}//生成90度共生矩阵
@@ -293,8 +295,8 @@ int Cooccurrence::GetCoMatrix(int Col,int RowX,int ColY,int p,int q,unsigned lon
 	{
 		for(j=q;j<q+ColY-1;j++)
 		{   
-			m=GrayMatrix[i][j];
-			n=GrayMatrix[i+1][j+1];
+			m=GrayMatrix[i-p][j-q];
+			n=GrayMatrix[i-p+1][j-q+1];
 			CMatrix_135[m][n]++;
 		}
 	}
@@ -302,11 +304,18 @@ int Cooccurrence::GetCoMatrix(int Col,int RowX,int ColY,int p,int q,unsigned lon
 	{
 		for(j=q+ColY-1;j>q;j--)
 		{
-			m=GrayMatrix[i][j];
-			n=GrayMatrix[i-1][j-1];
+			m=GrayMatrix[i-p][j-q];
+			n=GrayMatrix[i-p-1][j-q-1];
 			CMatrix_135[m][n]++;
 		}
 	}//生成135度共生矩阵
+
+	// free memory
+	for (i=0; i<RowX; ++i)
+	{
+		delete[] GrayMatrix[i];
+	}
+	delete[] GrayMatrix;
 
 	return 0;	
 }
