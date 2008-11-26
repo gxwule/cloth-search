@@ -45,7 +45,7 @@ namespace Zju
 
 			Cooccurrence* pCoocc;
 		private:
-			bool ImageMatcher::to_CharStar(String^ source, char*& target);
+			//bool ImageMatcher::to_CharStar(String^ source, char*& target);
 			//bool ImageMatcher::to_string(String^ source, std::string &target);
 			array<float>^ to_array(float* pf, int n);
 

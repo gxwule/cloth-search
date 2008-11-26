@@ -93,7 +93,7 @@ int Gabor::CalculateKernel(double Sx, double Sy, double f, double theta, int ind
 /* [in]fname: 图片文件名，包括路径
 /* [out]pic_gaborWL: 提取出的特征向量                                                                     */
 /************************************************************************/
-int Gabor::OnWenLi(char *fname, Pic_GaborWL *pic_gaborWL)
+int Gabor::OnWenLi(const char *fname, Pic_GaborWL *pic_gaborWL)
 {	
 	int index = 0;
 	for (int i = 0; i < KERNEL_NUM; ++i)

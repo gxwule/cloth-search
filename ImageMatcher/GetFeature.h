@@ -6,8 +6,8 @@
 // It should be called before get_waveletfeature.
 // It can be called just once before several "get_waveletfeature"
 // Return 
-bool luv_init(char* luvFile);
+bool luv_init(const char* luvFile);
 
 // the feature should be allocated and freed out of the method.
-bool get_waveletfeature(char* filename, float* feature);
+bool get_waveletfeature(const char* filename, float* feature);
 

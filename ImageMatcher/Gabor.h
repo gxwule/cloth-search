@@ -23,7 +23,7 @@ private:
 	int frequency;
 	int oriention;
 public:
-	int OnWenLi(char *fname, Pic_GaborWL *pic_gaborWL);
+	int OnWenLi(const char *fname, Pic_GaborWL *pic_gaborWL);
 	int OnRetrieveIn(Pic_GaborWL *model_WL, Pic_GaborWL *Pic_WL, int fnum, int *sort);
 	// Current not support customize these two parameters, actually.
 	Gabor(int frequency=FREQ_NUM, int oriention=ORIE_NUM);

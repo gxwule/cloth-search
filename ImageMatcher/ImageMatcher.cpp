@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include <highgui.h>
-#include <vcclr.h>
+//#include <vcclr.h>
 #include "ImageMatcher.h"
 #include "GetFeature.h"
 
@@ -18,6 +18,8 @@
 #pragma comment(lib, "libmwservices.lib")
 #pragma comment(lib, "gaborfilterdll.lib")
 #pragma comment(lib, "gaborkerneldll.lib")
+
+using namespace System::Runtime::InteropServices;
 
 namespace Zju
 {
@@ -37,15 +39,20 @@ namespace Zju
 
 		bool ImageMatcher::LuvInit(String^ luvFileName)
 		{
+			/*
 			char* fileName = nullptr;
 			if (!to_CharStar(luvFileName, fileName))
 			{
 				// error, exception should be thrown out here.
 				return false;
 			}
+			*/
+			IntPtr ip = Marshal::StringToHGlobalAnsi(luvFileName);
+			const char* fileName = static_cast<const char*>(ip.ToPointer());
 
 			bool re = luv_init(fileName);
-			delete[] fileName;
+			//delete[] fileName;
+			Marshal::FreeHGlobal(ip);
 
 			isLuvInited = true;
 			return re;
@@ -73,15 +80,11 @@ namespace Zju
 
 			IplImage* imgRgb = NULL;
 
-			char* fileName = nullptr;
-			if (!to_CharStar(imageFileName, fileName))
-			{
-				// error, exception should be thrown out here.
-				return nullptr;
-			}
+			IntPtr ip = Marshal::StringToHGlobalAnsi(imageFileName);
+			const char* fileName = static_cast<const char*>(ip.ToPointer());
 
 			imgRgb = cvLoadImage(fileName, CV_LOAD_IMAGE_COLOR);
-			delete[] fileName;
+			Marshal::FreeHGlobal(ip);
 
 			if (imgRgb == NULL)
 			{
@@ -124,18 +127,15 @@ namespace Zju
 				return nullptr;
 			}
 
-			char* fileName = nullptr;
-			if (!to_CharStar(imageFileName, fileName))
-			{
-				// error, exception should be thrown out here.
-				return nullptr;
-			}
+			IntPtr ip = Marshal::StringToHGlobalAnsi(imageFileName);
+			const char* fileName = static_cast<const char*>(ip.ToPointer());
 
 			int n = DIM * DIM;
 			float* pVector = new float[n];
 			//memset(pVector, 0.0f, sizeof(float) * n);
 			bool re = get_waveletfeature(fileName, pVector);
-			delete[] fileName;
+
+			Marshal::FreeHGlobal(ip);
 
 			if (!re)
 			{
@@ -150,16 +150,12 @@ namespace Zju
 
 		array<float>^ ImageMatcher::ExtractGaborVector(String^ imageFileName)
 		{
-			char* fileName = nullptr;
-			if (!to_CharStar(imageFileName, fileName))
-			{
-				// error, exception should be thrown out here.
-				return nullptr;
-			}
+			IntPtr ip = Marshal::StringToHGlobalAnsi(imageFileName);
+			const char* fileName = static_cast<const char*>(ip.ToPointer());
 
 			Gabor::Pic_GaborWL* picwl = new Gabor::Pic_GaborWL;
 			int re = pGabor->OnWenLi(fileName, picwl);
-			delete[] fileName;
+			Marshal::FreeHGlobal(ip);
 
 			array<float>^ textureVector = nullptr;
 			if (re == 0)
@@ -173,16 +169,12 @@ namespace Zju
 
 		array<float>^ ImageMatcher::ExtractCooccurrenceVector(String^ imageFileName)
 		{
-			char* fileName = nullptr;
-			if (!to_CharStar(imageFileName, fileName))
-			{
-				// error, exception should be thrown out here.
-				return nullptr;
-			}
+			IntPtr ip = Marshal::StringToHGlobalAnsi(imageFileName);
+			const char* fileName = static_cast<const char*>(ip.ToPointer());
 
 			Cooccurrence::Pic_WLType* picwl = new Cooccurrence::Pic_WLType;
 			int re = pCoocc->OnWenLi(fileName, picwl);
-			delete[] fileName;
+			Marshal::FreeHGlobal(ip);
 
 			array<float>^ textureVector = nullptr;
 			if (re == 0)
@@ -194,7 +186,7 @@ namespace Zju
 			return textureVector;
 		}
 
-
+		/*
 		// the "target" alloc in this method, the should be delete[] outside.
 		bool ImageMatcher::to_CharStar(String^ source, char*& target)
 		{
@@ -205,7 +197,6 @@ namespace Zju
 		}
 
 		// no memory delete need outside the method.
-		/*
 		bool ImageMatcher::to_string(String^ source, std::string &target)
 		{    
 			pin_ptr<const wchar_t> wch = PtrToStringChars(source);    

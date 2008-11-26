@@ -19,13 +19,13 @@ namespace Zju.Util
         /// The cloth as searched should less or equal to the limit.
         /// 500, 2000, 6000
         /// </summary>
-        public static float[] ColorMDLimits = { 686.0f, 1064.0f, 1656.0f, float.MaxValue - 1, float.MaxValue - 1 };
+        public static float[] ColorMDLimits = { float.MaxValue - 1, 686.0f, 1064.0f, 1656.0f, float.MaxValue - 1 };
 
-        public static float[] TextureMDLimits = { 80.5f, 132.6f, 220.8f, float.MaxValue - 1, float.MaxValue - 1 };
+        public static float[] TextureMDLimits = { float.MaxValue - 1, 80.5f, 132.6f, 220.8f, float.MaxValue - 1 };
 
-        public static float[] GaborMDLimits = { 10700.0f, 42500.0f, 135000.0f, float.MaxValue - 1, float.MaxValue - 1 };
+        public static float[] GaborMDLimits = { float.MaxValue - 1, 10700.0f, 42500.0f, 135000.0f, float.MaxValue - 1 };
 
-        public static float[] CooccurrenceMDLimits = { 0.6f, 0.94f, 1.59f, float.MaxValue - 1, float.MaxValue - 1 };
+        public static float[] CooccurrenceMDLimits = { float.MaxValue - 1, 0.6f, 0.94f, 1.59f, float.MaxValue - 1 };
     }
 
     [Flags]

@@ -146,7 +146,7 @@ void wtn(float *a, unsigned long nn[], int isign, int iter,
 /*
  *	得到8*8维小波特征向量
  */
-bool get_waveletfeature(char* filename, float* feature)
+bool get_waveletfeature(const char* filename, float* feature)
 {
 	int i,j,nL,t;
 	double r,g,b;
@@ -168,7 +168,7 @@ bool get_waveletfeature(char* filename, float* feature)
 	unsigned long nn[3] = {0, imgSize.height, imgSize.width};
 
 	float* picluv = new float[imgSize.width * imgSize.height];
-	memset(picluv, 0.0f, sizeof(float) * imgSize.width * imgSize.height);
+	memset(picluv, 0, sizeof(float) * imgSize.width * imgSize.height);
 
 	for( int h = 0; h < imgSize.height; ++h ) 
 	{
@@ -232,7 +232,7 @@ bool get_waveletfeature(char* filename, float* feature)
 /*
  * 初始化 luv[][], LLindex[], Lindex[][]以及matRGBtoXYZ[3][3],Wx,Wy,Wz,u0,v0
  */
-bool luv_init(char* luvFile)
+bool luv_init(const char* luvFile)
 {
   FILE *indexFile;
   int i;
@@ -240,8 +240,7 @@ bool luv_init(char* luvFile)
   int index;
   double deno;
 
-  indexFile = fopen (luvFile, "r");
-  if (indexFile == NULL) {
+  if (fopen_s(&indexFile, luvFile, "r") != 0) {
      //printf ("Error in opening luv file <%s> in class LuvIndexing\n", "luv.dat");
      // TODO log
 	  return false;
@@ -251,7 +250,7 @@ bool luv_init(char* luvFile)
 
   // read in sizes of luv and Lindex arrays and allocate storages
   for (i=0; i<159; i++) {
-     fscanf (indexFile, "%f %f %f %d", &L, &u, &v, &index);
+     fscanf_s(indexFile, "%f %f %f %d", &L, &u, &v, &index);
      luv[i][0] = L;
      luv[i][1] = u;
      luv[i][2] = v;

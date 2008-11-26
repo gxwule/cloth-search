@@ -22,7 +22,7 @@ public:
 
 public:
 	
-	int OnWenLi(char *fname, Pic_WLType *Pic_WenLi);
+	int OnWenLi(const char *fname, Pic_WLType *Pic_WenLi);
 	int OnRetrieveIn(Pic_WLType *model_WL, Pic_WLType *Pic_WL, int fnum, int *sort);
 private:
 	int GetDivision(int Row,int Col,unsigned char *ImageY,struct Pic_WLType * Pic_WenLi);

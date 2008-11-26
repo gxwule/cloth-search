@@ -49,7 +49,7 @@
 /* [in]fname: 文件名称，包括路径
 /* [out]Pic_WenLi:提取出的纹理特征向量                                                                     */
 /************************************************************************/
-int Cooccurrence::OnWenLi(char *fname, Pic_WLType *Pic_WenLi) 
+int Cooccurrence::OnWenLi(const char *fname, Pic_WLType *Pic_WenLi) 
 {
 	IplImage* imgRgb = cvLoadImage(fname, CV_LOAD_IMAGE_COLOR);
 	if (imgRgb == NULL)
@@ -139,7 +139,7 @@ int Cooccurrence::GetDivision(int Row,int Col,unsigned char *ImageY,struct Pic_W
 	
 	for(i=0;i<Block_Total;i++)
 	{
-		for(int j=0;j<4;j++) total=total+CCON[j][i];//求反差的均值和标准差
+		for(j=0;j<4;j++) total=total+CCON[j][i];//求反差的均值和标准差
 		A_CON[i]=total/4;
 		T_CON[i]=(float)(sqrt(((CCON[0][i]-A_CON[i])*(CCON[0][i]-A_CON[i])
 			+(CCON[1][i]-A_CON[i])*(CCON[1][i]-A_CON[i])
