@@ -90,7 +90,7 @@ namespace Zju
 			{
 				return nullptr;
 			}
-			
+
 			System::Collections::Generic::HashSet<int> ignoreColorSet;
 			if (ignoreColors != nullptr && ignoreColors->Length > 0)
 			{
@@ -133,7 +133,18 @@ namespace Zju
 			int n = DIM * DIM;
 			float* pVector = new float[n];
 			//memset(pVector, 0.0f, sizeof(float) * n);
-			bool re = get_waveletfeature(fileName, pVector);
+			bool re = false;
+			try 
+			{
+				re = get_waveletfeature(fileName, pVector);
+			}
+			catch (Exception^ e)
+			{
+				// TODO do some log
+				Marshal::FreeHGlobal(ip);
+				delete[] pVector;
+				return nullptr;
+			}
 
 			Marshal::FreeHGlobal(ip);
 
@@ -146,6 +157,7 @@ namespace Zju
 			delete[] pVector;
 
 			return textureVector;
+			
 		}
 
 		array<float>^ ImageMatcher::ExtractGaborVector(String^ imageFileName)
@@ -154,7 +166,19 @@ namespace Zju
 			const char* fileName = static_cast<const char*>(ip.ToPointer());
 
 			Gabor::Pic_GaborWL* picwl = new Gabor::Pic_GaborWL;
-			int re = pGabor->OnWenLi(fileName, picwl);
+			int re = 0;
+			try 
+			{
+				re = pGabor->OnWenLi(fileName, picwl);
+			}
+			catch (Exception^ e)
+			{
+				// TODO do some log
+				Marshal::FreeHGlobal(ip);
+				delete[] picwl;
+				return nullptr;
+			}
+
 			Marshal::FreeHGlobal(ip);
 
 			array<float>^ textureVector = nullptr;
@@ -173,7 +197,19 @@ namespace Zju
 			const char* fileName = static_cast<const char*>(ip.ToPointer());
 
 			Cooccurrence::Pic_WLType* picwl = new Cooccurrence::Pic_WLType;
-			int re = pCoocc->OnWenLi(fileName, picwl);
+			int re = 0;
+			try 
+			{
+				re = pCoocc->OnWenLi(fileName, picwl);
+			}
+			catch (Exception^ e)
+			{
+				// TODO do some log
+				Marshal::FreeHGlobal(ip);
+				delete[] picwl;
+				return nullptr;
+			}
+
 			Marshal::FreeHGlobal(ip);
 
 			array<float>^ textureVector = nullptr;

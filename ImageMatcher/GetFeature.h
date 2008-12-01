@@ -9,5 +9,6 @@
 bool luv_init(const char* luvFile);
 
 // the feature should be allocated and freed out of the method.
+// Daubechies texture algorithm, 8*8 wavelet.
 bool get_waveletfeature(const char* filename, float* feature);
 

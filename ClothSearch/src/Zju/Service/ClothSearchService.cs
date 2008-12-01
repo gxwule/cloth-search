@@ -119,6 +119,11 @@ namespace Zju.Service
                 clothes.AddRange(cs);
             }
 
+            if (clothes.Count > 200)
+            {
+                return clothes.GetRange(0, 200);
+            }
+
             return clothes;
         }
 
@@ -143,6 +148,11 @@ namespace Zju.Service
             foreach (List<Cloth> cs in sortClothes.Values)
             {
                 clothes.AddRange(cs);
+            }
+
+            if (clothes.Count > 200)
+            {
+                return clothes.GetRange(0, 200);
             }
 
             return clothes;
@@ -171,6 +181,11 @@ namespace Zju.Service
                 clothes.AddRange(cs);
             }
 
+            if (clothes.Count > 200)
+            {
+                return clothes.GetRange(0, 200);
+            }
+
             return clothes;
         }
 
@@ -195,6 +210,11 @@ namespace Zju.Service
             foreach (List<Cloth> cs in sortClothes.Values)
             {
                 clothes.AddRange(cs);
+            }
+
+            if (clothes.Count > 200)
+            {
+                return clothes.GetRange(0, 200);
             }
 
             return clothes;

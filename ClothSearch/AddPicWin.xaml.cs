@@ -56,7 +56,8 @@ namespace ClothSearch
             dlgOpenPic = new OpenFileDialog();
             dlgOpenPic.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
             dlgOpenPic.Title = "请选择新增的图片";
-            dlgOpenPic.Filter = "jpeg (*.jpg;*.jpeg;*.jpe;*.jfif)|*.jpg;*.jpeg;*.jpe;*.jfif|All Image files|*.jpg;*.jpeg;*.jpe;*.jfif;*.gif;*.png;*.bmp;*.ico;*.tif;*.tiff|All files (*.*)|*.*";
+            dlgOpenPic.Filter = "jpeg (*.jpg;*.jpeg;*.jpe;*.jfif)|*.jpg;*.jpeg;*.jpe;*.jfif|所有支持的图片文件 (JPG;BMP;PNG;TIF;...)|*.jpg;*.jpeg;*.jpe;*.jfif;*.png;*.bmp;*.dib;*.tif;*.tiff";
+            dlgOpenPic.FilterIndex = 2; // begin from 1
         }
 
         public AddPicWin() : this(null)

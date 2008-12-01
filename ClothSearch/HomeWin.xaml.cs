@@ -7,6 +7,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Threading;
 using Microsoft.Win32;
 using Zju.Dao;
 using Zju.Domain;
@@ -47,25 +48,49 @@ namespace ClothSearch
 
         private MatchAlgorithmWin matchAlgorithmWin;
 
-        private delegate void AsynUpdateUI(int nFinished);
+        private delegate void AsynOpenUI(int nTotal);
 
-        private delegate void AsynImportPics(List<String> picNames);
+        private delegate void AsynUpdateUI();
+
+        //private delegate void AsynImportPics(List<String> picNames);
 
         private System.Windows.Forms.FolderBrowserDialog dlgOpenPicFolder;
 
-        // pages
+        /// <summary>
+        /// pages.
+        /// </summary>
         private const int picsPerPage = 28;
         private List<Cloth> searchedClothes;
         private int curPage;
-        // totalPage = (seachedClothes.Count + picsPerPage - 1) / picsPerPage
+        /// <summary>
+        /// totalPage = (seachedClothes.Count + picsPerPage - 1) / picsPerPage
+        /// </summary>
         private int totalPage;
 
-        // the selected cloth in the result clothes.
+        /// <summary>
+        /// the selected cloth in the result clothes.
+        /// </summary>
         private Cloth selectedCloth;
 
         private const string imageNamePrefix = "img";
         private const string reImageNamePrefix = "r";
 
+        /// <summary>
+        ///  the finished picture when import
+        /// </summary>
+        private int nFinished;
+
+        /// <summary>
+        ///  Thread to import pictures.
+        /// </summary>
+        //private Thread importPicsThread;
+
+        /// <summary>
+        /// The picture file names to be imported, used in the thread <code>importPicsThread</code>.
+        /// </summary>
+        //private List<String> picNames;
+
+        //public static int count = 0;
         public HomeWin()
         {
             colorItems = ViewHelper.NewColorItems;
@@ -86,7 +111,7 @@ namespace ClothSearch
             dlgOpenPics.Multiselect = true;
 
             dlgOpenPicFolder = new System.Windows.Forms.FolderBrowserDialog();
-            dlgOpenPicFolder.Description = "请选择文件夹以导入其下的所有图片(JPG, GIF, PNG, BMP)";
+            dlgOpenPicFolder.Description = "请选择文件夹以导入其下的所有图片(JPG, PNG, BMP)";
             dlgOpenPicFolder.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
             //dlgOpenPicFolder.RootFolder = Environment.SpecialFolder.MyPictures;
 
@@ -96,6 +121,8 @@ namespace ClothSearch
             imageMatcher = ViewHelper.ImageMatcher;
 
             aDesc = new AlgorithmDesc();
+
+            //picNames = new List<string>();
         }
 
         private void btnToolOpen_Click(object sender, RoutedEventArgs e)
@@ -112,7 +139,7 @@ namespace ClothSearch
                 BitmapImage bi = ViewHelper.NewBitmapImage(dlgOpenKeyPic.FileName);
                 if (bi == null)
                 {
-                    MessageBox.Show("您选择的不是图片文件, 请重新选择.", "温馨提示");
+                    MessageBox.Show("您选择的文件无法识别, 可能不是图片文件.", "显示关键图...");
                     return;
                 }
 
@@ -135,8 +162,10 @@ namespace ClothSearch
         private OpenFileDialog newOpenFileDialog()
         {
             OpenFileDialog dlgOpenFile = new OpenFileDialog();
-            dlgOpenFile.Filter = "jpeg (*.jpg;*.jpeg;*.jpe;*.jfif)|*.jpg;*.jpeg;*.jpe;*.jfif|All Image files|*.jpg;*.jpeg;*.jpe;*.jfif;*.gif;*.png;*.bmp;*.ico;*.tif;*.tiff|All files (*.*)|*.*";
+            //dlgOpenFile.Filter = "jpeg (*.jpg;*.jpeg;*.jpe;*.jfif)|*.jpg;*.jpeg;*.jpe;*.jfif|All Image files|*.jpg;*.jpeg;*.jpe;*.jfif;*.gif;*.png;*.bmp;*.ico;*.tif;*.tiff|All files (*.*)|*.*";
+            dlgOpenFile.Filter = "jpeg (*.jpg;*.jpeg;*.jpe;*.jfif)|*.jpg;*.jpeg;*.jpe;*.jfif|所有支持的图片文件 (JPG;BMP;PNG;TIF;...)|*.jpg;*.jpeg;*.jpe;*.jfif;*.png;*.bmp;*.dib;*.tif;*.tiff";
             dlgOpenFile.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+            dlgOpenFile.FilterIndex = 2; // begin from 1
             return dlgOpenFile;
         }
 
@@ -148,7 +177,7 @@ namespace ClothSearch
                 int nFiles = selectedFiles.Length;
                 if (nFiles == 0)
                 {
-                    MessageBox.Show("您未先选择任何图片, 请重新选择.", "温馨提醒");
+                    MessageBox.Show("您未先选择任何图片, 请先选择.", "导入图片...");
                     return;
                 }
 
@@ -166,19 +195,19 @@ namespace ClothSearch
             {
                 String selectedPath = dlgOpenPicFolder.SelectedPath;
                 string[] jpgFiles = Directory.GetFiles(selectedPath, "*.jpg");
-                string[] gifFiles = Directory.GetFiles(selectedPath, "*.gif");
+                string[] tifFiles = Directory.GetFiles(selectedPath, "*.tif");
                 string[] pngFiles = Directory.GetFiles(selectedPath, "*.png");
                 string[] bmpFiles = Directory.GetFiles(selectedPath, "*.bmp");
-                int nFiles = jpgFiles.Length + gifFiles.Length + pngFiles.Length + bmpFiles.Length;
+                int nFiles = jpgFiles.Length + tifFiles.Length + pngFiles.Length + bmpFiles.Length;
                 if (nFiles == 0)
                 {
-                    MessageBox.Show("您选择的文件夹中未包含任何图片, 请重新选择.", "温馨提醒");
+                    MessageBox.Show("您选择的文件夹中未包含任何图片, 请重新选择.", "导入图片...");
                     return;
                 }
 
                 List<String> picNames = new List<string>(nFiles);
                 picNames.AddRange(jpgFiles);
-                picNames.AddRange(gifFiles);
+                picNames.AddRange(tifFiles);
                 picNames.AddRange(pngFiles);
                 picNames.AddRange(bmpFiles);
 
@@ -189,20 +218,33 @@ namespace ClothSearch
 
         private void asynImportClothPics(List<String> picNames)
         {
-            new AsynImportPics(importClothPics).BeginInvoke(picNames, null, null);
+            //importPicsThread = new AsynImportPics(importClothPics);
+            //importPicsThread.BeginInvoke(picNames, null, null);
+            ParameterizedThreadStart threadDelegate = new ParameterizedThreadStart(importClothPics);
+            Thread importPicsThread = new Thread(threadDelegate);
+            importPicsThread.IsBackground = true;
+            importPicsThread.Start(picNames);
         }
 
-        private void importClothPics(List<String> picNames)
+        private void importClothPics(Object obj)
         {
+            List<String> picNames = (List<String>)obj;
+
             this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
-                new AsynUpdateUI(showProgressDialog), picNames.Count);
+                new AsynOpenUI(showProgressDialog), picNames.Count);
             // batch add pictures: add 10 pictures every time.
             int step = 1;
             List<Cloth> clothes = new List<Cloth>(step);
             // finished pictures
-            int nFinished = 0;
+            nFinished = 0;
             foreach (String picName in picNames)
             {
+                if (progressWin != null  && progressWin.StateFlag == 1)
+                {
+                    // stop import
+                    break;
+                }
+
                 Cloth cloth = generateClothObject(picName);
                 
                 clothes.Add(cloth);
@@ -210,9 +252,11 @@ namespace ClothSearch
                 {
                     clothLibService.InsertAll(clothes);
                     this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
-                        new AsynUpdateUI(updateProgressWin), nFinished);
+                        new AsynUpdateUI(updateProgressWin));
                     clothes.Clear();
                 }
+
+                
             }
             if (clothes.Count > 0)
             {
@@ -220,7 +264,8 @@ namespace ClothSearch
             }
 
             this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
-                new AsynUpdateUI(closeProgressWin), nFinished);
+                new AsynUpdateUI(closeProgressWin));
+
         }
 
         private Cloth generateClothObject(string picName)
@@ -241,17 +286,23 @@ namespace ClothSearch
             progressWin = new ProgressWin(nTotal);
             progressWin.Owner = this;
             progressWin.ShowDialog();
+
+            //importPicsThread.Abort();
+
+            MessageBox.Show(String.Format("成功导入{0}张图片", nFinished), "祝贺您");
         }
 
-        private void updateProgressWin(int nFinished)
+        private void updateProgressWin()
         {
             progressWin.FinishedPics = nFinished;
         }
         
-        private void closeProgressWin(int nFinished)
+        private void closeProgressWin()
         {
+            // set the closing event should not be cancelled.
+            progressWin.StateFlag = 2;
             progressWin.Close();
-            MessageBox.Show(String.Format("成功导入{0}张图片", nFinished), "祝贺您");
+            progressWin = null;
         }
 
         private void btnToolImportKey_Click(object sender, RoutedEventArgs e)
@@ -297,11 +348,17 @@ namespace ClothSearch
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
+            /*if (++count >= 1000)
+            {
+                MessageBox.Show("系统未注册, 请与供应商联系, 谢谢.");
+                this.Close();
+            }*/
+
             if (true == rbtnPic.IsChecked)
             {
                 if (null == keyCloth || string.IsNullOrEmpty(keyCloth.Path))
                 {
-                    MessageBox.Show("图片搜索必须先指定关键图.", "温馨提醒");
+                    MessageBox.Show("图片搜索必须先指定关键图.", "搜索图片...");
                     return;
                 }
                 lblSearchResultInfo.Content = "正在通过图片内容搜索请稍候...";
@@ -341,7 +398,7 @@ namespace ClothSearch
                         : imageMatcher.ExtractColorVector(keyCloth.Path, ViewConstants.IgnoreColors);
                     if (colorVector == null)
                     {
-                        MessageBox.Show("您指定的关键图可能是动画图片文件, 无法提取颜色特征.", "温馨提醒");
+                        MessageBox.Show("无法识别指定图片文件, 请检查该文件是否正确.", "提取颜色特征...");
                         return null;
                     }
 
@@ -356,7 +413,7 @@ namespace ClothSearch
                         : imageMatcher.ExtractGaborVector(keyCloth.Path);
                     if (null == gaborVector)
                     {
-                        MessageBox.Show("您指定的关键图可能是动画图片文件, 无法提取纹理特征.", "温馨提醒");
+                        MessageBox.Show("您选择的文件无法识别, 可能不是图片文件.", "提取Gabor纹理...");
                         return null;
                     }
                     
@@ -371,7 +428,7 @@ namespace ClothSearch
                         : imageMatcher.ExtractTextureVector(keyCloth.Path);
                     if (null == textureVector)
                     {
-                        MessageBox.Show("您指定的关键图可能是动画图片文件, 无法提取纹理特征.", "温馨提醒");
+                        MessageBox.Show("您选择的文件无法识别, 可能不是图片文件.", "提取Daubechies纹理...");
                         return null;
                     }
 
@@ -387,7 +444,7 @@ namespace ClothSearch
                         : imageMatcher.ExtractCooccurrenceVector(keyCloth.Path);
                     if (null == cooccurrenceVector)
                     {
-                        MessageBox.Show("您指定的关键图可能是动画图片文件, 无法提取纹理特征.", "温馨提醒");
+                        MessageBox.Show("您选择的文件无法识别, 可能不是图片文件.", "提取Cooccurrence纹理...");
                         return null;
                     }
                     
