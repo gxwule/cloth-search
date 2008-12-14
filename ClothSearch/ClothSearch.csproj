@@ -61,53 +61,53 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <ApplicationDefinition Include="win\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="AddPicWin.xaml">
+    <Page Include="win\AddPicWin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="HomeWin.xaml">
+    <Page Include="win\HomeWin.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="IndeterminateProgressWin.xaml">
+    <Page Include="win\IndeterminateProgressWin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ProgressWin.xaml">
+    <Page Include="win\ProgressWin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MatchAlgorithmWin.xaml">
+    <Page Include="win\MatchAlgorithmWin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Compile Include="App.xaml.cs">
+    <Compile Include="win\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="HomeWin.xaml.cs">
+    <Compile Include="win\HomeWin.xaml.cs">
       <DependentUpon>HomeWin.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddPicWin.xaml.cs">
+    <Compile Include="win\AddPicWin.xaml.cs">
       <DependentUpon>AddPicWin.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ClothSearchAboutBox.cs">
+    <Compile Include="win\ClothSearchAboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ClothSearchAboutBox.Designer.cs">
+    <Compile Include="win\ClothSearchAboutBox.Designer.cs">
       <DependentUpon>ClothSearchAboutBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="IndeterminateProgressWin.xaml.cs">
+    <Compile Include="win\IndeterminateProgressWin.xaml.cs">
       <DependentUpon>IndeterminateProgressWin.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ProgressWin.xaml.cs">
+    <Compile Include="win\ProgressWin.xaml.cs">
       <DependentUpon>ProgressWin.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -123,7 +123,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="MatchAlgorithmWin.xaml.cs">
+    <Compile Include="win\MatchAlgorithmWin.xaml.cs">
       <DependentUpon>MatchAlgorithmWin.xaml</DependentUpon>
     </Compile>
     <Compile Include="src\Zju\Dao\ClothDao.cs" />
@@ -141,7 +141,7 @@
     <Compile Include="src\Zju\View\ViewConstants.cs" />
     <Compile Include="src\Zju\View\ViewHelper.cs" />
     <Compile Include="src\Zju\Vo\ClothVo.cs" />
-    <EmbeddedResource Include="ClothSearchAboutBox.resx">
+    <EmbeddedResource Include="win\ClothSearchAboutBox.resx">
       <DependentUpon>ClothSearchAboutBox.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
