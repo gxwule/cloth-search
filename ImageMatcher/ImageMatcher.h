@@ -26,6 +26,9 @@ namespace Zju
 			// Extract n*n*n-v HSV color vector for a image.
 			array<float>^ ExtractHSVColorVector(String^ imageFileName, int n, array<int>^ ignoreColors);
 
+			// Extract n*n*n-v HSV color vector for a image.
+			array<float>^ ExtractHSVAynsColorVector(String^ imageFileName, array<int>^ ignoreColors);
+
 			// Extract n*n*n-v HLS color vector for a image.
 			array<float>^ ExtractHLSColorVector(String^ imageFileName, int n, array<int>^ ignoreColors);
 
@@ -61,6 +64,8 @@ namespace Zju
 			array<float>^ to_array(Gabor::Pic_GaborWL* picwl);
 
 			array<float>^ to_array(Cooccurrence::Pic_WLType* picwl);
+
+			int calcHSVIndex(float h, float s, float v);
 		};
 	}
 }

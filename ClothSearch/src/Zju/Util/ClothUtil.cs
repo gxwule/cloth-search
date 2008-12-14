@@ -1,11 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using Zju.Domain;
+using System.IO;
 
 namespace Zju.Util
 {
     public sealed class ClothUtil
     {
+
+        private static StreamWriter log;
+        private static String logfile = @"E:\projects\ClothSearch\codes\trunk\data\clothlog.txt";
+
+        public static StreamWriter Log
+        {
+            get
+            {
+                if (log == null)
+                {
+                    if (File.Exists(logfile))
+                    {
+                        log = File.AppendText(logfile);
+                    }
+                    else
+                    {
+                        log = File.CreateText(logfile);
+                    }
+                    log.AutoFlush = true;
+                }
+                return log;
+            }
+        }
+
         public static float CalcManhattanDistance(int[] v1, int[] v2)
         {
             if (v1 == null || v2 == null || v1.Length != v2.Length)
@@ -38,6 +63,25 @@ namespace Zju.Util
             }
 
             return mds / n;
+        }
+
+        public static float CalcGaborDistance(float[] v1, float[] v2)
+        {
+            if (v1 == null || v2 == null || v1.Length != v2.Length)
+            {
+                return float.MaxValue;
+            }
+
+            float total = 0.0f;
+            int n = v1.Length;
+            for (int i=1; i<n; i+=2)
+            {
+                float t1 = v1[i - 1] - v2[i - 1];
+                float t2 = (float)(Math.Sqrt(v1[i]) - Math.Sqrt(v2[i]));
+                total += (float)Math.Sqrt(t1 * t1 + t2 * t2);
+            }
+
+            return total;
         }
 
         /// <summary>

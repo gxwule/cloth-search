@@ -228,6 +228,7 @@ namespace ClothSearch
 
         private void importClothPics(Object obj)
         {
+            //ClothUtil.Log.WriteLine("begin importClothPics");
             List<String> picNames = (List<String>)obj;
 
             this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
@@ -276,6 +277,7 @@ namespace ClothSearch
             cloth.Pattern = ViewHelper.ExtractPattern(cloth.Path);
             cloth.Name = cloth.Pattern;
 
+            //ClothUtil.Log.WriteLine("begin ExtractFeatures");
             ViewHelper.ExtractFeatures(cloth);
 
             return cloth;

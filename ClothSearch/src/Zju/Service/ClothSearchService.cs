@@ -164,7 +164,8 @@ namespace Zju.Service
             List<Cloth> allClothes = clothDao.FindAll();
             foreach (Cloth cloth in allClothes)
             {
-                float md = ClothUtil.CalcManhattanDistance(gaborVector, cloth.GaborVector);
+                //float md = ClothUtil.CalcManhattanDistance(gaborVector, cloth.GaborVector);
+                float md = ClothUtil.CalcGaborDistance(gaborVector, cloth.GaborVector);
                 if (md <= gaborMDLimit)
                 {
                     if (!sortClothes.ContainsKey(md))

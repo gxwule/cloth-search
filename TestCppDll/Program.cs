@@ -4,6 +4,7 @@ using System.Text;
 using Zju.Image;
 using System.Reflection;
 using System.IO;
+using System.Diagnostics;
 
 namespace TestCppDll
 {
@@ -276,13 +277,13 @@ namespace TestCppDll
             picNames.AddRange(bmpFiles);
 
             Console.WriteLine("begin extract");
-            string pre = @"E:\projects\ClothSearch\codes\trunk\data\RGBColor\RGBColor_float_8x8x8.txt";
+            string pre = @"E:\projects\ClothSearch\codes\trunk\data\RGBColor\HSVAsynColor_float_11x4x4.txt";
 
             float[][] vs = new float[picNames.Count][];
             int count = 0;
             foreach (String picName in picNames)
             {
-                vs[count++] = im.ExtractRGBColorVector(picName, 8, new int[] { -1 });
+                vs[count++] = im.ExtractHSVAynsColorVector(picName, new int[] { -1 });
             }
 
             //int index = picName.LastIndexOf('\\');
@@ -339,7 +340,7 @@ namespace TestCppDll
             String selectedPath = @"F:\jpgtest\";
             String ext = ".jpg";
             
-            string retest = @"E:\projects\ClothSearch\codes\trunk\data\RGBColor\retest_rate.txt";
+            string retest = @"E:\projects\ClothSearch\codes\trunk\data\RGBColor\retest_rate2.txt";
 
             StreamWriter sw = File.CreateText(retest);
             sw.AutoFlush = true;
@@ -349,7 +350,7 @@ namespace TestCppDll
 
             sw.WriteLine("图片: {0}, 平均每张图片颜色数: {1}, 偏差: {2}", 100, avrByMan, avrRByMan);
 
-            sw.WriteLine("vec  /lim  /Algo, |avr-avrByMan|, |avrR-avrRByMan|, suc_rate, mod_suc_rate");
+            sw.WriteLine("vec  /lim  /Algo, avr-avrByMan, avrR-avrRByMan, suc_rate, mod_suc_rate, maihadun, ejilide");
 
            // float limit = 0.05f;
            // int vecnum = 8;
@@ -379,17 +380,109 @@ namespace TestCppDll
                     float avr = 0.0f;
                     float avrR = 0.0f;
                     calcAvr(cnrgb, ref avr, ref avrR);
-                    string format = "{0,-5}/{1,-5}/{2} , {3,-14}, {4,-16}, {5,-8}, {6}";
-                    sw.WriteLine(format, vecnum, limit, "rgb", avr - avrByMan, avrR - avrRByMan, calcSucRate(cnByMan, cnrgb, 0.0f), calcSucRate(cnByMan, cnrgb, avr - avrByMan));
+                    string format = "{0,-5}/{1,-5}/{2} , {3,-12}, {4,-14}, {5,-8}, {6,-12}, {7,-8}, {8,-7}";
+                    sw.WriteLine(format, vecnum, limit, "rgb", avr - avrByMan, avrR - avrRByMan,
+                        calcSucRate(cnByMan, cnrgb, 0.0f), calcSucRate(cnByMan, cnrgb, avr - avrByMan),
+                    calcMaihadun(cnByMan, cnrgb), calEjilide(cnByMan, cnrgb));
 
                     calcAvr(cnhsv, ref avr, ref avrR);
-                    sw.WriteLine(format, vecnum, limit, "hsv", avr - avrByMan, avrR - avrRByMan, calcSucRate(cnByMan, cnhsv, 0.0f), calcSucRate(cnByMan, cnrgb, avr - avrByMan));
+                    sw.WriteLine(format, vecnum, limit, "hsv", avr - avrByMan, avrR - avrRByMan,
+                        calcSucRate(cnByMan, cnhsv, 0.0f), calcSucRate(cnByMan, cnhsv, avr - avrByMan),
+                    calcMaihadun(cnByMan, cnhsv), calEjilide(cnByMan, cnhsv));
 
                     calcAvr(cnhls, ref avr, ref avrR);
-                    sw.WriteLine(format, vecnum, limit, "hls", avr - avrByMan, avrR - avrRByMan, calcSucRate(cnByMan, cnhls, 0.0f), calcSucRate(cnByMan, cnrgb, avr - avrByMan));
+                    sw.WriteLine(format, vecnum, limit, "hls", avr - avrByMan, avrR - avrRByMan,
+                        calcSucRate(cnByMan, cnhls, 0.0f), calcSucRate(cnByMan, cnhls, avr - avrByMan),
+                    calcMaihadun(cnByMan, cnhls), calEjilide(cnByMan, cnhls));
                 }
             }
             sw.Close();
+        }
+
+        private static void testHSVAsynColorNumberSuccess()
+        {
+            Console.WriteLine("begin");
+            ImageMatcher im = new ImageMatcher();
+
+            String selectedPath = @"F:\jpgtest\";
+            String ext = ".jpg";
+
+            string retest = @"E:\projects\ClothSearch\codes\trunk\data\RGBColor\retest_rate_hsv_aync2.txt";
+
+            StreamWriter sw = File.CreateText(retest);
+            sw.AutoFlush = true;
+            float avrByMan = 0.0f;
+            float avrRByMan = 0.0f;
+            calcAvr(cnByMan, ref avrByMan, ref avrRByMan);
+
+            sw.WriteLine("图片: {0}, 平均每张图片颜色数: {1}, 偏差: {2}", 100, avrByMan, avrRByMan);
+
+            sw.WriteLine("vec  /lim  /Algo, avr-avrByMan, avrR-avrRByMan, suc_rate, mod_suc_rate, maihadun, ejilide");
+
+            // float limit = 0.05f;
+            // int vecnum = 8;
+            
+            int[] cnhsv = new int[100];
+            for (float limit = 0.05f; limit <= 0.1f; limit += 0.01f)
+            {
+                for (int i = 0; i < 100; ++i)
+                {
+                    string picName = selectedPath + (i + 1) + ext;
+                    float[] vhsv = im.ExtractHSVAynsColorVector(picName, new int[] { -1 });
+                    if (vhsv == null)
+                    {
+                        Console.WriteLine("Error of {0}{1}", i + 1, ext);
+                        continue;
+                    }
+                    cnhsv[i] = getColorNumber(vhsv, limit);
+                    //sw.WriteLine("{0}, {1}, {2}", getColorNumber(vrgb, limit), getColorNumber(vhsv, limit), getColorNumber(vhls, limit));
+                }
+                float avr = 0.0f;
+                float avrR = 0.0f;
+                string format = "{0,-5}/{1,-5}/{2} , {3,-12}, {4,-14}, {5,-8}, {6,-12}, {7,-8}, {8,-7}";
+                
+                calcAvr(cnhsv, ref avr, ref avrR);
+                sw.WriteLine(format, 176, limit, "hsva", avr - avrByMan, avrR - avrRByMan, 
+                    calcSucRate(cnByMan, cnhsv, 0.0f), calcSucRate(cnByMan, cnhsv, avr - avrByMan),
+                    calcMaihadun(cnByMan, cnhsv), calEjilide(cnByMan, cnhsv));
+            }
+
+            sw.Close();
+        }
+
+        private static int calcMaihadun(int[] v1, int[] v2)
+        {
+            if (v1 == null || v2 == null || v1.Length != v2.Length)
+            {
+                return int.MaxValue;
+            }
+
+            int n = v1.Length;
+            int total = 0;
+            for (int i=0; i<n; ++i)
+            {
+                total += (v1[i] > v2[i] ? v1[i] - v2[i] : v2[i] - v1[i]);
+            }
+
+            return total;
+        }
+
+        private static int calEjilide(int[] v1, int[] v2)
+        {
+            if (v1 == null || v2 == null || v1.Length != v2.Length)
+            {
+                return int.MaxValue;
+            }
+
+            int n = v1.Length;
+            int total = 0;
+            for (int i = 0; i < n; ++i)
+            {
+                int t = v1[i] - v2[i];
+                total += t * t;
+            }
+
+            return total;
         }
 
         private static void calcAvr(int[] v, ref float avr, ref float avrR)
@@ -456,6 +549,32 @@ namespace TestCppDll
             sw.Close();
         }
 
+        static void testCalcHsvAsynNumber()
+        {
+            Console.WriteLine("begin");
+            ImageMatcher im = new ImageMatcher();
+
+            String selectedPath = @"F:\jpgtest\";
+            String ext = ".jpg";
+            float limit = 0.1f;
+            int vecnum = 8;
+            string retest = @"E:\projects\ClothSearch\codes\trunk\data\RGBColor\retest_hsvasyn_number.txt";
+
+            StreamWriter sw = File.CreateText(retest);
+            for (int i = 1; i <= 100; ++i)
+            {
+                string picName = selectedPath + i + ext;
+                float[] vhsv = im.ExtractHSVAynsColorVector(picName, new int[] { -1 });
+                if (vhsv == null)
+                {
+                    Console.WriteLine("Error of {0}{1}", i, ext);
+                    continue;
+                }
+                sw.WriteLine("{0}, {1}", cnByMan[i - 1], getColorNumber(vhsv, limit));
+            }
+            sw.Close();
+        }
+
         static void Main(string[] args)
         {
             /*int r = 255;
@@ -481,7 +600,9 @@ namespace TestCppDll
             //Program pg = new Program();
             //pg.testRef();
             //testCalcColorNumber();
+            testHSVAsynColorNumberSuccess();
             testColorNumberSuccess();
+            //testCalcHsvAsynNumber();
         }
 
         private int stateFlag = 0;
@@ -496,5 +617,7 @@ namespace TestCppDll
             }
             }
         }
+
+        
     }
 }

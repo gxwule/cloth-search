@@ -6,6 +6,7 @@
 //#include <vcclr.h>
 #include "ImageMatcher.h"
 #include "GetFeature.h"
+#include <cmath>
 
 #pragma comment(lib, "cxcore.lib")
 #pragma comment(lib, "cv.lib")
@@ -242,6 +243,187 @@ namespace Zju
 			return re;
 		}
 
+		array<float>^ ImageMatcher::ExtractHSVAynsColorVector(String^ imageFileName, array<int>^ ignoreColors)
+		{
+			int nh = 11;
+			int ns = 4;
+			int nv = 4;
+			int na = nh * ns * nv;
+
+			array<int>^ v = gcnew array<int>(na) {0};
+
+			IplImage* imgRgb = NULL;
+
+			IntPtr ip = Marshal::StringToHGlobalAnsi(imageFileName);
+			const char* fileName = static_cast<const char*>(ip.ToPointer());
+
+			imgRgb = cvLoadImage(fileName, CV_LOAD_IMAGE_COLOR);
+			Marshal::FreeHGlobal(ip);
+
+			if (imgRgb == NULL)
+			{
+				return nullptr;
+			}
+
+			System::Collections::Generic::HashSet<int> ignoreColorSet;
+			if (ignoreColors != nullptr && ignoreColors->Length > 0)
+			{
+				for (int i=0; i<ignoreColors->Length; ++i)
+				{
+					ignoreColorSet.Add(ignoreColors[i]);
+				}
+			}
+
+			BYTE b, g, r;
+			for( int h = 0; h < imgRgb->height; ++h ) {
+				for ( int w = 0; w < imgRgb->width * 3; w += 3 ) {
+					b  = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+0];
+					g = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+1];
+					r = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+2];
+					if (!ignoreColorSet.Contains((((int)r) << 16) + (((int)g) << 8) + b))
+					{
+						//++v[r/interval*n2+g/interval*n+b/interval];
+						float tr = r / 255.0f;
+						float tg = g / 255.0f;
+						float tb = b / 255.0f;
+						float tmax = max(tr, tg, tb);
+						float tmin = min(tr, tg, tb);
+
+						float tv = tmax;
+						float ts = (tv - tmin) / tv;
+						float th = 0;
+						float tr1 = (tv - tr) / (tv - tmin);
+						float tg1 = (tv - tg) / (tv - tmin);
+						float tb1 = (tv - tb) / (tv - tmin);
+						if (tr == tmax && tg == tmin)
+						{
+							th = 5 + tb1;
+						}
+						else if (tr == tmax && tg != tmin)
+						{
+							th = 1 - tg1;
+						}
+						else if (tg == tmax && tb == tmin)
+						{
+							th = 1 + tr1;
+						}
+						else if (tg == tmax && tb != tmin)
+						{
+							th = 3 - tb1;
+						}
+						else if (tb == tmax && tr == tmin)
+						{
+							th = 3 + tg1;
+						}
+						else
+						{
+							th = 5 - tr1;
+						}
+
+						++v[calcHSVIndex(th, ts, tv)];
+					}
+				}
+			}
+
+			float total = imgRgb->width * imgRgb->height;
+			cvReleaseImage( &imgRgb );
+
+			array<float>^ re = gcnew array<float>(na);
+			for (int i=0; i<na; ++i)
+			{
+				re[i] = v[i] / total;
+			}
+
+			return re;
+		}
+
+		int ImageMatcher::calcHSVIndex(float h, float s, float v)
+		{
+			int S = 0;
+			if (s >= 0 && s < 0.08)
+			{
+				S = 0;
+			}
+			else if (s >= 0.08 && s < 0.4)
+			{
+				S = 1;
+			}
+			else if (s >= 0.4 && s < 0.75)
+			{
+				S = 2;
+			}
+			else if (s >= 0.75 && s <= 1)
+			{
+				S = 3;
+			}
+			
+			int V = 0;
+			if (v >= 0 && v < 0.06)
+			{
+				V = 0;
+			}
+			else if (v >= 0.06 && v < 0.4)
+			{
+				V = 1;
+			}
+			else if (v >= 0.4 && v < 0.82)
+			{
+				V = 2;
+			}
+			else if (v >= 0.82 && v <= 1)
+			{
+				V = 3;
+			}
+
+			int H = 0;
+			if ((h >= 0 && h < 0.38) || (h >= 5.25 && h < 6))
+			{
+				H = 0;
+			}
+			else if (h >= 0.38 && h < 0.83)
+			{
+				H = 1;
+			}
+			else if (h >= 0.83 && h < 1.25)
+			{
+				H = 2;
+			}
+			else if (h >= 1.25 && h < 2.58)
+			{
+				H = 3;
+			}
+			else if (h >= 2.58 && h < 3.25)
+			{
+				H = 4;
+			}
+			else if (h >= 3.25 && h < 4.58)
+			{
+				H = 5;
+			}
+			else if (h >= 4.58 && h < 4.83)
+			{
+				H = 6;
+			}
+			else if (h >= 4.83 && h < 5.25)
+			{
+				H = 7;
+			}
+			else if (V == 0 || (S == 0 && v < 0.2))
+			{
+				H = 8;
+			}
+			else if (V == 3)
+			{
+				H = 9;
+			}
+			else if (S == 0)
+			{
+				H = 10;
+			}
+
+			return H * 16 + S * 4 + V;
+		}
+
 		// Extract n*n*n-v HLS color vector for a image.
 		array<float>^ ImageMatcher::ExtractHLSColorVector(String^ imageFileName, int n, array<int>^ ignoreColors)
 		{
@@ -349,7 +531,7 @@ namespace Zju
 
 		array<float>^ ImageMatcher::ExtractGaborVector(String^ imageFileName)
 		{
-			return nullptr;
+			//return nullptr;
 			IntPtr ip = Marshal::StringToHGlobalAnsi(imageFileName);
 			const char* fileName = static_cast<const char*>(ip.ToPointer());
 

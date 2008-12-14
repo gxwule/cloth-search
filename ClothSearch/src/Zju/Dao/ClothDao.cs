@@ -15,6 +15,7 @@ namespace Zju.Dao
         public void Insert(Cloth cloth)
         {
             Storage storage = DaoHelper.Instance.DbStorage;
+            //storage.BeginThreadTransaction(Storage.EXCLU)
             ClothRoot root = (ClothRoot)storage.Root;
 
             insertWithoutCommit(storage, root, cloth);

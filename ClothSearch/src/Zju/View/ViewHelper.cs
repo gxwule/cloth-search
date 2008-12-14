@@ -25,7 +25,7 @@ namespace Zju.View
     {
         private static ImageMatcher imageMatcher;
 
-        private static Dictionary<RecallLevel, int> recallLevelToIndexMap; 
+        private static Dictionary<RecallLevel, int> recallLevelToIndexMap;
 
         public static ImageMatcher ImageMatcher
         {
@@ -109,22 +109,30 @@ namespace Zju.View
 
             if (cloth.ColorVector == null)
             {
+                //ClothUtil.Log.WriteLine("begin ExtractColorVector");
                 cloth.ColorVector = ImageMatcher.ExtractColorVector(cloth.Path, ViewConstants.IgnoreColors);
+                //ClothUtil.Log.WriteLine("end ExtractColorVector");
             }
             
             if (cloth.TextureVector == null)
             {
+                //ClothUtil.Log.WriteLine("begin ExtractTextureVector");
                 cloth.TextureVector = ImageMatcher.ExtractTextureVector(cloth.Path);
+                //ClothUtil.Log.WriteLine("end ExtractTextureVector");
             }
 
             if (cloth.GaborVector == null)
             {
+                //ClothUtil.Log.WriteLine("begin ExtractGaborVector");
                 cloth.GaborVector = ImageMatcher.ExtractGaborVector(cloth.Path);
+                //ClothUtil.Log.WriteLine("end ExtractGaborVector");
             }
 
             if (cloth.CooccurrenceVector == null)
             {
+                //ClothUtil.Log.WriteLine("begin ExtractCooccurrenceVector");
                 cloth.CooccurrenceVector = ImageMatcher.ExtractCooccurrenceVector(cloth.Path);
+                //ClothUtil.Log.WriteLine("end ExtractCooccurrenceVector");
             }
         }
 

@@ -14,23 +14,29 @@ namespace Zju.Dao
 
         private static DaoHelper helper;
 
+        static DaoHelper()
+        {
+            helper = new DaoHelper();
+            Storage storage = StorageFactory.Instance.CreateStorage();
+
+            storage.Open(DbConstants.DataBaseFilePath, DbConstants.PagePoolSize);
+            ClothRoot root = (ClothRoot)storage.Root;
+            if (root == null)
+            {
+                root = new ClothRoot(storage);
+                storage.Root = root;
+
+                // persist root object.
+                storage.Commit();
+            }
+
+            helper.storage = storage;
+        }
+
         public Storage DbStorage
         {
             get
             {
-                if (!storage.IsOpened())
-                {
-                    storage.Open(DbConstants.DataBaseFilePath, DbConstants.PagePoolSize);
-                    ClothRoot root = (ClothRoot)storage.Root;
-                    if (root == null)
-                    {
-                        root = new ClothRoot(storage);
-                        storage.Root = root;
-
-                        // persist root object.
-                        storage.Commit();
-                    }
-                }
                 return storage;
             }
         }
@@ -58,11 +64,6 @@ namespace Zju.Dao
         {
             get
             {
-                if (helper == null)
-                {
-                    helper = new DaoHelper();
-                    helper.storage = StorageFactory.Instance.CreateStorage();
-                }
                 return helper;
             }
         }
