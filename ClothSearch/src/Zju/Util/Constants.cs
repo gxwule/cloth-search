@@ -26,6 +26,11 @@ namespace Zju.Util
         public static float[] GaborMDLimits = { float.MaxValue - 1, 10700.0f, 42500.0f, 135000.0f, float.MaxValue - 1 };
 
         public static float[] CooccurrenceMDLimits = { float.MaxValue - 1, 0.6f, 0.94f, 1.59f, float.MaxValue - 1 };
+
+        public static int[] IgnoreColors = { -1 };
+
+
+        public const string LuvFileName = "E:/projects/ClothSearch/codes/trunk/data/luv.dat";
     }
 
     [Flags]

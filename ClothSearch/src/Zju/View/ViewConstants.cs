@@ -21,8 +21,7 @@ namespace Zju.View
                   new KeyValuePair<String, ShapeEnum>("三角形", ShapeEnum.TRIANGLE),
                   new KeyValuePair<String, ShapeEnum>("特殊形状", ShapeEnum.SPECIAL) };
 
-        public static int[] IgnoreColors = { 0xffffff };
+        
 
-        public const string LuvFileName = "E:/projects/ClothSearch/codes/trunk/data/luv.dat";
     }
 }

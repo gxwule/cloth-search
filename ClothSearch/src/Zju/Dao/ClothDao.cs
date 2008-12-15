@@ -15,31 +15,47 @@ namespace Zju.Dao
         public void Insert(Cloth cloth)
         {
             Storage storage = DaoHelper.Instance.DbStorage;
-            //storage.BeginThreadTransaction(Storage.EXCLU)
             ClothRoot root = (ClothRoot)storage.Root;
 
-            insertWithoutCommit(storage, root, cloth);
-            
-            storage.Commit();
+            storage.BeginThreadTransaction(TransactionMode.Exclusive);
+            try
+            {
+                insertWithoutCommit(storage, root, cloth);
+                storage.EndThreadTransaction();
+            }
+            catch (Exception e)
+            {
+                // do some log
+                storage.RollbackThreadTransaction();
+            }
         }
 
         public void InsertAll(List<Cloth> clothes)
         {
             Storage storage = DaoHelper.Instance.DbStorage;
             ClothRoot root = (ClothRoot)storage.Root;
-
             int nCloth = 0;
-            foreach (Cloth cloth in clothes)
-            {
-                insertWithoutCommit(storage, root, cloth);
 
-                if (0 == ++nCloth % DbConstants.ComitLimit)
+            storage.BeginThreadTransaction(TransactionMode.Exclusive);
+            try
+            {
+                foreach (Cloth cloth in clothes)
                 {
-                    storage.Commit();
+                    insertWithoutCommit(storage, root, cloth);
+
+                    if (0 == ++nCloth % DbConstants.ComitLimit)
+                    {
+                        storage.EndThreadTransaction();
+                        storage.BeginThreadTransaction(TransactionMode.Exclusive);
+                    }
                 }
+                storage.EndThreadTransaction();
             }
-            
-            storage.Commit();
+            catch (Exception e)
+            {
+                // do some log
+                storage.RollbackThreadTransaction();
+            }
         }
 
         public void Update(Cloth cloth, Cloth newCloth)
@@ -58,65 +74,74 @@ namespace Zju.Dao
             BitIndex colorIndex = root.ColorIndex;
             BitIndex shapeIndex = root.ShapeIndex;
 
-            if (cloth.Pattern != newCloth.Pattern)
+            storage.BeginThreadTransaction(TransactionMode.Exclusive);
+            try
             {
-                patternIndex.Remove(cloth);
-                cloth.Pattern = newCloth.Pattern;
-                if (cloth.Pattern != null)
+                if (cloth.Pattern != newCloth.Pattern)
                 {
-                    patternIndex.Put(cloth);
+                    patternIndex.Remove(cloth);
+                    cloth.Pattern = newCloth.Pattern;
+                    if (cloth.Pattern != null)
+                    {
+                        patternIndex.Put(cloth);
+                    }
                 }
-            }
 
-            if (cloth.Colors != newCloth.Colors)
+                if (cloth.Colors != newCloth.Colors)
+                {
+                    colorIndex.Remove(cloth);
+                    cloth.Colors = newCloth.Colors;
+                    colorIndex[cloth] = (int)cloth.Colors;
+                }
+
+                if (cloth.Shapes != newCloth.Shapes)
+                {
+                    shapeIndex.Remove(cloth);
+                    cloth.Shapes = newCloth.Shapes;
+                    shapeIndex[cloth] = (int)cloth.Shapes;
+                }
+
+                if (cloth.Name != newCloth.Name)
+                {
+                    cloth.Name = newCloth.Name;
+                }
+                
+                if (newCloth.Path != null && cloth.Path != newCloth.Path)
+                {
+                    cloth.Path = newCloth.Path;
+                }
+                
+                if (newCloth.ColorVector != null && cloth.ColorVector != newCloth.ColorVector)
+                {
+                    cloth.ColorVector = newCloth.ColorVector;
+                }
+
+                if (newCloth.TextureVector != null && cloth.TextureVector != newCloth.TextureVector)
+                {
+                    cloth.TextureVector = newCloth.TextureVector;
+                }
+
+                if (newCloth.GaborVector != null && cloth.GaborVector != newCloth.GaborVector)
+                {
+                    cloth.GaborVector = newCloth.GaborVector;
+                }
+
+                if (newCloth.CooccurrenceVector != null && cloth.CooccurrenceVector != newCloth.CooccurrenceVector)
+                {
+                    cloth.CooccurrenceVector = newCloth.CooccurrenceVector;
+                }
+
+                cloth.UpdateTime = (0 == newCloth.UpdateTime.Ticks) ? DateTime.UtcNow : newCloth.UpdateTime;
+
+                cloth.Modify();
+
+                storage.EndThreadTransaction();
+            }
+            catch (Exception e)
             {
-                colorIndex.Remove(cloth);
-                cloth.Colors = newCloth.Colors;
-                colorIndex[cloth] = (int)cloth.Colors;
+                // do some log
+                storage.RollbackThreadTransaction();
             }
-
-            if (cloth.Shapes != newCloth.Shapes)
-            {
-                shapeIndex.Remove(cloth);
-                cloth.Shapes = newCloth.Shapes;
-                shapeIndex[cloth] = (int)cloth.Shapes;
-            }
-
-            if (cloth.Name != newCloth.Name)
-            {
-                cloth.Name = newCloth.Name;
-            }
-            
-            if (newCloth.Path != null && cloth.Path != newCloth.Path)
-            {
-                cloth.Path = newCloth.Path;
-            }
-            
-            if (newCloth.ColorVector != null && cloth.ColorVector != newCloth.ColorVector)
-            {
-                cloth.ColorVector = newCloth.ColorVector;
-            }
-
-            if (newCloth.TextureVector != null && cloth.TextureVector != newCloth.TextureVector)
-            {
-                cloth.TextureVector = newCloth.TextureVector;
-            }
-
-            if (newCloth.GaborVector != null && cloth.GaborVector != newCloth.GaborVector)
-            {
-                cloth.GaborVector = newCloth.GaborVector;
-            }
-
-            if (newCloth.CooccurrenceVector != null && cloth.CooccurrenceVector != newCloth.CooccurrenceVector)
-            {
-                cloth.CooccurrenceVector = newCloth.CooccurrenceVector;
-            }
-
-            cloth.UpdateTime = (0 == newCloth.UpdateTime.Ticks) ? DateTime.UtcNow : newCloth.UpdateTime;
-
-            cloth.Modify();
-
-            storage.Commit();
         }
 
         /// <summary>
@@ -133,9 +158,18 @@ namespace Zju.Dao
                 Cloth cloth = (Cloth)root.ClothOidIndex.Get(oid);
                 if (null != cloth)
                 {
-                    removeFromIndexes(cloth, root);
+                    storage.BeginThreadTransaction(TransactionMode.Exclusive);
+                    try
+                    {
+                        removeFromIndexes(cloth, root);
 
-                    storage.Commit();
+                        storage.EndThreadTransaction();
+                    }
+                    catch (Exception e)
+                    {
+                        // do some log
+                        storage.RollbackThreadTransaction();
+                    }
                 }
             }
             
@@ -147,10 +181,18 @@ namespace Zju.Dao
             {
                 Storage storage = DaoHelper.Instance.DbStorage;
                 ClothRoot root = (ClothRoot)storage.Root;
+                storage.BeginThreadTransaction(TransactionMode.Exclusive);
+                try
+                {
+                     removeFromIndexes(cloth, root);
 
-                removeFromIndexes(cloth, root);
-
-                storage.Commit();
+                     storage.EndThreadTransaction();
+                }
+                catch (Exception e)
+                {
+                    // do some log
+                    storage.RollbackThreadTransaction();
+                }
             }
         }
 

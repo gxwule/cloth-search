@@ -5,6 +5,7 @@ using Zju.Image;
 using System.Reflection;
 using System.IO;
 using System.Diagnostics;
+using System.Threading;
 
 namespace TestCppDll
 {
@@ -575,6 +576,38 @@ namespace TestCppDll
             sw.Close();
         }
 
+        static ImageMatcher imageMatcher = new ImageMatcher();
+        static void testGaborMultiThread()
+        {
+            Console.WriteLine("testGaborMultiThread begin");
+            
+            string s = @"F:\jspsp\20387.jpg";
+            string s2 = @"F:\jspsp\20390.jpg";
+            Console.WriteLine("init finish");
+
+            ParameterizedThreadStart pts = new ParameterizedThreadStart(gaborThread);
+            Thread t1 = new Thread(pts);
+            Thread t2 = new Thread(pts);
+            t1.Start(s);
+            t2.Start(s2);
+            t1.Join();
+            t2.Join();
+
+            Console.WriteLine("testGabor end");
+        }
+
+        static void gaborThread(Object obj)
+        {
+            String s = (String)obj;
+            Console.WriteLine(s);
+            float[] v = imageMatcher.ExtractGaborVector(s);
+            foreach (float i in v)
+            {
+                Console.Write("{0} ", i);
+            }
+            Console.Write(s + "end");
+        }
+
         static void Main(string[] args)
         {
             /*int r = 255;
@@ -600,9 +633,10 @@ namespace TestCppDll
             //Program pg = new Program();
             //pg.testRef();
             //testCalcColorNumber();
-            testHSVAsynColorNumberSuccess();
-            testColorNumberSuccess();
+            //testHSVAsynColorNumberSuccess();
+            //testColorNumberSuccess();
             //testCalcHsvAsynNumber();
+            testGaborMultiThread();
         }
 
         private int stateFlag = 0;

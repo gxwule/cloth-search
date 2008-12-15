@@ -123,7 +123,7 @@ namespace ClothSearch
             {
                 cloth.Pattern = txtAddPattern.Text;
             }
-            cloth.Name =  useKeyPic && keyCloth.Name != null ? keyCloth.Name : ViewHelper.ExtractPattern(addPicFileName);
+            cloth.Name =  useKeyPic && keyCloth.Name != null ? keyCloth.Name : ClothUtil.ExtractPattern(addPicFileName);
 
             ColorEnum colors = ColorEnum.NONE;
             foreach (ColorItem ci in colorItems)
@@ -147,13 +147,13 @@ namespace ClothSearch
 
             // feature vectors
             cloth.ColorVector = (useKeyPic && keyCloth.ColorVector != null)
-                ? keyCloth.ColorVector : ViewHelper.ImageMatcher.ExtractColorVector(cloth.Path, ViewConstants.IgnoreColors);
+                ? keyCloth.ColorVector : ClothUtil.ImageMatcherInst.ExtractColorVector(cloth.Path, SearchConstants.IgnoreColors);
             cloth.TextureVector = (useKeyPic && keyCloth.TextureVector != null)
-                ? keyCloth.TextureVector : ViewHelper.ImageMatcher.ExtractTextureVector(cloth.Path);
+                ? keyCloth.TextureVector : ClothUtil.ImageMatcherInst.ExtractTextureVector(cloth.Path);
             cloth.GaborVector = (useKeyPic && keyCloth.GaborVector != null)
-                ? keyCloth.GaborVector : ViewHelper.ImageMatcher.ExtractGaborVector(cloth.Path);
+                ? keyCloth.GaborVector : ClothUtil.ImageMatcherInst.ExtractGaborVector(cloth.Path);
             cloth.CooccurrenceVector = (useKeyPic && keyCloth.CooccurrenceVector != null)
-                ? keyCloth.CooccurrenceVector : ViewHelper.ImageMatcher.ExtractCooccurrenceVector(cloth.Path);
+                ? keyCloth.CooccurrenceVector : ClothUtil.ImageMatcherInst.ExtractCooccurrenceVector(cloth.Path);
 
             clothLibService.Insert(cloth);
 
@@ -179,7 +179,7 @@ namespace ClothSearch
         {
             if (!String.IsNullOrEmpty(fileName))
             {
-                string pattern = ViewHelper.ExtractPattern(fileName);
+                string pattern = ClothUtil.ExtractPattern(fileName);
                 // use pattern as name currently.
                 showAddPicInfo(fileName, pattern);
             }

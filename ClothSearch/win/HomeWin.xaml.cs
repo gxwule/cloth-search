@@ -24,6 +24,7 @@ namespace ClothSearch
     public partial class HomeWin : Window
     {
         private List<ColorItem> colorItems;
+
         private List<ShapeItem> shapeItems;
 
         private IClothLibService clothLibService;
@@ -48,9 +49,11 @@ namespace ClothSearch
 
         private MatchAlgorithmWin matchAlgorithmWin;
 
-        private delegate void AsynOpenUI(int nTotal);
+        //private delegate void AsynOpenUI(int nTotal);
 
-        private delegate void AsynUpdateUI();
+        private delegate void IntAsynUpdateUI(int nTotal);
+
+        private delegate void NoArguAsynUpdateUI();
 
         //private delegate void AsynImportPics(List<String> picNames);
 
@@ -91,6 +94,21 @@ namespace ClothSearch
         //private List<String> picNames;
 
         //public static int count = 0;
+
+        //private int curKeyClothOperId = 0;
+
+        //private static Object keyClothLock = new Object();
+
+        //private static Object incKeyClothLock = new Object();
+
+        /*private IndeterminateProgressWin inProgWin;
+
+        private bool keyClothOpened = false;
+
+        private Thread keyClothThread;
+
+        private Thread searchThread;*/
+
         public HomeWin()
         {
             colorItems = ViewHelper.NewColorItems;
@@ -118,7 +136,7 @@ namespace ClothSearch
             // It should be done by dependency injection here!!
             clothLibService = new ClothLibService(new ClothDao());
             clothSearchService = new ClothSearchService(new ClothDao());
-            imageMatcher = ViewHelper.ImageMatcher;
+            imageMatcher = ClothUtil.ImageMatcherInst;
 
             aDesc = new AlgorithmDesc();
 
@@ -144,20 +162,54 @@ namespace ClothSearch
                 }
 
                 imgKeyPic.Source = bi;
-
                 keyCloth = new Cloth();
                 keyCloth.Path = dlgOpenKeyPic.FileName;
-                keyCloth.Pattern = ViewHelper.ExtractPattern(keyCloth.Path);
+                keyCloth.Pattern = ClothUtil.ExtractPattern(keyCloth.Path);
                 keyCloth.Name = keyCloth.Pattern;
 
-                keyCloth.ColorVector = imageMatcher.ExtractColorVector(keyCloth.Path, ViewConstants.IgnoreColors);
-                keyCloth.TextureVector = imageMatcher.ExtractTextureVector(keyCloth.Path);
-                keyCloth.GaborVector = imageMatcher.ExtractGaborVector(keyCloth.Path);
-                keyCloth.CooccurrenceVector = imageMatcher.ExtractCooccurrenceVector(keyCloth.Path);
+                //keyCloth.ColorVector = imageMatcher.ExtractColorVector(keyCloth.Path, SearchConstants.IgnoreColors);
+                //keyCloth.TextureVector = imageMatcher.ExtractTextureVector(keyCloth.Path);
+                //keyCloth.GaborVector = imageMatcher.ExtractGaborVector(keyCloth.Path);
+                //keyCloth.CooccurrenceVector = imageMatcher.ExtractCooccurrenceVector(keyCloth.Path);
+
+                /*keyClothOpened = true;
+                if (keyClothThread != null && keyClothThread.IsAlive)
+                {
+                    keyClothThread.Abort();
+                }
+                ParameterizedThreadStart threadDelegate = new ParameterizedThreadStart(fillKeyCloth);
+                keyClothThread = new Thread(threadDelegate);
+                keyClothThread.IsBackground = true;
+                keyClothThread.Start(dlgOpenKeyPic.FileName); 
+                */
+                /*lock (keyClothLock)
+                {
+                    FillKeyCloth fkc = new FillKeyCloth(fillKeyCloth);
+                    fkc.BeginInvoke(dlgOpenKeyPic.FileName, ++curKeyClothOperId, null, null);
+                }*/
+
+                //ViewHelper.ExtractFeatures(keyCloth);
+                //keyCloth.ColorVector = imageMatcher.ExtractColorVector(keyCloth.Path, ViewConstants.IgnoreColors);
+                //keyCloth.TextureVector = imageMatcher.ExtractTextureVector(keyCloth.Path);
+                //keyCloth.GaborVector = imageMatcher.ExtractGaborVector(keyCloth.Path);
+                //keyCloth.CooccurrenceVector = imageMatcher.ExtractCooccurrenceVector(keyCloth.Path);
 
                 updateSearchButton();
             }
         }
+
+       /* private void fillKeyCloth(Object obj)
+        {
+            Cloth cloth = new Cloth();
+            cloth.Path = (String)obj;
+            cloth.Pattern = ClothUtil.ExtractPattern(cloth.Path);
+            cloth.Name = cloth.Pattern;
+            cloth.ColorVector = imageMatcher.ExtractColorVector(cloth.Path, SearchConstants.IgnoreColors);
+            cloth.TextureVector = imageMatcher.ExtractTextureVector(cloth.Path);
+            cloth.GaborVector = imageMatcher.ExtractGaborVector(cloth.Path);
+            cloth.CooccurrenceVector = imageMatcher.ExtractCooccurrenceVector(cloth.Path);
+            keyCloth = cloth;                
+        }*/
 
         private OpenFileDialog newOpenFileDialog()
         {
@@ -218,70 +270,36 @@ namespace ClothSearch
 
         private void asynImportClothPics(List<String> picNames)
         {
-            //importPicsThread = new AsynImportPics(importClothPics);
-            //importPicsThread.BeginInvoke(picNames, null, null);
-            ParameterizedThreadStart threadDelegate = new ParameterizedThreadStart(importClothPics);
-            Thread importPicsThread = new Thread(threadDelegate);
-            importPicsThread.IsBackground = true;
-            importPicsThread.Start(picNames);
-        }
-
-        private void importClothPics(Object obj)
-        {
-            //ClothUtil.Log.WriteLine("begin importClothPics");
-            List<String> picNames = (List<String>)obj;
-
-            this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
-                new AsynOpenUI(showProgressDialog), picNames.Count);
-            // batch add pictures: add 10 pictures every time.
-            int step = 1;
-            List<Cloth> clothes = new List<Cloth>(step);
-            // finished pictures
             nFinished = 0;
-            foreach (String picName in picNames)
-            {
-                if (progressWin != null  && progressWin.StateFlag == 1)
-                {
-                    // stop import
-                    break;
-                }
-
-                Cloth cloth = generateClothObject(picName);
-                
-                clothes.Add(cloth);
-                if (++nFinished % step == 0)
-                {
-                    clothLibService.InsertAll(clothes);
-                    this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
-                        new AsynUpdateUI(updateProgressWin));
-                    clothes.Clear();
-                }
-
-                
-            }
-            if (clothes.Count > 0)
-            {
-                clothLibService.InsertAll(clothes);
-            }
-
-            this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
-                new AsynUpdateUI(closeProgressWin));
-
+            clothLibService.AsynImportClothPics(new ImportArgus(picNames, 1, 1,
+                new ShouldStop(shouldStopCallback),
+                new IntArgDelegate(asynShowProgressDialogCallback),
+                new IntArgDelegate(asynUpdateProgressWinCallback),
+                new NoArgDelegate(asynCloseProgressWinCallback)));
         }
 
-        private Cloth generateClothObject(string picName)
+        private void asynShowProgressDialogCallback(int picNum)
         {
-            Cloth cloth = new Cloth();
-
-            cloth.Path = picName;
-            cloth.Pattern = ViewHelper.ExtractPattern(cloth.Path);
-            cloth.Name = cloth.Pattern;
-
-            //ClothUtil.Log.WriteLine("begin ExtractFeatures");
-            ViewHelper.ExtractFeatures(cloth);
-
-            return cloth;
+            this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
+                new IntAsynUpdateUI(showProgressDialog), picNum);
         }
+
+        private void asynUpdateProgressWinCallback(int finish)
+        {
+            this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
+                        new IntAsynUpdateUI(updateProgressWin), finish);
+        }
+
+        private void asynCloseProgressWinCallback()
+        {
+            this.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
+                new NoArguAsynUpdateUI(closeProgressWin));
+        }
+
+        private bool shouldStopCallback()
+        {
+            return progressWin != null && progressWin.StateFlag == 1;
+        }      
 
         private void showProgressDialog(int nTotal)
         {
@@ -294,14 +312,17 @@ namespace ClothSearch
             MessageBox.Show(String.Format("成功导入{0}张图片", nFinished), "祝贺您");
         }
 
-        private void updateProgressWin()
+        private void updateProgressWin(int finish)
         {
+            // atomic add
+            Interlocked.Add(ref nFinished, finish);
             progressWin.FinishedPics = nFinished;
         }
-        
+
         private void closeProgressWin()
         {
             // set the closing event should not be cancelled.
+            //nFinished = finish;
             progressWin.StateFlag = 2;
             progressWin.Close();
             progressWin = null;
@@ -348,7 +369,7 @@ namespace ClothSearch
             matchAlgorithmWin.ShowDialog();
         }
 
-        private void btnSearch_Click(object sender, RoutedEventArgs e)
+		private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
             /*if (++count >= 1000)
             {
@@ -379,7 +400,54 @@ namespace ClothSearch
             
             updatePicResults();
         }
+        /*
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            /*if (++count >= 1000)
+            {
+                MessageBox.Show("系统未注册, 请与供应商联系, 谢谢.");
+                this.Close();
+            }*
 
+            //inProgWin = new IndeterminateProgressWin("请等待", "正在查询中...");
+            //inProgWin.Show();
+
+            int searchMark = 0;
+            if (true == rbtnPic.IsChecked)
+            {
+                //if (null == keyCloth || string.IsNullOrEmpty(keyCloth.Path))
+                if (!canSearchByPic())
+                {
+                    MessageBox.Show("图片搜索必须先指定关键图.", "搜索图片...");
+                    return;
+                }
+                lblSearchResultInfo.Content = "正在通过图片内容搜索请稍候...";
+                searchMark = 1;
+                //searchedClothes = searchByPic();
+            }
+            else if (true == rbtnText.IsChecked)
+            {
+                lblSearchResultInfo.Content = "正在通过文字搜索请稍候...";
+                searchMark = 2;
+                //searchedClothes = searchByText();
+            }
+            else if (true == rbtnCombine.IsChecked)
+            {
+                if (!canSearchByPic())
+                {
+                    MessageBox.Show("联合搜索必须先指定关键图.", "联合搜索图片...");
+                    return;
+                }
+                lblSearchResultInfo.Content = "正在进行联合搜索请稍候...";
+                searchMark = 3;
+                //searchedClothes = searchByCombine();
+            }
+            
+            updatePicResults();
+
+            //inProgWin.Close();
+        }
+*/
         /// <summary>
         /// 
         /// </summary>
@@ -397,7 +465,7 @@ namespace ClothSearch
             {
                 case AlgorithmType.Color1:
                     int[] colorVector = keyCloth.ColorVector != null ? keyCloth.ColorVector
-                        : imageMatcher.ExtractColorVector(keyCloth.Path, ViewConstants.IgnoreColors);
+                        : imageMatcher.ExtractColorVector(keyCloth.Path, SearchConstants.IgnoreColors);
                     if (colorVector == null)
                     {
                         MessageBox.Show("无法识别指定图片文件, 请检查该文件是否正确.", "提取颜色特征...");
@@ -606,6 +674,7 @@ namespace ClothSearch
         {
             imgKeyPic.Source = null;
             keyCloth = null;
+            //keyClothOpened = false;
 
             updateSearchButton();
         }
@@ -761,7 +830,7 @@ namespace ClothSearch
             updateSearchButtonByPic();
         }
 
-        private bool canSearchByPic()
+		private bool canSearchByPic()
         {
             bool cando = false;
 
@@ -772,6 +841,18 @@ namespace ClothSearch
 
             return cando;
         }
+        /*
+        private bool canSearchByPic()
+        {
+            /*bool cando = false;
+
+            if (null != keyCloth && !string.IsNullOrEmpty(keyCloth.Path))
+            {
+                cando = true;
+            }*
+
+            return keyClothOpened;
+        }*/
 
         private void txtSearchInput_TextChanged(object sender, TextChangedEventArgs e)
         {

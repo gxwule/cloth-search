@@ -16,6 +16,8 @@ namespace Zju.Service
 
         void Delete(Cloth cloth);
 
-        List<Cloth> findAll();
+        List<Cloth> FindAll();
+
+        void AsynImportClothPics(ImportArgus argus);
     }
 }

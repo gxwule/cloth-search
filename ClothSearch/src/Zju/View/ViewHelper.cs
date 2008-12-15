@@ -22,23 +22,10 @@ namespace Zju.View
     }
 
     public sealed class ViewHelper
-    {
-        private static ImageMatcher imageMatcher;
+    {  
 
         private static Dictionary<RecallLevel, int> recallLevelToIndexMap;
 
-        public static ImageMatcher ImageMatcher
-        {
-            get
-            {
-                if (imageMatcher == null)
-                {
-                    imageMatcher = new ImageMatcher();
-                    imageMatcher.LuvInit(ViewConstants.LuvFileName);
-                }
-                return imageMatcher;
-            }
-        }
 
         public static List<ColorItem> NewColorItems
         {
@@ -93,69 +80,6 @@ namespace Zju.View
             }
 
             return bi;
-        }
-
-        /// <summary>
-        /// Extract color and texture features for the cloth picture.
-        /// And save the features back into the <code>cloth</code> objects.
-        /// </summary>
-        /// <param name="cloth"></param>
-        public static void ExtractFeatures(Cloth cloth)
-        {
-            if (String.IsNullOrEmpty(cloth.Path))
-            {
-                return;
-            }
-
-            if (cloth.ColorVector == null)
-            {
-                //ClothUtil.Log.WriteLine("begin ExtractColorVector");
-                cloth.ColorVector = ImageMatcher.ExtractColorVector(cloth.Path, ViewConstants.IgnoreColors);
-                //ClothUtil.Log.WriteLine("end ExtractColorVector");
-            }
-            
-            if (cloth.TextureVector == null)
-            {
-                //ClothUtil.Log.WriteLine("begin ExtractTextureVector");
-                cloth.TextureVector = ImageMatcher.ExtractTextureVector(cloth.Path);
-                //ClothUtil.Log.WriteLine("end ExtractTextureVector");
-            }
-
-            if (cloth.GaborVector == null)
-            {
-                //ClothUtil.Log.WriteLine("begin ExtractGaborVector");
-                cloth.GaborVector = ImageMatcher.ExtractGaborVector(cloth.Path);
-                //ClothUtil.Log.WriteLine("end ExtractGaborVector");
-            }
-
-            if (cloth.CooccurrenceVector == null)
-            {
-                //ClothUtil.Log.WriteLine("begin ExtractCooccurrenceVector");
-                cloth.CooccurrenceVector = ImageMatcher.ExtractCooccurrenceVector(cloth.Path);
-                //ClothUtil.Log.WriteLine("end ExtractCooccurrenceVector");
-            }
-        }
-
-        /// <summary>
-        /// Extract pattern string from the picture name. I.e.
-        /// C;\a\bcd.jpg -> bcd
-        /// </summary>
-        /// <param name="picName"></param>
-        /// <returns></returns>
-        public static string ExtractPattern(string picName)
-        {
-            if (string.IsNullOrEmpty(picName))
-            {
-                return null;
-            }
-
-            int i = picName.LastIndexOf('.');
-            int j = picName.LastIndexOfAny(new char[] {'/', '\\'});
-
-            j = j == -1 ? 0 : j;
-            i = i == -1 ? picName.Length : i;
-
-            return i - j - 1 > 0 ? picName.Substring(j + 1, i - j - 1) : null;
         }
 
         public static int RecallLevelToIndex(RecallLevel rLevel)

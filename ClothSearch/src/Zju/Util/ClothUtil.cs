@@ -2,14 +2,27 @@
 using System.Collections.Generic;
 using Zju.Domain;
 using System.IO;
+using Zju.Image;
 
 namespace Zju.Util
 {
     public sealed class ClothUtil
     {
+        private static ImageMatcher imageMatcher;
 
         private static StreamWriter log;
         private static String logfile = @"E:\projects\ClothSearch\codes\trunk\data\clothlog.txt";
+
+        static ClothUtil()
+        {
+            imageMatcher = new ImageMatcher();
+            imageMatcher.LuvInit(SearchConstants.LuvFileName);
+        }
+
+        public static ImageMatcher ImageMatcherInst
+        {
+            get { return imageMatcher; }
+        }
 
         public static StreamWriter Log
         {
@@ -156,6 +169,60 @@ namespace Zju.Util
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Extract color and texture features for the cloth picture.
+        /// And save the features back into the <code>cloth</code> objects.
+        /// </summary>
+        /// <param name="cloth"></param>
+        public static void ExtractFeatures(Cloth cloth)
+        {
+            if (String.IsNullOrEmpty(cloth.Path))
+            {
+                return;
+            }
+
+            cloth.ColorVector = ImageMatcherInst.ExtractColorVector(cloth.Path, SearchConstants.IgnoreColors);
+            cloth.TextureVector = ImageMatcherInst.ExtractTextureVector(cloth.Path);
+            cloth.GaborVector = ImageMatcherInst.ExtractGaborVector(cloth.Path);
+            cloth.CooccurrenceVector = ImageMatcherInst.ExtractCooccurrenceVector(cloth.Path);
+        }
+
+        /// <summary>
+        /// Extract pattern string from the picture name. I.e.
+        /// C;\a\bcd.jpg -> bcd
+        /// </summary>
+        /// <param name="picName"></param>
+        /// <returns></returns>
+        public static string ExtractPattern(string picName)
+        {
+            if (string.IsNullOrEmpty(picName))
+            {
+                return null;
+            }
+
+            int i = picName.LastIndexOf('.');
+            int j = picName.LastIndexOfAny(new char[] { '/', '\\' });
+
+            j = j == -1 ? 0 : j;
+            i = i == -1 ? picName.Length : i;
+
+            return i - j - 1 > 0 ? picName.Substring(j + 1, i - j - 1) : null;
+        }
+
+        public static Cloth GenerateClothObject(string picName)
+        {
+            Cloth cloth = new Cloth();
+
+            cloth.Path = picName;
+            cloth.Pattern = ClothUtil.ExtractPattern(cloth.Path);
+            cloth.Name = cloth.Pattern;
+
+            //ClothUtil.Log.WriteLine("begin ExtractFeatures");
+            ClothUtil.ExtractFeatures(cloth);
+
+            return cloth;
         }
     }
 }
