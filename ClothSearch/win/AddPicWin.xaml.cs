@@ -147,9 +147,9 @@ namespace ClothSearch
 
             // feature vectors
             cloth.ColorVector = (useKeyPic && keyCloth.ColorVector != null)
-                ? keyCloth.ColorVector : ClothUtil.ImageMatcherInst.ExtractColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
+                ? keyCloth.ColorVector : ClothUtil.ImageMatcherInst.ExtractRGBSeparateColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
             cloth.TextureVector = (useKeyPic && keyCloth.TextureVector != null)
-                ? keyCloth.TextureVector : ClothUtil.ImageMatcherInst.ExtractTextureVector(cloth.Path);
+                ? keyCloth.TextureVector : ClothUtil.ImageMatcherInst.ExtractDaubechiesWaveletVector(cloth.Path);
             cloth.GaborVector = (useKeyPic && keyCloth.GaborVector != null)
                 ? keyCloth.GaborVector : ClothUtil.ImageMatcherInst.ExtractGaborVector(cloth.Path);
             cloth.CooccurrenceVector = (useKeyPic && keyCloth.CooccurrenceVector != null)

@@ -77,7 +77,7 @@ namespace Zju
 			return re;
 		}
 */
-		array<float>^ ImageMatcher::ExtractColorVector(String^ imageFileName, int n, array<int>^ ignoreColors)
+		array<float>^ ImageMatcher::ExtractRGBSeparateColorVector(String^ imageFileName, int n, array<int>^ ignoreColors)
 		{
 			int n2 = n * 2;
 			int n3 = n * 3;
@@ -253,7 +253,7 @@ namespace Zju
 			return re;
 		}
 
-		array<float>^ ImageMatcher::ExtractHSVAynsColorVector(String^ imageFileName, array<int>^ ignoreColors)
+		array<float>^ ImageMatcher::ExtractHSVAynsColorVector(String^ imageFileName, int n, array<int>^ ignoreColors)
 		{
 			int nh = 11;
 			int ns = 4;
@@ -499,7 +499,7 @@ namespace Zju
 			return re;
 		}
 
-		array<float>^ ImageMatcher::ExtractTextureVector(String^ imageFileName)
+		array<float>^ ImageMatcher::ExtractDaubechiesWaveletVector(String^ imageFileName)
 		{
 			if (!isLuvInited)
 			{

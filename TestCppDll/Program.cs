@@ -75,8 +75,8 @@ namespace TestCppDll
             List<string> fns = new List<string>();
             foreach (String picName in picNames)
             {
-                ccs.Add(im.ExtractColorVector(picName, 8, new int[]{-1}));
-                tcs.Add(im.ExtractTextureVector(picName));
+                ccs.Add(im.ExtractRGBSeparateColorVector(picName, 8, new int[]{-1}));
+                tcs.Add(im.ExtractDaubechiesWaveletVector(picName));
                 fns.Add(picName);
             }
 
@@ -201,7 +201,7 @@ namespace TestCppDll
             String s = @"F:\photos\cc\08-06-23写真\ 003.JPG";
             //string s = @"E:\pic_skindetect\img_lib\20081839149581.jpg";
             im.LuvInit(@"E:\projects\ClothSearch\codes\trunk\data\luv.dat");
-            float[] v = im.ExtractTextureVector(s);
+            float[] v = im.ExtractDaubechiesWaveletVector(s);
             float sum = 0;
             foreach (float i in v)
             {
@@ -284,7 +284,7 @@ namespace TestCppDll
             int count = 0;
             foreach (String picName in picNames)
             {
-                vs[count++] = im.ExtractHSVAynsColorVector(picName, new int[] { -1 });
+                vs[count++] = im.ExtractHSVAynsColorVector(picName, 0, new int[] { -1 });
             }
 
             //int index = picName.LastIndexOf('\\');
@@ -429,7 +429,7 @@ namespace TestCppDll
                 for (int i = 0; i < 100; ++i)
                 {
                     string picName = selectedPath + (i + 1) + ext;
-                    float[] vhsv = im.ExtractHSVAynsColorVector(picName, new int[] { -1 });
+                    float[] vhsv = im.ExtractHSVAynsColorVector(picName, 0, new int[] { -1 });
                     if (vhsv == null)
                     {
                         Console.WriteLine("Error of {0}{1}", i + 1, ext);
@@ -565,7 +565,7 @@ namespace TestCppDll
             for (int i = 1; i <= 100; ++i)
             {
                 string picName = selectedPath + i + ext;
-                float[] vhsv = im.ExtractHSVAynsColorVector(picName, new int[] { -1 });
+                float[] vhsv = im.ExtractHSVAynsColorVector(picName, 0, new int[] { -1 });
                 if (vhsv == null)
                 {
                     Console.WriteLine("Error of {0}{1}", i, ext);

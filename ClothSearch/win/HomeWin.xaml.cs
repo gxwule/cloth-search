@@ -167,8 +167,8 @@ namespace ClothSearch
                 keyCloth.Pattern = ClothUtil.ExtractPattern(keyCloth.Path);
                 keyCloth.Name = keyCloth.Pattern;
 
-                //keyCloth.ColorVector = imageMatcher.ExtractColorVector(keyCloth.Path, SearchConstants.IgnoreColors);
-                //keyCloth.TextureVector = imageMatcher.ExtractTextureVector(keyCloth.Path);
+                //keyCloth.ColorVector = imageMatcher.ExtractRGBSeparateColorVector(keyCloth.Path, SearchConstants.IgnoreColors);
+                //keyCloth.TextureVector = imageMatcher.ExtractDaubechiesWaveletVector(keyCloth.Path);
                 //keyCloth.GaborVector = imageMatcher.ExtractGaborVector(keyCloth.Path);
                 //keyCloth.CooccurrenceVector = imageMatcher.ExtractCooccurrenceVector(keyCloth.Path);
 
@@ -189,8 +189,8 @@ namespace ClothSearch
                 }*/
 
                 //ViewHelper.ExtractFeatures(keyCloth);
-                //keyCloth.ColorVector = imageMatcher.ExtractColorVector(keyCloth.Path, ViewConstants.IgnoreColors);
-                //keyCloth.TextureVector = imageMatcher.ExtractTextureVector(keyCloth.Path);
+                //keyCloth.ColorVector = imageMatcher.ExtractRGBSeparateColorVector(keyCloth.Path, ViewConstants.IgnoreColors);
+                //keyCloth.TextureVector = imageMatcher.ExtractDaubechiesWaveletVector(keyCloth.Path);
                 //keyCloth.GaborVector = imageMatcher.ExtractGaborVector(keyCloth.Path);
                 //keyCloth.CooccurrenceVector = imageMatcher.ExtractCooccurrenceVector(keyCloth.Path);
 
@@ -204,8 +204,8 @@ namespace ClothSearch
             cloth.Path = (String)obj;
             cloth.Pattern = ClothUtil.ExtractPattern(cloth.Path);
             cloth.Name = cloth.Pattern;
-            cloth.ColorVector = imageMatcher.ExtractColorVector(cloth.Path, SearchConstants.IgnoreColors);
-            cloth.TextureVector = imageMatcher.ExtractTextureVector(cloth.Path);
+            cloth.ColorVector = imageMatcher.ExtractRGBSeparateColorVector(cloth.Path, SearchConstants.IgnoreColors);
+            cloth.TextureVector = imageMatcher.ExtractDaubechiesWaveletVector(cloth.Path);
             cloth.GaborVector = imageMatcher.ExtractGaborVector(cloth.Path);
             cloth.CooccurrenceVector = imageMatcher.ExtractCooccurrenceVector(cloth.Path);
             keyCloth = cloth;                
@@ -466,7 +466,7 @@ namespace ClothSearch
                 case AlgorithmType.Color1:
                     if (null == keyCloth.ColorVector)
                     {
-                        keyCloth.ColorVector = imageMatcher.ExtractColorVector(keyCloth.Path, 8, SearchConstants.IgnoreColors);
+                        keyCloth.ColorVector = imageMatcher.ExtractRGBSeparateColorVector(keyCloth.Path, 8, SearchConstants.IgnoreColors);
                     }
                     float[] colorVector = keyCloth.ColorVector;
                     if (colorVector == null)
@@ -502,7 +502,7 @@ namespace ClothSearch
                 case AlgorithmType.Texture2:
                     if (null == keyCloth.TextureVector)
                     {
-                        keyCloth.TextureVector = imageMatcher.ExtractTextureVector(keyCloth.Path);
+                        keyCloth.TextureVector = imageMatcher.ExtractDaubechiesWaveletVector(keyCloth.Path);
                     }
                     float[] textureVector = keyCloth.TextureVector;
                     if (null == textureVector)
