@@ -96,7 +96,7 @@ namespace Zju.Service
             return ClothUtil.IntersectClothLists(clothLists);
         }
 
-        public List<Cloth> SearchByPicColor(int[] colorVector)
+        public List<Cloth> SearchByPicColor(float[] colorVector)
         {
             SortedDictionary<float, List<Cloth>> sortClothes = new SortedDictionary<float, List<Cloth>>();
             List<Cloth> allClothes = clothDao.FindAll();
@@ -221,7 +221,7 @@ namespace Zju.Service
             return clothes;
         }
 
-        public List<Cloth> SearchByTextAndPicColor(String words, ColorEnum colors, ShapeEnum shapes, int[] colorVector)
+        public List<Cloth> SearchByTextAndPicColor(String words, ColorEnum colors, ShapeEnum shapes, float[] colorVector)
         {
             List<List<Cloth>> clothLists = new List<List<Cloth>>();
 

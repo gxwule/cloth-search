@@ -71,11 +71,11 @@ namespace TestCppDll
 
             Console.WriteLine("begin extract");
             List<float[]> tcs = new List<float[]>();
-            List<int[]> ccs = new List<int[]>();
+            List<float[]> ccs = new List<float[]>();
             List<string> fns = new List<string>();
             foreach (String picName in picNames)
             {
-                ccs.Add(im.ExtractColorVector(picName, new int[]{-1}));
+                ccs.Add(im.ExtractColorVector(picName, 8, new int[]{-1}));
                 tcs.Add(im.ExtractTextureVector(picName));
                 fns.Add(picName);
             }

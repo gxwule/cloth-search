@@ -9,7 +9,7 @@ namespace Zju.Service
     {
         List<Cloth> SearchByText(String words, ColorEnum colors, ShapeEnum shapes);
 
-        List<Cloth> SearchByPicColor(int[] colorVector);
+        List<Cloth> SearchByPicColor(float[] colorVector);
 
         List<Cloth> SearchByPicTexture(float[] textureVector);
 
@@ -17,7 +17,7 @@ namespace Zju.Service
 
         List<Cloth> SearchByPicCooccurrence(float[] cooccurrenceVector);
 
-        List<Cloth> SearchByTextAndPicColor(String words, ColorEnum colors, ShapeEnum shapes, int[] colorVector);
+        List<Cloth> SearchByTextAndPicColor(String words, ColorEnum colors, ShapeEnum shapes, float[] colorVector);
 
         List<Cloth> SearchByTextAndPicTexture(String words, ColorEnum colors, ShapeEnum shapes, float[] textureVector);
 

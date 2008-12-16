@@ -40,7 +40,7 @@ namespace Zju.Domain
         /// </summary>
         private DateTime updateTime;
 
-        private int[] colorVector;
+        private float[] colorVector;
 
         private float[] textureVector;
 
@@ -87,7 +87,7 @@ namespace Zju.Domain
             set { updateTime = value; }
         }
 
-        public int[] ColorVector
+        public float[] ColorVector
         {
             get { return colorVector; }
             set { colorVector = value; }

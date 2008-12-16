@@ -464,8 +464,11 @@ namespace ClothSearch
             switch (aDesc.AType)
             {
                 case AlgorithmType.Color1:
-                    int[] colorVector = keyCloth.ColorVector != null ? keyCloth.ColorVector
-                        : imageMatcher.ExtractColorVector(keyCloth.Path, SearchConstants.IgnoreColors);
+                    if (null == keyCloth.ColorVector)
+                    {
+                        keyCloth.ColorVector = imageMatcher.ExtractColorVector(keyCloth.Path, 8, SearchConstants.IgnoreColors);
+                    }
+                    float[] colorVector = keyCloth.ColorVector;
                     if (colorVector == null)
                     {
                         MessageBox.Show("无法识别指定图片文件, 请检查该文件是否正确.", "提取颜色特征...");
@@ -479,8 +482,11 @@ namespace ClothSearch
                     clothes = clothSearchService.SearchByPicColor(colorVector);
                     break;
                 case AlgorithmType.Texture1:
-                    float[] gaborVector = keyCloth.GaborVector != null ? keyCloth.GaborVector
-                        : imageMatcher.ExtractGaborVector(keyCloth.Path);
+                    if (null == keyCloth.GaborVector)
+                    {
+                        keyCloth.GaborVector = imageMatcher.ExtractGaborVector(keyCloth.Path);
+                    }
+                    float[] gaborVector = keyCloth.GaborVector;
                     if (null == gaborVector)
                     {
                         MessageBox.Show("您选择的文件无法识别, 可能不是图片文件.", "提取Gabor纹理...");
@@ -494,8 +500,11 @@ namespace ClothSearch
                     clothes = clothSearchService.SearchByPicGabor(gaborVector);
                     break;
                 case AlgorithmType.Texture2:
-                    float[] textureVector = keyCloth.TextureVector != null ? keyCloth.TextureVector
-                        : imageMatcher.ExtractTextureVector(keyCloth.Path);
+                    if (null == keyCloth.TextureVector)
+                    {
+                        keyCloth.TextureVector = imageMatcher.ExtractTextureVector(keyCloth.Path);
+                    }
+                    float[] textureVector = keyCloth.TextureVector;
                     if (null == textureVector)
                     {
                         MessageBox.Show("您选择的文件无法识别, 可能不是图片文件.", "提取Daubechies纹理...");
@@ -510,8 +519,11 @@ namespace ClothSearch
                     break;
                 case AlgorithmType.Texture3:
                 default:
-                    float[] cooccurrenceVector = keyCloth.CooccurrenceVector != null ? keyCloth.CooccurrenceVector
-                        : imageMatcher.ExtractCooccurrenceVector(keyCloth.Path);
+                    if (null == keyCloth.CooccurrenceVector)
+                    {
+                        keyCloth.CooccurrenceVector = imageMatcher.ExtractCooccurrenceVector(keyCloth.Path);
+                    }
+                    float[] cooccurrenceVector = keyCloth.CooccurrenceVector;
                     if (null == cooccurrenceVector)
                     {
                         MessageBox.Show("您选择的文件无法识别, 可能不是图片文件.", "提取Cooccurrence纹理...");

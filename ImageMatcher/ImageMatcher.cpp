@@ -77,9 +77,11 @@ namespace Zju
 			return re;
 		}
 */
-		array<int>^ ImageMatcher::ExtractColorVector(String^ imageFileName, array<int>^ ignoreColors)
+		array<float>^ ImageMatcher::ExtractColorVector(String^ imageFileName, int n, array<int>^ ignoreColors)
 		{
-			array<int>^ v = gcnew array<int>(24) {0};
+			int n2 = n * 2;
+			int n3 = n * 3;
+			array<int>^ v = gcnew array<int>(n3) {0};
 
 			IplImage* imgRgb = NULL;
 
@@ -103,6 +105,7 @@ namespace Zju
 				}
 			}
 
+			int interval = (256 + n -1) / n;
 			BYTE b, g, r;
 			for( int h = 0; h < imgRgb->height; ++h ) {
 				for ( int w = 0; w < imgRgb->width * 3; w += 3 ) {
@@ -111,16 +114,23 @@ namespace Zju
 					r = ((PUCHAR)(imgRgb->imageData + imgRgb->widthStep * h))[w+2];
 					if (!ignoreColorSet.Contains((((int)r) << 16) + (((int)g) << 8) + b))
 					{
-						++v[r/32];
-						++v[g/32+8];
-						++v[b/32+16];
+						++v[r/interval];
+						++v[g/interval+n];
+						++v[b/interval+n2];
 					}
 				}
 			}
 
+			float total = imgRgb->height * imgRgb->width;
 			cvReleaseImage( &imgRgb );
 
-			return v;
+			array<float>^ re = gcnew array<float>(n3);
+			for (int i=0; i<n3; ++i)
+			{
+				re[i] = v[i] / total;
+			}
+
+			return re;
 		}
 
 		array<float>^ ImageMatcher::ExtractRGBColorVector(String^ imageFileName, int n, array<int>^ ignoreColors)

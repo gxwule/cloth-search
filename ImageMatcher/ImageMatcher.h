@@ -18,7 +18,7 @@ namespace Zju
 			// Extract 24-v color vector for a image.
 			// Format of ingoreColors is as: 0xffffff.
 			// Return null if failed.
-			array<int>^ ExtractColorVector(String^ imageFileName, array<int>^ ignoreColors);
+			array<float>^ ExtractColorVector(String^ imageFileName, int n, array<int>^ ignoreColors);
 
 			// Extract n*n*n-v color vector for a image.
 			array<float>^ ExtractRGBColorVector(String^ imageFileName, int n, array<int>^ ignoreColors);
