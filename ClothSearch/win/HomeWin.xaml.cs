@@ -27,6 +27,10 @@ namespace ClothSearch
 
         private List<ShapeItem> shapeItems;
 
+        private List<ColorItem> modifyColorItems;
+
+        private List<ShapeItem> modifyShapeItems;
+
         private IClothLibService clothLibService;
 
         private IClothSearchService clothSearchService;
@@ -115,6 +119,12 @@ namespace ClothSearch
             shapeItems = ViewHelper.NewShapeItems;
             this.Resources.Add("colorItems", colorItems);
             this.Resources.Add("shapeItems", shapeItems);
+
+            modifyColorItems = ViewHelper.NewColorItems;
+            modifyShapeItems = ViewHelper.NewShapeItems;
+            this.Resources.Add("modifyColorItems", modifyColorItems);
+            this.Resources.Add("modifyShapeItems", modifyShapeItems);
+            
 
             InitializeComponent();
 
@@ -675,6 +685,34 @@ namespace ClothSearch
             txtModifyName.Text = string.IsNullOrEmpty(selectedCloth.Name) ? "" : selectedCloth.Name;
 
             txtModifyPattern.Text = string.IsNullOrEmpty(selectedCloth.Pattern) ? "" : selectedCloth.Pattern;
+
+            ColorEnum colors = selectedCloth.Colors;
+            foreach (ColorItem ci in modifyColorItems)
+            {
+                if ((colors & ci.Value) != 0)
+                {
+                    ci.Selected = true;
+                }
+                else
+                {
+                    ci.Selected = false;
+                }
+            }
+            updateModifyColorText();
+
+            ShapeEnum shapes = selectedCloth.Shapes;
+            foreach (ShapeItem si in modifyShapeItems)
+            {
+                if ((shapes & si.Value) != 0)
+                {
+                    si.Selected = true;
+                }
+                else
+                {
+                    si.Selected = false;
+                }
+            }
+            updateModifyShapeText();
             
             txtModifyName.IsEnabled = true;
             txtModifyPattern.IsEnabled = true;
@@ -721,6 +759,25 @@ namespace ClothSearch
             Cloth newCloth = new Cloth(selectedCloth);
             newCloth.Name = string.IsNullOrEmpty(txtModifyName.Text) ? null : txtModifyName.Text;
             newCloth.Pattern = string.IsNullOrEmpty(txtModifyPattern.Text) ? null : txtModifyPattern.Text;
+            ColorEnum colors = ColorEnum.NONE;
+            foreach (ColorItem ci in modifyColorItems)
+            {
+                if (ci.Selected)
+                {
+                    colors |= ci.Value;
+                }
+            }
+            newCloth.Colors = colors;
+
+            ShapeEnum shapes = ShapeEnum.NONE;
+            foreach (ShapeItem si in modifyShapeItems)
+            {
+                if (si.Selected)
+                {
+                    shapes |= si.Value;
+                }
+            }
+            newCloth.Shapes = shapes;
 
             clothLibService.Update(selectedCloth, newCloth);
         }
@@ -915,6 +972,46 @@ namespace ClothSearch
             {
                 updateSearchButtonByCombine();
             }
+        }
+
+        private void chkModifyColor_Click(object sender, RoutedEventArgs e)
+        {
+            updateModifyColorText();
+        }
+
+        private void updateModifyColorText()
+        {
+            String Values = "";
+
+            foreach (ColorItem ci in modifyColorItems)
+            {
+                if (ci.Selected)
+                {
+                    Values += String.IsNullOrEmpty(Values) ? ci.Name : "," + ci.Name;
+                }
+            }
+
+            cmbModifyColor.Text = Values;
+        }
+
+        private void chkModifyShape_Click(object sender, RoutedEventArgs e)
+        {
+            updateModifyShapeText();
+        }
+
+        private void updateModifyShapeText()
+        {
+            String Values = "";
+
+            foreach (ShapeItem ci in modifyShapeItems)
+            {
+                if (ci.Selected)
+                {
+                    Values += String.IsNullOrEmpty(Values) ? ci.Name : "," + ci.Name;
+                }
+            }
+
+            cmbModifyShape.Text = Values;
         }
     }
 }

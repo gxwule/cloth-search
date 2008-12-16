@@ -3,22 +3,90 @@ using System.Collections.Generic;
 using Zju.Util;
 using Zju.Image;
 using Zju.Domain;
+using System.ComponentModel;
 using System.Windows.Media.Imaging;
 
 namespace Zju.View
 {
-    public class ColorItem
+    // INotifyPropertyChanged for two-way-binding
+    public class ColorItem : INotifyPropertyChanged
     {
-        public String Name { get; set; }
+        private String name;
+        private bool selected;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public String Name
+        { 
+            get 
+            {
+                return name;
+            }
+            set 
+            { 
+                name = value;
+                if (this.PropertyChanged != null)
+                {
+                    this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Name"));
+                }
+            }
+        }
         public ColorEnum Value { get; set; }
-        public Boolean Selected { get; set; }
+        public Boolean Selected
+        {
+            get
+            {
+                return selected;
+            }
+            set
+            {
+                selected = value;
+                if (this.PropertyChanged != null)
+                {
+                    this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Selected"));
+                }
+            }
+        }
     }
 
-    public class ShapeItem
+    public class ShapeItem : INotifyPropertyChanged
     {
-        public String Name { get; set; }
+        private String name;
+        private bool selected;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public String Name 
+        { 
+            get 
+            {
+                return name;
+            }
+            set 
+            { 
+                name = value;
+                if (this.PropertyChanged != null)
+                {
+                    this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Name"));
+                }
+            }
+        }
+
         public ShapeEnum Value { get; set; }
-        public Boolean Selected { get; set; }
+
+        public Boolean Selected
+        {
+            get
+            {
+                return selected;
+            }
+            set
+            {
+                selected = value;
+                if (this.PropertyChanged != null)
+                {
+                    this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Selected"));
+                }
+            }
+        }
     }
 
     public sealed class ViewHelper

@@ -1,7 +1,7 @@
 ﻿<Window x:Class="ClothSearch.HomeWin"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="面料花型检索系统" Height="693" WindowStartupLocation="CenterScreen" Width="935">
+    Title="面料花型检索系统" Height="755" WindowStartupLocation="CenterScreen" Width="935">
     <DockPanel LastChildFill="True">
         <Border DockPanel.Dock="Top" Style="{StaticResource blueBorder}">
             <Image Name="banner" Stretch="Fill" Height="77" VerticalAlignment="Top" Source="/ClothSearch;component/res/banner.png"/>
@@ -118,12 +118,56 @@
                 </Border>
                 <Border Style="{StaticResource blueBorder}">
                     <Canvas>
-                        <Label Canvas.Left="13" Canvas.Top="13" Width="39">名称:</Label>
+                        <Label Canvas.Left="12" Canvas.Top="13" Width="39">名称:</Label>
                         <TextBox Canvas.Left="56" Canvas.Top="16" Name="txtModifyName" Width="120" />
                         <Label Canvas.Left="12" Canvas.Top="44" Width="41">花型:</Label>
                         <TextBox Canvas.Left="56" Canvas.Top="46" Name="txtModifyPattern" Width="120" />
-                        <Button Canvas.Left="70" Canvas.Top="78" Height="23" Name="btnResultDelete" Width="44" Click="btnResultDelete_Click" IsEnabled="False">删除</Button>
-                        <Button Canvas.Left="124" Canvas.Top="78" Height="23" Name="btnResultModify" Width="44" Click="btnResultModify_Click" IsEnabled="False">修改</Button>
+                        <Label Canvas.Left="12" Canvas.Top="75" Height="24" Width="40">形状:</Label>
+                        <!--  ItemsSource="{Binding Source={StaticResource shapeItems}}" -->
+                        <!-- MouseEnter ="cmbInput_MouseEnter" -->
+                        <ComboBox Canvas.Left="56" Canvas.Top="75" Width="120" Name="cmbModifyShape" 
+                            ItemsSource="{Binding Source={StaticResource modifyShapeItems}}"
+                            HorizontalContentAlignment="Stretch" ToolTip="形状描述"
+                            IsEditable="True" IsReadOnly="True">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <CheckBox x:Name="CheckBox" 
+                                          IsChecked="{Binding Path=Selected}"
+                                          Click="chkModifyShape_Click">
+                                            <CheckBox.Content>
+                                                <TextBlock Text="{Binding Path=Name}" 
+                                                   Margin="2"/>
+                                    </CheckBox.Content>
+                                        </CheckBox>
+                                    </Grid>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <Label Canvas.Left="12" Canvas.Top="106" Height="24" Width="37">颜色:</Label>
+                        <!--  ItemsSource="{Binding Source={StaticResource colorItems}}" -->
+                        <!-- MouseEnter ="cmbInput_MouseEnter" -->
+                        <ComboBox Canvas.Left="56" Canvas.Top="106" Width="120" Name="cmbModifyColor" 
+                            ItemsSource="{Binding Source={StaticResource modifyColorItems}}"
+                            HorizontalContentAlignment="Stretch" ToolTip="颜色描述"
+                            IsEditable="True" IsReadOnly="True">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <CheckBox x:Name="CheckBox" 
+                                          IsChecked="{Binding Path=Selected}"
+                                          Click="chkModifyColor_Click">
+                                            <CheckBox.Content>
+                                                <TextBlock Text="{Binding Path=Name}" 
+                                                   Margin="2"/>
+                                    </CheckBox.Content>
+                                        </CheckBox>
+                                    </Grid>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <Button Canvas.Left="70" Canvas.Top="140" Height="23" Name="btnResultDelete" Width="44" Click="btnResultDelete_Click" IsEnabled="False">删除</Button>
+                        <Button Canvas.Left="124" Canvas.Top="140" Height="23" Name="btnResultModify" Width="44" Click="btnResultModify_Click" IsEnabled="False">修改</Button>
                     </Canvas>
                 </Border>
             </StackPanel>
