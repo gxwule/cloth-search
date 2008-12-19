@@ -474,11 +474,11 @@ namespace ClothSearch
             switch (aDesc.AType)
             {
                 case AlgorithmType.Color1:
-                    if (null == keyCloth.ColorVector)
+                    if (null == keyCloth.RGBSeparateColorVector)
                     {
-                        keyCloth.ColorVector = imageMatcher.ExtractRGBSeparateColorVector(keyCloth.Path, 8, SearchConstants.IgnoreColors);
+                        keyCloth.RGBSeparateColorVector = imageMatcher.ExtractRGBSeparateColorVector(keyCloth.Path, 8, SearchConstants.IgnoreColors);
                     }
-                    float[] colorVector = keyCloth.ColorVector;
+                    float[] colorVector = keyCloth.RGBSeparateColorVector;
                     if (colorVector == null)
                     {
                         MessageBox.Show("无法识别指定图片文件, 请检查该文件是否正确.", "提取颜色特征...");
@@ -510,11 +510,11 @@ namespace ClothSearch
                     clothes = clothSearchService.SearchByPicGabor(gaborVector);
                     break;
                 case AlgorithmType.Texture2:
-                    if (null == keyCloth.TextureVector)
+                    if (null == keyCloth.DaubechiesWaveletVector)
                     {
-                        keyCloth.TextureVector = imageMatcher.ExtractDaubechiesWaveletVector(keyCloth.Path);
+                        keyCloth.DaubechiesWaveletVector = imageMatcher.ExtractDaubechiesWaveletVector(keyCloth.Path);
                     }
-                    float[] textureVector = keyCloth.TextureVector;
+                    float[] textureVector = keyCloth.DaubechiesWaveletVector;
                     if (null == textureVector)
                     {
                         MessageBox.Show("您选择的文件无法识别, 可能不是图片文件.", "提取Daubechies纹理...");

@@ -96,7 +96,7 @@ namespace Zju.Dao
             Assert.AreEqual(emptyList, target.FindAllByColors(ColorEnum.BLUE));
             Assert.AreEqual(emptyList, target.FindAllByColors(ColorEnum.BLACK | ColorEnum.BLUE));
             //print(cloth);
-            // delete the cloth, for next test case
+            // delete the cloth, for next Test case
             target.Delete(oid);
             //print(cloth);
             Assert.IsNull(target.FindByOid(oid));

@@ -111,14 +111,14 @@ namespace Zju.Dao
                     cloth.Path = newCloth.Path;
                 }
                 
-                if (newCloth.ColorVector != null && cloth.ColorVector != newCloth.ColorVector)
+                if (newCloth.RGBSeparateColorVector != null && cloth.RGBSeparateColorVector != newCloth.RGBSeparateColorVector)
                 {
-                    cloth.ColorVector = newCloth.ColorVector;
+                    cloth.RGBSeparateColorVector = newCloth.RGBSeparateColorVector;
                 }
 
-                if (newCloth.TextureVector != null && cloth.TextureVector != newCloth.TextureVector)
+                if (newCloth.DaubechiesWaveletVector != null && cloth.DaubechiesWaveletVector != newCloth.DaubechiesWaveletVector)
                 {
-                    cloth.TextureVector = newCloth.TextureVector;
+                    cloth.DaubechiesWaveletVector = newCloth.DaubechiesWaveletVector;
                 }
 
                 if (newCloth.GaborVector != null && cloth.GaborVector != newCloth.GaborVector)

@@ -40,9 +40,17 @@ namespace Zju.Domain
         /// </summary>
         private DateTime updateTime;
 
-        private float[] colorVector;
+        private float[] rGBSeparateColorVector;
 
-        private float[] textureVector;
+        private float[] rGBColorVector;
+
+        private float[] hSVColorVector;
+
+        private float[] hSVAynsColorVector;
+
+        private float[] hLSColorVector;
+
+        private float[] daubechiesWaveletVector;
 
         private float[] gaborVector;
 
@@ -87,16 +95,40 @@ namespace Zju.Domain
             set { updateTime = value; }
         }
 
-        public float[] ColorVector
+        public float[] RGBSeparateColorVector
         {
-            get { return colorVector; }
-            set { colorVector = value; }
+            get { return rGBSeparateColorVector; }
+            set { rGBSeparateColorVector = value; }
         }
 
-        public float[] TextureVector
+        public float[] RGBColorVector
         {
-            get { return textureVector; }
-            set { textureVector = value; }
+            get { return rGBColorVector; }
+            set { rGBColorVector = value; }
+        }
+
+        public float[] HSVColorVector
+        {
+            get { return hSVColorVector; }
+            set { hSVColorVector = value; }
+        }
+
+        public float[] HSVAynsColorVector
+        {
+            get { return hSVAynsColorVector; }
+            set { hSVAynsColorVector = value; }
+        }
+
+        public float[] HLSColorVector
+        {
+            get { return hLSColorVector; }
+            set { hLSColorVector = value; }
+        }
+
+        public float[] DaubechiesWaveletVector
+        {
+            get { return daubechiesWaveletVector; }
+            set { daubechiesWaveletVector = value; }
         }
 
         public float[] GaborVector
@@ -125,8 +157,12 @@ namespace Zju.Domain
             this.path = cloth.Path;
             this.colors = cloth.Colors;
             this.shapes = cloth.Shapes;
-            this.colorVector = cloth.ColorVector;
-            this.textureVector = cloth.TextureVector;
+            this.rGBSeparateColorVector = cloth.RGBSeparateColorVector;
+            this.rGBColorVector = cloth.RGBColorVector;
+            this.hSVColorVector = cloth.HSVColorVector;
+            this.hSVAynsColorVector = cloth.HSVAynsColorVector;
+            this.hLSColorVector = cloth.HLSColorVector;
+            this.daubechiesWaveletVector = cloth.DaubechiesWaveletVector;
             this.gaborVector = cloth.GaborVector;
             this.cooccurrenceVector = cloth.CooccurrenceVector;
             this.updateTime = cloth.UpdateTime;

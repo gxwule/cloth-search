@@ -102,7 +102,7 @@ namespace Zju.Service
             List<Cloth> allClothes = clothDao.FindAll();
             foreach (Cloth cloth in allClothes)
             {
-                float md = ClothUtil.CalcManhattanDistance(colorVector, cloth.ColorVector);
+                float md = ClothUtil.CalcManhattanDistance(colorVector, cloth.RGBSeparateColorVector);
                 if (md <= colorMDLimit)
                 {
                     if (!sortClothes.ContainsKey(md))
@@ -133,7 +133,7 @@ namespace Zju.Service
             List<Cloth> allClothes = clothDao.FindAll();
             foreach (Cloth cloth in allClothes)
             {
-                float md = ClothUtil.CalcManhattanDistance(textureVector, cloth.TextureVector);
+                float md = ClothUtil.CalcManhattanDistance(textureVector, cloth.DaubechiesWaveletVector);
                 if (md <= textureMDLimit)
                 {
                     if (!sortClothes.ContainsKey(md))

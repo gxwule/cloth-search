@@ -183,8 +183,8 @@ namespace Zju.Util
                 return;
             }
 
-            cloth.ColorVector = ImageMatcherInst.ExtractRGBSeparateColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
-            cloth.TextureVector = ImageMatcherInst.ExtractDaubechiesWaveletVector(cloth.Path);
+            cloth.RGBSeparateColorVector = ImageMatcherInst.ExtractRGBSeparateColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
+            cloth.DaubechiesWaveletVector = ImageMatcherInst.ExtractDaubechiesWaveletVector(cloth.Path);
             cloth.GaborVector = ImageMatcherInst.ExtractGaborVector(cloth.Path);
             cloth.CooccurrenceVector = ImageMatcherInst.ExtractCooccurrenceVector(cloth.Path);
         }
