@@ -42,7 +42,7 @@
   <Class Name="Zju.Search.PicSearcher">
     <Position X="8" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAEAAAAEAAAAAABgAAA=</HashCode>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAQAAAAEAAAAEAAAAAABgAAA=</HashCode>
       <FileName>src\Zju\Search\PicSearcher.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -104,6 +104,9 @@
   </Class>
   <Class Name="Zju.Search.GaborSearcher">
     <Position X="1.5" Y="5.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
       <FileName>src\Zju\Search\GaborSearcher.cs</FileName>

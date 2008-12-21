@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Zju.Domain;
 using Zju.Util;
+using Zju.Dao;
 
 namespace Zju.Search
 {
@@ -12,12 +13,6 @@ namespace Zju.Search
 
         protected static readonly DelCalcDist DEFAULT_CALC_DIST_DELEGATE = new DelCalcDist(ClothUtil.CalcManhattanDistance);
 
-        public PicSearcher(float limit, IBaseSearcher wrappedSearcher, int maxResult)
-            : this(limit, DEFAULT_CALC_DIST_DELEGATE, wrappedSearcher, maxResult)
-        {
-           
-        }
-
         public PicSearcher(float limit, DelCalcDist calcDist, IBaseSearcher wrappedSearcher, int maxResult)
             : base(wrappedSearcher, maxResult)
         {
@@ -25,13 +20,15 @@ namespace Zju.Search
             this.calcDist = calcDist;
         }
 
+        public PicSearcher(float limit, DelCalcDist calcDist, ClothDao clothDao, int maxResult)
+            : base(clothDao, maxResult)
+        {
+            this.limit = limit;
+            this.calcDist = calcDist;
+        }
+
         public override List<Cloth> Search(BaseParam param)
         {
-            if (!(param is PicParam))
-            {
-                throw new ArgumentException("The parameter must be of PicParam in PicSearcher.");
-            }
-
             List<Cloth> clothes = null;
             if (wrappedSearcher != null)
             {
@@ -39,6 +36,11 @@ namespace Zju.Search
             }
             else if (clothDao != null)
             {
+                if (!(param is PicParam))
+                {
+                    throw new ArgumentException("The parameter must be of PicParam in PicSearcher.");
+                }
+
                 clothes = clothDao.FindAll();
             }
 

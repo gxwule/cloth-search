@@ -23,8 +23,8 @@ namespace Zju.Search
 
         #region IBaseSearcher Members
 
-        public BaseSearcher()
-            : this(null, DEFAULT_MAX_RESULT)
+        public BaseSearcher(ClothDao clothDao)
+            : this(clothDao, DEFAULT_MAX_RESULT)
         {
             
         }
@@ -38,7 +38,12 @@ namespace Zju.Search
         public BaseSearcher(IBaseSearcher wrappedSearcher, int maxResult)
         {
             this.wrappedSearcher = wrappedSearcher;
-            this.clothDao = new ClothDao();
+            this.MaxResult = maxResult;
+        }
+
+        public BaseSearcher(ClothDao clothDao, int maxResult)
+        {
+            this.clothDao = clothDao;
             this.MaxResult = maxResult;
         }
 
