@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Zju.Util;
-using Zju.Dao;
 using Zju.Domain;
+using Zju.Dao;
+using Zju.Searcher;
 
 namespace Zju.Service
 {
@@ -18,245 +19,54 @@ namespace Zju.Service
 
         private float cooccurrenceMDLimit;
 
-        public ClothSearchService() : this(null)
+        public ClothSearchService()
         {
-
-        }
-
-        public ClothSearchService(IClothDao clothDao)
-        {
-            this.clothDao = clothDao;
             colorMDLimit = SearchConstants.ColorMDLimits[0];
             textureMDLimit = SearchConstants.TextureMDLimits[0];
+            clothDao = new ClothDao();
         }
 
         #region IClothSearchService Members
 
         public List<Cloth> SearchByText(string words, ColorEnum colors, ShapeEnum shapes)
         {
-            List<List<Cloth>> clothLists = new List<List<Cloth>>();
-
-            if (colors != ColorEnum.NONE)
-            {
-                List<Cloth> clothesByColor = clothDao.FindAllByColors(colors);
-                if (clothesByColor.Count > 0)
-                {
-                    clothLists.Add(clothesByColor);
-                }
-                else
-                {
-                    // empty list
-                    return clothesByColor;
-                }
-            }
-
-
-            if (shapes != ShapeEnum.NONE)
-            {
-                List<Cloth> clothesByShape = clothDao.FindAllByShapes(shapes);
-                if (clothesByShape.Count > 0)
-                {
-                    clothLists.Add(clothesByShape);
-                }
-                else
-                {
-                    // empty list
-                    return clothesByShape;
-                }
-            }
-            
-
-            if (!String.IsNullOrEmpty(words))
-            {
-                string[] patterns = words.Split(new char[] { ',', ' ', '\t' });
-                List<List<Cloth>> clothListsByWords = new List<List<Cloth>>();
-                foreach (string pattern in patterns)
-                {
-                    if (!string.IsNullOrEmpty(pattern))
-                    {
-                        List<Cloth> clothesByPattern = clothDao.FindAllByPattern(pattern);
-
-                        if (clothesByPattern.Count > 0)
-                        {
-                            clothListsByWords.Add(clothesByPattern);
-                        }
-                    }
-                }
-                if (clothListsByWords.Count > 0)
-                {
-                    clothLists.Add(ClothUtil.UnionClothLists(clothListsByWords));
-                }
-                else
-                {
-                    // empty list
-                    return new List<Cloth>();
-                }
-            }
-
-            return ClothUtil.IntersectClothLists(clothLists);
+            return new TextSearcher(new TextParam(words, colors, shapes), clothDao).Search();
         }
 
-        public List<Cloth> SearchByPicColor(float[] colorVector)
+        public List<Cloth> SearchByPicRGBSeparateColor(float[] colorVector)
         {
-            SortedDictionary<float, List<Cloth>> sortClothes = new SortedDictionary<float, List<Cloth>>();
-            List<Cloth> allClothes = clothDao.FindAll();
-            foreach (Cloth cloth in allClothes)
-            {
-                float md = ClothUtil.CalcManhattanDistance(colorVector, cloth.RGBSeparateColorVector);
-                if (md <= colorMDLimit)
-                {
-                    if (!sortClothes.ContainsKey(md))
-                    {
-                        sortClothes[md] = new List<Cloth>();
-                    }
-                    sortClothes[md].Add(cloth);
-                }
-            }
-
-            List<Cloth> clothes = new List<Cloth>();
-            foreach (List<Cloth> cs in sortClothes.Values)
-            {
-                clothes.AddRange(cs);
-            }
-
-            if (clothes.Count > 200)
-            {
-                return clothes.GetRange(0, 200);
-            }
-
-            return clothes;
+            return new RGBSeparateColorSearcher(new PicParam(colorVector), colorMDLimit, ClothUtil.CalcManhattanDistance, clothDao, 200)
+                .Search();
         }
 
-        public List<Cloth> SearchByPicTexture(float[] textureVector)
+        public List<Cloth> SearchByPicDaubechiesWavelet(float[] textureVector)
         {
-            SortedDictionary<float, List<Cloth>> sortClothes = new SortedDictionary<float, List<Cloth>>();
-            List<Cloth> allClothes = clothDao.FindAll();
-            foreach (Cloth cloth in allClothes)
-            {
-                float md = ClothUtil.CalcManhattanDistance(textureVector, cloth.DaubechiesWaveletVector);
-                if (md <= textureMDLimit)
-                {
-                    if (!sortClothes.ContainsKey(md))
-                    {
-                        sortClothes[md] = new List<Cloth>();
-                    }
-                    sortClothes[md].Add(cloth);
-                }
-            }
-
-            List<Cloth> clothes = new List<Cloth>();
-            foreach (List<Cloth> cs in sortClothes.Values)
-            {
-                clothes.AddRange(cs);
-            }
-
-            if (clothes.Count > 200)
-            {
-                return clothes.GetRange(0, 200);
-            }
-
-            return clothes;
+            return new RGBSeparateColorSearcher(new PicParam(textureVector), textureMDLimit, ClothUtil.CalcManhattanDistance, clothDao, 200)
+                .Search();
         }
 
         public List<Cloth> SearchByPicGabor(float[] gaborVector)
         {
-            SortedDictionary<float, List<Cloth>> sortClothes = new SortedDictionary<float, List<Cloth>>();
-            List<Cloth> allClothes = clothDao.FindAll();
-            foreach (Cloth cloth in allClothes)
-            {
-                //float md = ClothUtil.CalcManhattanDistance(gaborVector, cloth.GaborVector);
-                float md = ClothUtil.CalcGaborDistance(gaborVector, cloth.GaborVector);
-                if (md <= gaborMDLimit)
-                {
-                    if (!sortClothes.ContainsKey(md))
-                    {
-                        sortClothes[md] = new List<Cloth>();
-                    }
-                    sortClothes[md].Add(cloth);
-                }
-            }
-
-            List<Cloth> clothes = new List<Cloth>();
-            foreach (List<Cloth> cs in sortClothes.Values)
-            {
-                clothes.AddRange(cs);
-            }
-
-            if (clothes.Count > 200)
-            {
-                return clothes.GetRange(0, 200);
-            }
-
-            return clothes;
+            return new RGBSeparateColorSearcher(new PicParam(gaborVector), gaborMDLimit, ClothUtil.CalcGaborDistance, clothDao, 200)
+                .Search();
         }
 
         public List<Cloth> SearchByPicCooccurrence(float[] cooccurrenceVector)
         {
-            SortedDictionary<float, List<Cloth>> sortClothes = new SortedDictionary<float, List<Cloth>>();
-            List<Cloth> allClothes = clothDao.FindAll();
-            foreach (Cloth cloth in allClothes)
-            {
-                float md = ClothUtil.CalcManhattanDistance(cooccurrenceVector, cloth.CooccurrenceVector);
-                if (md <= cooccurrenceMDLimit)
-                {
-                    if (!sortClothes.ContainsKey(md))
-                    {
-                        sortClothes[md] = new List<Cloth>();
-                    }
-                    sortClothes[md].Add(cloth);
-                }
-            }
-
-            List<Cloth> clothes = new List<Cloth>();
-            foreach (List<Cloth> cs in sortClothes.Values)
-            {
-                clothes.AddRange(cs);
-            }
-
-            if (clothes.Count > 200)
-            {
-                return clothes.GetRange(0, 200);
-            }
-
-            return clothes;
+            return new RGBSeparateColorSearcher(new PicParam(cooccurrenceVector), cooccurrenceMDLimit, ClothUtil.CalcManhattanDistance, clothDao, 200)
+                .Search();
         }
 
         public List<Cloth> SearchByTextAndPicColor(String words, ColorEnum colors, ShapeEnum shapes, float[] colorVector)
         {
-            List<List<Cloth>> clothLists = new List<List<Cloth>>();
-
-            List<Cloth> clothesByText = SearchByText(words, colors, shapes);
-            if (clothesByText != null && clothesByText.Count > 0)
-            {
-                clothLists.Add(clothesByText);
-            }
-
-            List<Cloth> clothesByPicColor = SearchByPicColor(colorVector);
-            if (clothesByPicColor != null && clothesByPicColor.Count > 0)
-            {
-                clothLists.Add(clothesByPicColor);
-            }
-
-            return ClothUtil.IntersectClothLists(clothLists);
+            return new RGBSeparateColorSearcher(new PicParam(colorVector), colorMDLimit, ClothUtil.CalcManhattanDistance,
+                new TextSearcher(new TextParam(words, colors, shapes), clothDao), 200).Search();
         }
 
         public List<Cloth> SearchByTextAndPicTexture(String words, ColorEnum colors, ShapeEnum shapes, float[] textureVector)
         {
-            List<List<Cloth>> clothLists = new List<List<Cloth>>();
-
-            List<Cloth> clothesByText = SearchByText(words, colors, shapes);
-            if (clothesByText != null && clothesByText.Count > 0)
-            {
-                clothLists.Add(clothesByText);
-            }
-
-            List<Cloth> clothesByTexture = SearchByPicTexture(textureVector);
-            if (clothesByTexture != null && clothesByTexture.Count > 0)
-            {
-                clothLists.Add(clothesByTexture);
-            }
-
-            return ClothUtil.IntersectClothLists(clothLists);
+            return new RGBSeparateColorSearcher(new PicParam(textureVector), textureMDLimit, ClothUtil.CalcManhattanDistance,
+                new TextSearcher(new TextParam(words, colors, shapes), clothDao), 200).Search();
         }
 
         public float GetColorMDLimit()

@@ -27,7 +27,7 @@
   <Class Name="Zju.Search.BaseSearcher" Collapsed="true">
     <Position X="9" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BAAAAgAAAAAAAAAAAAAAAAAAAAIAAAEAAAAAAAAgAAA=</HashCode>
+      <HashCode>BAAAAgAAAAACAAAAAAAAAAAAAAIAAAEAAAAAAAAgAAA=</HashCode>
       <FileName>src\Zju\Search\BaseSearcher.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -104,9 +104,6 @@
   </Class>
   <Class Name="Zju.Search.GaborSearcher">
     <Position X="1.5" Y="5.25" Width="1.5" />
-    <Compartments>
-      <Compartment Name="Methods" Collapsed="true" />
-    </Compartments>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
       <FileName>src\Zju\Search\GaborSearcher.cs</FileName>

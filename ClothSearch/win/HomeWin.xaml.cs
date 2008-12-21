@@ -145,7 +145,7 @@ namespace ClothSearch
 
             // It should be done by dependency injection here!!
             clothLibService = new ClothLibService(new ClothDao());
-            clothSearchService = new ClothSearchService(new ClothDao());
+            clothSearchService = new ClothSearchService();
             imageMatcher = ClothUtil.ImageMatcherInst;
 
             aDesc = new AlgorithmDesc();
@@ -489,7 +489,7 @@ namespace ClothSearch
                     {
                         clothSearchService.SetColorMDLimit(SearchConstants.ColorMDLimits[index]);
                     }
-                    clothes = clothSearchService.SearchByPicColor(colorVector);
+                    clothes = clothSearchService.SearchByPicRGBSeparateColor(colorVector);
                     break;
                 case AlgorithmType.Texture1:
                     if (null == keyCloth.GaborVector)
@@ -525,7 +525,7 @@ namespace ClothSearch
                     {
                         clothSearchService.SetTextureMDLimit(SearchConstants.TextureMDLimits[index]);
                     }
-                    clothes = clothSearchService.SearchByPicTexture(textureVector);
+                    clothes = clothSearchService.SearchByPicDaubechiesWavelet(textureVector);
                     break;
                 case AlgorithmType.Texture3:
                 default:

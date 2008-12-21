@@ -95,22 +95,22 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\Zju\Search\ColorSearcher.cs" />
-    <Compile Include="src\Zju\Search\CooccurrenceSearcher.cs" />
-    <Compile Include="src\Zju\Search\DaubechiesWaveletSearcher.cs" />
-    <Compile Include="src\Zju\Search\GaborSearcher.cs" />
-    <Compile Include="src\Zju\Search\HSVAynsColorSearcher.cs" />
-    <Compile Include="src\Zju\Search\HSVColorSearcher.cs" />
-    <Compile Include="src\Zju\Search\PicSearcher.cs" />
-    <Compile Include="src\Zju\Search\RGBColorSearcher.cs" />
-    <Compile Include="src\Zju\Search\RGBSeparateColorSearcher.cs" />
-    <Compile Include="src\Zju\Search\BaseSearcher.cs" />
-    <Compile Include="src\Zju\Search\BaseParam.cs" />
-    <Compile Include="src\Zju\Search\IBaseSearcher.cs" />
-    <Compile Include="src\Zju\Search\TextParam.cs" />
-    <Compile Include="src\Zju\Search\PicParam.cs" />
-    <Compile Include="src\Zju\Search\TextSearcher.cs" />
-    <Compile Include="src\Zju\Search\TextureSearcher.cs" />
+    <Compile Include="src\Zju\Searcher\ColorSearcher.cs" />
+    <Compile Include="src\Zju\Searcher\CooccurrenceSearcher.cs" />
+    <Compile Include="src\Zju\Searcher\DaubechiesWaveletSearcher.cs" />
+    <Compile Include="src\Zju\Searcher\GaborSearcher.cs" />
+    <Compile Include="src\Zju\Searcher\HSVAynsColorSearcher.cs" />
+    <Compile Include="src\Zju\Searcher\HSVColorSearcher.cs" />
+    <Compile Include="src\Zju\Searcher\PicSearcher.cs" />
+    <Compile Include="src\Zju\Searcher\RGBColorSearcher.cs" />
+    <Compile Include="src\Zju\Searcher\RGBSeparateColorSearcher.cs" />
+    <Compile Include="src\Zju\Searcher\BaseSearcher.cs" />
+    <Compile Include="src\Zju\Searcher\BaseParam.cs" />
+    <Compile Include="src\Zju\Searcher\IBaseSearcher.cs" />
+    <Compile Include="src\Zju\Searcher\TextParam.cs" />
+    <Compile Include="src\Zju\Searcher\PicParam.cs" />
+    <Compile Include="src\Zju\Searcher\TextSearcher.cs" />
+    <Compile Include="src\Zju\Searcher\TextureSearcher.cs" />
     <Compile Include="win\AddPicWin.xaml.cs">
       <DependentUpon>AddPicWin.xaml</DependentUpon>
     </Compile>

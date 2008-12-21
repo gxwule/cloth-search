@@ -1,28 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using Zju.Domain;
 using Zju.Dao;
+using Zju.Domain;
+using Zju.Util;
 
-namespace Zju.Search
+namespace Zju.Searcher
 {
     public class TextSearcher : BaseSearcher
     {
-        public TextSearcher(ClothDao clothDao)
-            : base(clothDao)
+        public TextSearcher(TextParam textParam, IClothDao clothDao)
+            : base(textParam, clothDao)
         {
 
         }
 
-        public override List<Cloth> Search(BaseParam param)
+        public override List<Cloth> Search()
         {
             List<Cloth> clothes = null;
             if (clothDao != null)
             {
-                if (!(param is TextParam))
-                {
-                    throw new ArgumentException("The parameter must be of TextParam in TextSearcher.");
-                }
-
                 clothes = clothDao.FindAll();
             }
 

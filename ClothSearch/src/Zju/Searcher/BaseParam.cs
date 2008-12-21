@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Zju.Search
+namespace Zju.Searcher
 {
-    public class BaseParam
+    public abstract class BaseParam
     {
         
     }

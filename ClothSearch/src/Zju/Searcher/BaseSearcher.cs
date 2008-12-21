@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Zju.Domain;
 using Zju.Dao;
 
-namespace Zju.Search
+namespace Zju.Searcher
 {
     public delegate float DelCalcDist(float[] v1, float[] v2);
 
@@ -11,7 +11,7 @@ namespace Zju.Search
     {
         protected IBaseSearcher wrappedSearcher;
         protected IClothDao clothDao;
-        //protected List<Cloth> clothes;
+        protected BaseParam param;
 
         protected const int DEFAULT_MAX_RESULT = 200;
 
@@ -23,31 +23,33 @@ namespace Zju.Search
 
         #region IBaseSearcher Members
 
-        public BaseSearcher(ClothDao clothDao)
-            : this(clothDao, DEFAULT_MAX_RESULT)
+        public BaseSearcher(BaseParam param, IClothDao clothDao)
+            : this(param, clothDao, DEFAULT_MAX_RESULT)
         {
             
         }
 
-        public BaseSearcher(IBaseSearcher wrappedSearcher)
-            : this(wrappedSearcher, DEFAULT_MAX_RESULT)
+        public BaseSearcher(BaseParam param, IBaseSearcher wrappedSearcher)
+            : this(param, wrappedSearcher, DEFAULT_MAX_RESULT)
         {
           
         }
 
-        public BaseSearcher(IBaseSearcher wrappedSearcher, int maxResult)
+        public BaseSearcher(BaseParam param, IBaseSearcher wrappedSearcher, int maxResult)
         {
+            this.param = param;
             this.wrappedSearcher = wrappedSearcher;
             this.MaxResult = maxResult;
         }
 
-        public BaseSearcher(ClothDao clothDao, int maxResult)
+        public BaseSearcher(BaseParam param, IClothDao clothDao, int maxResult)
         {
+            this.param = param;
             this.clothDao = clothDao;
             this.MaxResult = maxResult;
         }
 
-        public abstract List<Cloth> Search(BaseParam param);
+        public abstract List<Cloth> Search();
 
         #endregion
     }

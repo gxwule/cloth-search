@@ -9,9 +9,9 @@ namespace Zju.Service
     {
         List<Cloth> SearchByText(String words, ColorEnum colors, ShapeEnum shapes);
 
-        List<Cloth> SearchByPicColor(float[] colorVector);
+        List<Cloth> SearchByPicRGBSeparateColor(float[] colorVector);
 
-        List<Cloth> SearchByPicTexture(float[] textureVector);
+        List<Cloth> SearchByPicDaubechiesWavelet(float[] textureVector);
 
         List<Cloth> SearchByPicGabor(float[] gaborVector);
 

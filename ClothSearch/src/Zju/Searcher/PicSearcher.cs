@@ -4,7 +4,7 @@ using Zju.Domain;
 using Zju.Util;
 using Zju.Dao;
 
-namespace Zju.Search
+namespace Zju.Searcher
 {
     public abstract class PicSearcher : BaseSearcher
     {
@@ -13,34 +13,29 @@ namespace Zju.Search
 
         protected static readonly DelCalcDist DEFAULT_CALC_DIST_DELEGATE = new DelCalcDist(ClothUtil.CalcManhattanDistance);
 
-        public PicSearcher(float limit, DelCalcDist calcDist, IBaseSearcher wrappedSearcher, int maxResult)
-            : base(wrappedSearcher, maxResult)
+        public PicSearcher(PicParam picParam, float limit, DelCalcDist calcDist, IBaseSearcher wrappedSearcher, int maxResult)
+            : base(picParam, wrappedSearcher, maxResult)
         {
             this.limit = limit;
             this.calcDist = calcDist;
         }
 
-        public PicSearcher(float limit, DelCalcDist calcDist, ClothDao clothDao, int maxResult)
-            : base(clothDao, maxResult)
+        public PicSearcher(PicParam picParam, float limit, DelCalcDist calcDist, IClothDao clothDao, int maxResult)
+            : base(picParam, clothDao, maxResult)
         {
             this.limit = limit;
             this.calcDist = calcDist;
         }
 
-        public override List<Cloth> Search(BaseParam param)
+        public override List<Cloth> Search()
         {
             List<Cloth> clothes = null;
             if (wrappedSearcher != null)
             {
-                clothes = wrappedSearcher.Search(param);
+                clothes = wrappedSearcher.Search();
             }
             else if (clothDao != null)
             {
-                if (!(param is PicParam))
-                {
-                    throw new ArgumentException("The parameter must be of PicParam in PicSearcher.");
-                }
-
                 clothes = clothDao.FindAll();
             }
 
