@@ -11,12 +11,19 @@ namespace Zju.Searcher
 
         }
 
-        public PicParam(float[] feature)
+        public PicParam(float[] feature, int clothNum)
         {
             this.Feature = feature;
+            this.ClothNum = clothNum;
         }
 
         public float[] Feature
+        {
+            get;
+            set;
+        }
+
+        public int ClothNum
         {
             get;
             set;

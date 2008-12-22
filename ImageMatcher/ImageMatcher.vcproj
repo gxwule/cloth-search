@@ -195,10 +195,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Gabor.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\GetFeature.cpp"
 				>
 			</File>
@@ -234,18 +230,6 @@
 			>
 			<File
 				RelativePath=".\Cooccurrence.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Gabor.h"
-				>
-			</File>
-			<File
-				RelativePath=".\gaborfilterdll.h"
-				>
-			</File>
-			<File
-				RelativePath=".\gaborkerneldll.h"
 				>
 			</File>
 			<File

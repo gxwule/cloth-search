@@ -145,14 +145,25 @@ namespace ClothSearch
             cloth.Shapes = shapes;
 
             // feature vectors
-            cloth.RGBSeparateColorVector = (useKeyPic && keyCloth.RGBSeparateColorVector != null)
-                ? keyCloth.RGBSeparateColorVector : ClothUtil.ImageMatcherInst.ExtractRGBSeparateColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
+            //cloth.RGBSeparateColorVector = (useKeyPic && keyCloth.RGBSeparateColorVector != null)
+            //    ? keyCloth.RGBSeparateColorVector : ClothUtil.ImageMatcherInst.ExtractRGBSeparateColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
+            cloth.RGBColorVector = (useKeyPic && keyCloth.RGBColorVector != null)
+                ? keyCloth.RGBColorVector : ClothUtil.ImageMatcherInst.ExtractRGBColorVector(cloth.Path, 3, SearchConstants.IgnoreColors);
+            cloth.HSVAynsColorVector = (useKeyPic && keyCloth.HSVAynsColorVector != null)
+                ? keyCloth.HSVAynsColorVector : ClothUtil.ImageMatcherInst.ExtractHSVAynsColorVector(cloth.Path, 0, SearchConstants.IgnoreColors);
+            cloth.HSVColorVector = (useKeyPic && keyCloth.HSVColorVector != null)
+                ? keyCloth.HSVColorVector : ClothUtil.ImageMatcherInst.ExtractHSVColorVector(cloth.Path, 3, SearchConstants.IgnoreColors);
+            if (cloth.HSVColorVector != null)
+            {
+                cloth.ColorNum = ClothUtil.getColorNumber(cloth.HSVColorVector, 0.07f);
+            }
+            
             cloth.DaubechiesWaveletVector = (useKeyPic && keyCloth.DaubechiesWaveletVector != null)
                 ? keyCloth.DaubechiesWaveletVector : ClothUtil.ImageMatcherInst.ExtractDaubechiesWaveletVector(cloth.Path);
-            cloth.GaborVector = (useKeyPic && keyCloth.GaborVector != null)
-                ? keyCloth.GaborVector : ClothUtil.ImageMatcherInst.ExtractGaborVector(cloth.Path);
-            cloth.CooccurrenceVector = (useKeyPic && keyCloth.CooccurrenceVector != null)
-                ? keyCloth.CooccurrenceVector : ClothUtil.ImageMatcherInst.ExtractCooccurrenceVector(cloth.Path);
+            //cloth.GaborVector = (useKeyPic && keyCloth.GaborVector != null)
+            //    ? keyCloth.GaborVector : ClothUtil.ImageMatcherInst.ExtractGaborVector(cloth.Path);
+            //cloth.CooccurrenceVector = (useKeyPic && keyCloth.CooccurrenceVector != null)
+            //    ? keyCloth.CooccurrenceVector : ClothUtil.ImageMatcherInst.ExtractCooccurrenceVector(cloth.Path);
 
             clothLibService.Insert(cloth);
 

@@ -19,8 +19,8 @@
 #pragma comment(lib, "sgl.lib")
 #pragma comment(lib, "libmwsglm.lib")
 #pragma comment(lib, "libmwservices.lib")
-#pragma comment(lib, "gaborfilterdll.lib")
-#pragma comment(lib, "gaborkerneldll.lib")
+//#pragma comment(lib, "gaborfilterdll.lib")
+//#pragma comment(lib, "gaborkerneldll.lib")
 
 using namespace System::Runtime::InteropServices;
 
@@ -31,13 +31,13 @@ namespace Zju
 		ImageMatcher::ImageMatcher() : isLuvInited(false)
 		{
 			pCoocc = new Cooccurrence();
-			pGabor = new Gabor();
+			//pGabor = new Gabor();
 		}
 
 		ImageMatcher::~ImageMatcher()
 		{
 			delete pCoocc;
-			delete pGabor;
+			//delete pGabor;
 		}
 
 		bool ImageMatcher::LuvInit(String^ luvFileName)
@@ -542,7 +542,7 @@ namespace Zju
 		array<float>^ ImageMatcher::ExtractGaborVector(String^ imageFileName)
 		{
 			//return nullptr;
-			IntPtr ip = Marshal::StringToHGlobalAnsi(imageFileName);
+			/*IntPtr ip = Marshal::StringToHGlobalAnsi(imageFileName);
 			const char* fileName = static_cast<const char*>(ip.ToPointer());
 
 			Gabor::Pic_GaborWL* picwl = new Gabor::Pic_GaborWL;
@@ -568,7 +568,8 @@ namespace Zju
 			}
 			delete picwl;
 
-			return textureVector;
+			return textureVector;*/
+			return nullptr;
 		}
 
 		array<float>^ ImageMatcher::ExtractCooccurrenceVector(String^ imageFileName)
@@ -636,7 +637,7 @@ namespace Zju
 			return textureVector;
 		}
 
-		array<float>^ ImageMatcher::to_array(Gabor::Pic_GaborWL* picwl)
+		/*array<float>^ ImageMatcher::to_array(Gabor::Pic_GaborWL* picwl)
 		{
 			int n = GABOR_TEXTURE_SIZE;
 			array<float>^ textureVector = gcnew array<float>(n);
@@ -646,7 +647,7 @@ namespace Zju
 			}
 
 			return textureVector;
-		}
+		}*/
 
 		array<float>^ ImageMatcher::to_array(Cooccurrence::Pic_WLType* picwl)
 		{

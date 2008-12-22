@@ -204,19 +204,21 @@ namespace Zju.Util
             }
 
             // color features
-            cloth.RGBSeparateColorVector = ImageMatcherInst.ExtractRGBSeparateColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
-            cloth.RGBColorVector = ImageMatcherInst.ExtractRGBColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
+            //cloth.RGBSeparateColorVector = ImageMatcherInst.ExtractRGBSeparateColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
+            cloth.RGBColorVector = ImageMatcherInst.ExtractRGBColorVector(cloth.Path, 3, SearchConstants.IgnoreColors);
             cloth.HSVAynsColorVector = ImageMatcherInst.ExtractHSVAynsColorVector(cloth.Path, 0, SearchConstants.IgnoreColors);
-            cloth.HSVColorVector = ImageMatcherInst.ExtractHSVColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
-            cloth.HLSColorVector = ImageMatcherInst.ExtractHLSColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
+            cloth.HSVColorVector = ImageMatcherInst.ExtractHSVColorVector(cloth.Path, 3, SearchConstants.IgnoreColors);
+            //cloth.HLSColorVector = ImageMatcherInst.ExtractHLSColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
 
             // texture features
             cloth.DaubechiesWaveletVector = ImageMatcherInst.ExtractDaubechiesWaveletVector(cloth.Path);
             cloth.CooccurrenceVector = ImageMatcherInst.ExtractCooccurrenceVector(cloth.Path);
-            if (isGabor)
-            {
-                cloth.GaborVector = ImageMatcherInst.ExtractGaborVector(cloth.Path);
-            }
+            //if (isGabor)
+            //{
+             //   cloth.GaborVector = ImageMatcherInst.ExtractGaborVector(cloth.Path);
+            //}
+
+            cloth.ColorNum = getColorNumber(cloth.HSVColorVector, 0.07f);
         }
 
         public static void ExtractFeaturesNecessary(Cloth cloth, bool isGabor)
@@ -227,13 +229,13 @@ namespace Zju.Util
             }
 
             // color features
-            if (null == cloth.RGBSeparateColorVector)
-            {
-                cloth.RGBSeparateColorVector = ImageMatcherInst.ExtractRGBSeparateColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
-            }
+           // if (null == cloth.RGBSeparateColorVector)
+            //{
+                //cloth.RGBSeparateColorVector = ImageMatcherInst.ExtractRGBSeparateColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
+            //}
             if (null == cloth.RGBColorVector)
             {
-                cloth.RGBColorVector = ImageMatcherInst.ExtractRGBColorVector(cloth.Path, 4, SearchConstants.IgnoreColors);
+                cloth.RGBColorVector = ImageMatcherInst.ExtractRGBColorVector(cloth.Path, 3, SearchConstants.IgnoreColors);
             }
             if (null == cloth.HSVAynsColorVector)
             {
@@ -241,27 +243,35 @@ namespace Zju.Util
             }
             if (null == cloth.HSVColorVector)
             {
-                cloth.HSVColorVector = ImageMatcherInst.ExtractHSVColorVector(cloth.Path, 4, SearchConstants.IgnoreColors);
+                cloth.HSVColorVector = ImageMatcherInst.ExtractHSVColorVector(cloth.Path, 3, SearchConstants.IgnoreColors);
+                int colorNum = getColorNumber(cloth.HSVColorVector, 0.07f);
+                if (colorNum > 8)
+                {
+                    colorNum = 8;
+                }
+                cloth.ColorNum = colorNum;
             }
-            if (null == cloth.HLSColorVector)
-            {
-                cloth.HLSColorVector = ImageMatcherInst.ExtractHLSColorVector(cloth.Path, 4, SearchConstants.IgnoreColors);
-            }
+            //if (null == cloth.HLSColorVector)
+            //{
+                //cloth.HLSColorVector = ImageMatcherInst.ExtractHLSColorVector(cloth.Path, 3, SearchConstants.IgnoreColors);
+            //}
             
             // texture features
             if (null == cloth.DaubechiesWaveletVector)
             {
                 cloth.DaubechiesWaveletVector = ImageMatcherInst.ExtractDaubechiesWaveletVector(cloth.Path);
             }
-            if (null == cloth.CooccurrenceVector)
-            {
-                cloth.CooccurrenceVector = ImageMatcherInst.ExtractCooccurrenceVector(cloth.Path);
-            }
+            //if (null == cloth.CooccurrenceVector)
+            //{
+                //cloth.CooccurrenceVector = ImageMatcherInst.ExtractCooccurrenceVector(cloth.Path);
+            //}
 
-            if (isGabor && null == cloth.GaborVector)
-            {
-                cloth.GaborVector = ImageMatcherInst.ExtractGaborVector(cloth.Path);
-            }
+            //if (isGabor && null == cloth.GaborVector)
+            //{
+            //    cloth.GaborVector = ImageMatcherInst.ExtractGaborVector(cloth.Path);
+            //}
+
+            
         }
 
         /// <summary>
@@ -297,7 +307,7 @@ namespace Zju.Util
             //ClothUtil.Log.WriteLine("begin ExtractFeatures");
             ClothUtil.ExtractFeaturesNecessary(cloth, isGabor);
 
-            cloth.ColorNum = getColorNumber(cloth.HSVAynsColorVector, 0.06f);
+            
 
             return cloth;
         }

@@ -9,25 +9,27 @@ namespace Zju.Service
     {
         List<Cloth> SearchByText(String words, ColorEnum colors, ShapeEnum shapes);
 
-        List<Cloth> SearchByPicRGBSeparateColor(float[] colorVector);
+        List<Cloth> SearchByPicRGBSeparateColor(Cloth keyCloth);
 
-        List<Cloth> SearchByPicRGBColor(float[] colorVector);
+        List<Cloth> SearchByPicRGBColor(Cloth keyCloth);
 
-        List<Cloth> SearchByPicHSVColor(float[] colorVector);
+        List<Cloth> SearchByPicHSVColor(Cloth keyCloth);
 
-        List<Cloth> SearchByPicHSVAynsColor(float[] colorVector);
+        List<Cloth> SearchByPicHSVAynsColor(Cloth keyCloth);
 
-        List<Cloth> SearchByPicHLSColor(float[] colorVector);
+        List<Cloth> SearchByPicHLSColor(Cloth keyCloth);
 
-        List<Cloth> SearchByPicDaubechiesWavelet(float[] textureVector);
+        List<Cloth> SearchByPicDaubechiesWavelet(Cloth keyCloth);
 
-        List<Cloth> SearchByPicGabor(float[] gaborVector);
+        List<Cloth> SearchByPicGabor(Cloth keyCloth);
 
-        List<Cloth> SearchByPicCooccurrence(float[] cooccurrenceVector);
+        List<Cloth> SearchByPicCooccurrence(Cloth keyCloth);
 
-        List<Cloth> SearchByTextAndPicColor(String words, ColorEnum colors, ShapeEnum shapes, float[] colorVector);
+        List<Cloth> SearchByTextAndPicColor(String words, ColorEnum colors, ShapeEnum shapes, Cloth keyCloth);
 
-        List<Cloth> SearchByTextAndPicTexture(String words, ColorEnum colors, ShapeEnum shapes, float[] textureVector);
+        List<Cloth> SearchByTextAndPicTexture(String words, ColorEnum colors, ShapeEnum shapes, Cloth keyCloth);
+
+        List<Cloth> SearchByPicGaborAndHSVAsyColor(Cloth keyCloth);
 
         List<Cloth> SearchTest(Cloth keyCloth);
 

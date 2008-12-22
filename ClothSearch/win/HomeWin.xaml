@@ -87,9 +87,9 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <RadioButton Canvas.Left="236" Canvas.Top="44" Height="16" Name="rbtnCombine" Width="72" GroupName="rbtnSearchOptionGroup" Checked="rbtnCombine_Checked">联合搜索</RadioButton>
+                <RadioButton Canvas.Left="491" Canvas.Top="44" Height="16" Name="rbtnCombine" Width="72" GroupName="rbtnSearchOptionGroup" Checked="rbtnCombine_Checked">联合搜索</RadioButton>
                 <RadioButton Canvas.Left="361" Canvas.Top="44" Height="16" Name="rbtnText" Width="68" GroupName="rbtnSearchOptionGroup" Checked="rbtnText_Checked">文字搜索</RadioButton>
-                <RadioButton Canvas.Left="491" Canvas.Top="44" Height="16" Name="rbtnPic" Width="68" GroupName="rbtnSearchOptionGroup" Checked="rbtnPic_Checked">图片搜索</RadioButton>
+                <RadioButton Canvas.Left="236" Canvas.Top="44" Height="16" Name="rbtnPic" Width="68" GroupName="rbtnSearchOptionGroup" Checked="rbtnPic_Checked">图片搜索</RadioButton>
             </Canvas>
         </Border>
         <!--
@@ -118,11 +118,11 @@
                 </Border>
                 <Border Style="{StaticResource blueBorder}">
                     <Canvas>
-                        <Label Canvas.Left="12" Canvas.Top="13" Width="39">名称:</Label>
-                        <TextBox Canvas.Left="56" Canvas.Top="16" Name="txtModifyName" Width="120" />
-                        <Label Canvas.Left="12" Canvas.Top="44" Width="41">花型:</Label>
-                        <TextBox Canvas.Left="56" Canvas.Top="46" Name="txtModifyPattern" Width="120" />
-                        <Label Canvas.Left="12" Canvas.Top="75" Height="24" Width="40">形状:</Label>
+                        <Label Canvas.Left="5" Canvas.Top="13" Width="48">花型:</Label>
+                        <TextBox Canvas.Left="56" Canvas.Top="16" Name="txtModifyPattern" Width="120" />
+                        <Label Canvas.Left="5" Canvas.Top="44" Width="48">颜色数:</Label>
+                        <TextBox Canvas.Left="56" Canvas.Top="46" Name="txtModifyName" Width="120" />
+                        <Label Canvas.Left="5" Canvas.Top="75" Height="24" Width="48">形状:</Label>
                         <!--  ItemsSource="{Binding Source={StaticResource shapeItems}}" -->
                         <!-- MouseEnter ="cmbInput_MouseEnter" -->
                         <ComboBox Canvas.Left="56" Canvas.Top="75" Width="120" Name="cmbModifyShape" 
@@ -144,7 +144,7 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-                        <Label Canvas.Left="12" Canvas.Top="106" Height="24" Width="37">颜色:</Label>
+                        <Label Canvas.Left="5" Canvas.Top="106" Height="24" Width="48">颜色:</Label>
                         <!--  ItemsSource="{Binding Source={StaticResource colorItems}}" -->
                         <!-- MouseEnter ="cmbInput_MouseEnter" -->
                         <ComboBox Canvas.Left="56" Canvas.Top="106" Width="120" Name="cmbModifyColor" 

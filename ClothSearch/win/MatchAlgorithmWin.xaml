@@ -30,43 +30,43 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <Canvas Grid.Row="0" Grid.Column="0">
-                    <Label Canvas.Left="41" Canvas.Top="14" Width="106">纹理3号匹配算法:</Label>
+                    <Label Canvas.Left="41" Canvas.Top="14" Width="106">1号匹配算法:</Label>
                     <RadioButton Canvas.Left="154" Canvas.Top="19" Height="16" Name="rbtnTexture3" GroupName="grbtnSearchAlgo" Width="75">更高查全率</RadioButton>
                     <ComboBox Canvas.Left="154" Canvas.Top="44" Name="cmbTexture3" SelectedIndex="0" Width="78">
                         <Label>默认</Label>
-                        <Label>更高1</Label>
+                        <!--<Label>更高1</Label>
                         <Label>更高2</Label>
-                        <Label>更高3</Label>
+                        <Label>更高3</Label>-->
                     </ComboBox>
                 </Canvas>
                 <Canvas Grid.Row="1" Grid.Column="0">
-                    <Label Canvas.Left="41" Canvas.Top="14" Width="106">纹理2号匹配算法:</Label>
+                    <Label Canvas.Left="41" Canvas.Top="14" Width="106">2号匹配算法:</Label>
                     <RadioButton Canvas.Left="154" Canvas.Top="19" Height="16" Name="rbtnTexture2" GroupName="grbtnSearchAlgo" Width="75">更高查全率</RadioButton>
                     <ComboBox Canvas.Left="154" Canvas.Top="44" Name="cmbTexture2" SelectedIndex="0" Width="78">
                         <Label>默认</Label>
-                        <Label>更高1</Label>
+                        <!--<Label>更高1</Label>
                         <Label>更高2</Label>
-                        <Label>更高3</Label>
+                        <Label>更高3</Label>-->
                     </ComboBox>
                 </Canvas>
                 <Canvas Grid.Row="2" Grid.Column="0">
-                    <Label Canvas.Left="41" Canvas.Top="14" Width="106">纹理1号匹配算法:</Label>
+                    <Label Canvas.Left="41" Canvas.Top="14" Width="106">3号匹配算法:</Label>
                     <RadioButton Canvas.Left="154" Canvas.Top="19" Height="16" Name="rbtnTexture1" GroupName="grbtnSearchAlgo" Width="75">更高查全率</RadioButton>
                     <ComboBox Canvas.Left="154" Canvas.Top="44" Name="cmbTexture1" SelectedIndex="0" Width="78">
                         <Label>默认</Label>
-                        <Label>更高1</Label>
+                        <!--<Label>更高1</Label>
                         <Label>更高2</Label>
-                        <Label>更高3</Label>
+                        <Label>更高3</Label>-->
                     </ComboBox>
                 </Canvas>
                 <Canvas Grid.Row="0" Grid.Column="1">
-                    <Label Canvas.Left="41" Canvas.Top="14" Width="106">颜色1号匹配算法:</Label>
+                    <Label Canvas.Left="41" Canvas.Top="14" Width="106">4号匹配算法:</Label>
                     <RadioButton Canvas.Left="154" Canvas.Top="19" Height="16" Name="rbtnColor1" GroupName="grbtnSearchAlgo" Width="75">更高查全率</RadioButton>
                     <ComboBox Canvas.Left="154" Canvas.Top="44" Name="cmbColor1" SelectedIndex="0" Width="78">
                         <Label>默认</Label>
-                        <Label>更高1</Label>
+                        <!--<Label>更高1</Label>
                         <Label>更高2</Label>
-                        <Label>更高3</Label>
+                        <Label>更高3</Label>-->
                     </ComboBox>
                 </Canvas>
             </Grid>

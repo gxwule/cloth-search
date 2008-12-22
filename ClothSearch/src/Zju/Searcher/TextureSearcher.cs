@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Zju.Dao;
+using Zju.Domain;
 
 namespace Zju.Searcher
 {

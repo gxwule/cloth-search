@@ -286,6 +286,19 @@ namespace Zju.Dao
             return (Cloth)root.PathIndex.Get(path);
         }
 
+        public List<Cloth> FindByClothNum(int clothNum)
+        {
+            Storage storage = DaoHelper.Instance.DbStorage;
+            ClothRoot root = (ClothRoot)storage.Root;
+
+            List<Cloth> clothes = new List<Cloth>();
+            foreach (Cloth cloth in root.ColorNumIndex.Range(clothNum, clothNum))
+            {
+                clothes.Add(cloth);
+            }
+            return clothes;
+        }
+
         /// <summary>
         /// Find all Cloth objects.
         /// </summary>

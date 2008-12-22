@@ -3,7 +3,7 @@
 #pragma once
 
 //#include <string>
-#include "Gabor.h"
+//#include "Gabor.h"
 #include "Cooccurrence.h"
 
 using namespace System;
@@ -53,7 +53,7 @@ namespace Zju
 			// mark if lvuInit method called.
 			bool isLuvInited;
 
-			Gabor* pGabor;
+			//Gabor* pGabor;
 
 			Cooccurrence* pCoocc;
 		private:
@@ -61,7 +61,7 @@ namespace Zju
 			//bool ImageMatcher::to_string(String^ source, std::string &target);
 			array<float>^ to_array(float* pf, int n);
 
-			array<float>^ to_array(Gabor::Pic_GaborWL* picwl);
+//			array<float>^ to_array(Gabor::Pic_GaborWL* picwl);
 
 			array<float>^ to_array(Cooccurrence::Pic_WLType* picwl);
 

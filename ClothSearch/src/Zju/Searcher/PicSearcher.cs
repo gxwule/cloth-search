@@ -29,6 +29,8 @@ namespace Zju.Searcher
 
         public override List<Cloth> Search()
         {
+            PicParam picParam = (PicParam)param;
+
             List<Cloth> clothes = null;
             if (wrappedSearcher != null)
             {
@@ -36,7 +38,14 @@ namespace Zju.Searcher
             }
             else if (clothDao != null)
             {
-                clothes = clothDao.FindAll();
+                if (picParam.ClothNum > 0)
+                {
+                    clothes = clothDao.FindByClothNum(picParam.ClothNum);
+                }
+                else
+                {
+                    clothes = clothDao.FindAll();
+                }
             }
 
             if (null == clothes)
@@ -44,7 +53,7 @@ namespace Zju.Searcher
                 throw new NullReferenceException("Both wrappedSearcher and clothDao are null, or some error happened.");
             }
 
-            float[] featureVector = ((PicParam)param).Feature;
+            float[] featureVector = picParam.Feature;
             SortedDictionary<float, List<Cloth>> sortClothes = new SortedDictionary<float, List<Cloth>>();
             foreach (Cloth cloth in clothes)
             {

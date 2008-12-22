@@ -57,7 +57,7 @@ namespace Zju.Dao
         ~DaoHelper()
         {
             // Commit modified objects and close db. The better practice is to close db explicitly.
-            CloseDb();
+            //CloseDb();
         }
 
         public static DaoHelper Instance
