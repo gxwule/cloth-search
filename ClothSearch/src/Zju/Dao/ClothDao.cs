@@ -73,20 +73,53 @@ namespace Zju.Dao
             FieldIndex patternIndex = root.PatternIndex;
             BitIndex colorIndex = root.ColorIndex;
             BitIndex shapeIndex = root.ShapeIndex;
+            FieldIndex pathIndex = root.PathIndex;
+            FieldIndex colorNumIndex = root.ColorNumIndex;
 
             storage.BeginThreadTransaction(TransactionMode.Exclusive);
             try
             {
-                if (cloth.Pattern != newCloth.Pattern)
+                // Pattern
+                if (cloth.Pattern != null)
                 {
-                    patternIndex.Remove(cloth);
-                    cloth.Pattern = newCloth.Pattern;
-                    if (cloth.Pattern != null)
+                    if (!cloth.Pattern.Equals(newCloth.Pattern))
                     {
+                        patternIndex.Remove(cloth);
+                        cloth.Pattern = newCloth.Pattern;
                         patternIndex.Put(cloth);
                     }
                 }
+                else if (newCloth.Pattern != null)
+                {
+                    cloth.Pattern = newCloth.Pattern;
+                    patternIndex.Put(cloth);
+                }
 
+                // ColorNum
+                if (cloth.ColorNum != newCloth.ColorNum)
+                {
+                    colorNumIndex.Remove(cloth);
+                    cloth.ColorNum = newCloth.ColorNum;
+                    colorNumIndex.Put(cloth);
+                }
+
+                // Path
+                if (cloth.Path != null)
+                {
+                    if (!cloth.Path.Equals(newCloth.Path))
+                    {
+                        pathIndex.Remove(cloth);
+                        cloth.Path = newCloth.Path;
+                        pathIndex.Set(cloth);
+                    }
+                }
+                else if (newCloth.Path != null)
+                {
+                    cloth.Path = newCloth.Path;
+                    pathIndex.Set(cloth);
+                }
+
+                // Colors
                 if (cloth.Colors != newCloth.Colors)
                 {
                     colorIndex.Remove(cloth);
@@ -94,6 +127,7 @@ namespace Zju.Dao
                     colorIndex[cloth] = (int)cloth.Colors;
                 }
 
+                // Shapes
                 if (cloth.Shapes != newCloth.Shapes)
                 {
                     shapeIndex.Remove(cloth);
@@ -101,32 +135,57 @@ namespace Zju.Dao
                     shapeIndex[cloth] = (int)cloth.Shapes;
                 }
 
-                if (cloth.Name != newCloth.Name)
+                // Name
+                if ((cloth.Name != null && !cloth.Name.Equals(newCloth.Name))
+                    || (cloth.Name == null && newCloth.Name != null))
                 {
                     cloth.Name = newCloth.Name;
                 }
-                
-                if (newCloth.Path != null && cloth.Path != newCloth.Path)
-                {
-                    cloth.Path = newCloth.Path;
-                }
-                
-                if (newCloth.RGBSeparateColorVector != null && cloth.RGBSeparateColorVector != newCloth.RGBSeparateColorVector)
+
+                // RGBSeparateColorVector
+                if (newCloth.RGBSeparateColorVector != null && !newCloth.RGBSeparateColorVector.Equals(cloth.RGBSeparateColorVector))
                 {
                     cloth.RGBSeparateColorVector = newCloth.RGBSeparateColorVector;
                 }
 
-                if (newCloth.DaubechiesWaveletVector != null && cloth.DaubechiesWaveletVector != newCloth.DaubechiesWaveletVector)
+                // RGBColorVector
+                if (newCloth.RGBColorVector != null && !newCloth.RGBColorVector.Equals(cloth.RGBColorVector))
+                {
+                    cloth.RGBColorVector = newCloth.RGBColorVector;
+                }
+
+                // HSVColorVector
+                if (newCloth.HSVColorVector != null && !newCloth.HSVColorVector.Equals(cloth.HSVColorVector))
+                {
+                    cloth.HSVColorVector = newCloth.HSVColorVector;
+                }
+
+                // HSVAynsColorVector
+                if (newCloth.HSVAynsColorVector != null && !newCloth.HSVAynsColorVector.Equals(cloth.HSVAynsColorVector))
+                {
+                    cloth.HSVAynsColorVector = newCloth.HSVAynsColorVector;
+                }
+
+                // HLSColorVector
+                if (newCloth.HLSColorVector != null && !newCloth.HLSColorVector.Equals(cloth.HLSColorVector))
+                {
+                    cloth.HLSColorVector = newCloth.HLSColorVector;
+                }
+
+                // DaubechiesWaveletVector
+                if (newCloth.DaubechiesWaveletVector != null && !newCloth.DaubechiesWaveletVector.Equals(cloth.DaubechiesWaveletVector))
                 {
                     cloth.DaubechiesWaveletVector = newCloth.DaubechiesWaveletVector;
                 }
 
-                if (newCloth.GaborVector != null && cloth.GaborVector != newCloth.GaborVector)
+                // GaborVector
+                if (newCloth.GaborVector != null && !newCloth.GaborVector.Equals(cloth.GaborVector))
                 {
                     cloth.GaborVector = newCloth.GaborVector;
                 }
 
-                if (newCloth.CooccurrenceVector != null && cloth.CooccurrenceVector != newCloth.CooccurrenceVector)
+                // CooccurrenceVector
+                if (newCloth.CooccurrenceVector != null && !newCloth.CooccurrenceVector.Equals(cloth.CooccurrenceVector))
                 {
                     cloth.CooccurrenceVector = newCloth.CooccurrenceVector;
                 }
@@ -202,6 +261,8 @@ namespace Zju.Dao
             root.ShapeIndex.Remove(cloth);
             root.ClothOidIndex.Remove(cloth);
             root.PatternIndex.Remove(cloth);
+            root.ColorNumIndex.Remove(cloth);
+            root.PathIndex.Remove(cloth);
         }
 
         /// <summary>
@@ -215,6 +276,14 @@ namespace Zju.Dao
             ClothRoot root = (ClothRoot)storage.Root;
 
             return (Cloth)root.ClothOidIndex.Get(oid);
+        }
+
+        public Cloth FindByPath(string path)
+        {
+            Storage storage = DaoHelper.Instance.DbStorage;
+            ClothRoot root = (ClothRoot)storage.Root;
+
+            return (Cloth)root.PathIndex.Get(path);
         }
 
         /// <summary>
@@ -356,7 +425,9 @@ namespace Zju.Dao
 
             // this method called for generate the Oid, or the key of ClothOidIndex will always be 0.
             storage.MakePersistent(cloth);
-            clothOidIndex.Put(cloth);
+            clothOidIndex.Set(cloth);
+            root.PathIndex.Set(cloth);
+            root.ColorNumIndex.Put(cloth);
             if (cloth.Pattern != null)
             {
                 root.PatternIndex.Put(cloth);

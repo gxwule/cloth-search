@@ -50,6 +50,8 @@ namespace Zju.Dao
         /// <returns></returns>
         List<Cloth> FindAllByPattern(string pattern);
 
+        Cloth FindByPath(string path);
+
         /// <summary>
         /// Find list of Cloth object by colors.
         /// NOTES: There are two rules for clothes to be selected:

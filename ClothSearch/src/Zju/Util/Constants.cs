@@ -31,6 +31,8 @@ namespace Zju.Util
 
 
         public const string LuvFileName = "E:/projects/ClothSearch/codes/trunk/data/luv.dat";
+
+        public const int MAX_IMPORT_THREADS = 100;
     }
 
     [Flags]

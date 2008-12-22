@@ -22,6 +22,9 @@ namespace Zju.Domain
 
         private FieldIndex patternIndex;
 
+        private FieldIndex pathIndex;
+
+        private FieldIndex colorNumIndex;
 
         public BitIndex ColorIndex
         {
@@ -43,6 +46,18 @@ namespace Zju.Domain
             get { return patternIndex; }
         }
 
+        public FieldIndex PathIndex
+        {
+            get { return pathIndex; }
+            set { pathIndex = value; }
+        }
+
+        public FieldIndex ColorNumIndex
+        {
+            get { return colorNumIndex; }
+            set { colorNumIndex = value; }
+        }
+
         public ClothRoot()
         {
 
@@ -54,6 +69,8 @@ namespace Zju.Domain
             shapeIndex = storage.CreateBitIndex();
             clothOidIndex = storage.CreateFieldIndex(typeof(Cloth), "Oid", true);
             patternIndex = storage.CreateFieldIndex(typeof(Cloth), "Pattern", false);
+            pathIndex = storage.CreateFieldIndex(typeof(Cloth), "Path", true);
+            colorNumIndex = storage.CreateFieldIndex(typeof(Cloth), "ColorNum", false);
         }
     }
 }

@@ -5,7 +5,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
-using Zju.Dao;
 using Zju.Domain;
 using Zju.Service;
 using Zju.Util;
@@ -50,7 +49,7 @@ namespace ClothSearch
             btnAddFileSave.IsEnabled = false;
 
             // It should be done by dependency injection here!!
-            clothLibService = new ClothLibService(new ClothDao());
+            clothLibService = new ClothLibService();
 
             // initialize OpenFileDialog
             dlgOpenPic = new OpenFileDialog();

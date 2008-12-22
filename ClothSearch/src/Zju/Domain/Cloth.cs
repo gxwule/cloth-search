@@ -56,6 +56,11 @@ namespace Zju.Domain
 
         private float[] cooccurrenceVector;
 
+        /// <summary>
+        /// Color number in the cloth.
+        /// </summary>
+        private int colorNum; 
+
 #endregion
 
 #region getter & setter
@@ -142,6 +147,12 @@ namespace Zju.Domain
             get { return cooccurrenceVector; }
             set { cooccurrenceVector = value; }
         }
+
+        public int ColorNum
+        {
+            get { return colorNum; }
+            set { colorNum = value; }
+        }
 #endregion
         
         public Cloth()
@@ -166,6 +177,7 @@ namespace Zju.Domain
             this.gaborVector = cloth.GaborVector;
             this.cooccurrenceVector = cloth.CooccurrenceVector;
             this.updateTime = cloth.UpdateTime;
+            this.colorNum = cloth.colorNum;
         }
 
         public Cloth(String name, String pattern, String path, ColorEnum colors, ShapeEnum shapes)

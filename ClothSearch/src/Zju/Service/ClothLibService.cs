@@ -18,18 +18,21 @@ namespace Zju.Service
 
         public ClothLibService()
         {
-
-        }
-
-        public ClothLibService(IClothDao clothDao)
-        {
-            this.clothDao = clothDao;
+            this.clothDao = new ClothDao();
         }
 
         #region IClothLibService Members
 
         public void Insert(Cloth cloth)
         {
+            if (cloth.Oid > 0 || string.IsNullOrEmpty(cloth.Path))
+            {
+                return;
+            }
+
+            //Cloth existCloth = clothDao.FindByPath(cloth.Path);
+            
+
             if (0 == cloth.UpdateTime.Ticks)
             {
                 cloth.UpdateTime = DateTime.UtcNow;
@@ -37,7 +40,7 @@ namespace Zju.Service
             clothDao.Insert(cloth);
         }
 
-        public void InsertAll(List<Cloth> clothes)
+        private void InsertAll(List<Cloth> clothes)
         {
             foreach (Cloth cloth in clothes)
             {
@@ -72,15 +75,28 @@ namespace Zju.Service
             return clothDao.FindAll();
         }
 
+        /// <summary>
+        /// If use multithread, than gabor featrue will not be extracted.
+        /// </summary>
+        /// <param name="argus"></param>
         public void AsynImportClothPics(ImportArgus argus)
         {
             if (argus.PicNames == null || argus.PicNames.Count == 0)
             {
                 return;
             }
+
             if (argus.PicNames.Count < argus.ThreadNum)
             {
                 argus.ThreadNum = argus.PicNames.Count;
+            }
+            else if (argus.ThreadNum <= 0)
+            {
+                argus.ThreadNum = 1;
+            }
+            else if (argus.ThreadNum > SearchConstants.MAX_IMPORT_THREADS)
+            {
+                argus.ThreadNum = SearchConstants.MAX_IMPORT_THREADS;
             }
 
             ParameterizedThreadStart threadDelegate = new ParameterizedThreadStart(importClothPics);
@@ -104,19 +120,19 @@ namespace Zju.Service
 
             ParameterizedThreadStart threadDelegate = new ParameterizedThreadStart(importClothPicThread);
             Thread[] threads = new Thread[argus.ThreadNum];
+            bool isGabor = (argus.ThreadNum == 1);
             for (int i = 0; i < threads.Length; ++ i )
             {
                 threads[i] = new Thread(threadDelegate);
                 threads[i].IsBackground = true;
-                threads[i].Start(new ImportThreadArgus(picNameQueue, argus.Step, argus.StopImport, argus.StepDel));
+                threads[i].Priority = ThreadPriority.BelowNormal;
+                threads[i].Start(new ImportThreadArgus(picNameQueue, argus.Step, argus.StopImport, argus.StepDel, isGabor));
             }
 
             for (int i = 0; i < threads.Length; ++i)
             {
                 threads[i].Join();
             }
-
-            //Thread.Sleep(10000);
 
             argus.AfterDel();
         }
@@ -134,7 +150,7 @@ namespace Zju.Service
                 {
                     break;
                 }
-                Cloth cloth = ClothUtil.GenerateClothObject(picName);
+                Cloth cloth = ClothUtil.GenerateClothObject(picName, argus.isGabor);
 
                 clothes.Add(cloth);
                 if (clothes.Count % argus.Step == 0)
@@ -178,14 +194,16 @@ namespace Zju.Service
             internal IntArgDelegate StepDel;
             internal ShouldStop StopImport;
             internal int Step;
+            internal bool isGabor;
 
             internal ImportThreadArgus(Queue picNameQueue, int step,
-                ShouldStop stopImport, IntArgDelegate stepDel)
+                ShouldStop stopImport, IntArgDelegate stepDel, bool isGabor)
             {
                 this.PicNameQueue = picNameQueue;
                 this.Step = step;
                 this.StopImport = stopImport;
                 this.StepDel = stepDel;
+                this.isGabor = isGabor;
             }
         }
 

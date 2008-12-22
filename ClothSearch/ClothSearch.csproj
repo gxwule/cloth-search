@@ -97,6 +97,7 @@
   <ItemGroup>
     <Compile Include="src\Zju\Searcher\ColorSearcher.cs" />
     <Compile Include="src\Zju\Searcher\CooccurrenceSearcher.cs" />
+    <Compile Include="src\Zju\Searcher\HLSColorSearcher.cs" />
     <Compile Include="src\Zju\Searcher\DaubechiesWaveletSearcher.cs" />
     <Compile Include="src\Zju\Searcher\GaborSearcher.cs" />
     <Compile Include="src\Zju\Searcher\HSVAynsColorSearcher.cs" />

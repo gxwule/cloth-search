@@ -8,8 +8,6 @@ namespace Zju.Service
     {
         void Insert(Cloth cloth);
 
-        void InsertAll(List<Cloth> clothes);
-
         void Update(Cloth cloth, Cloth newCloth);
 
         void Delete(int oid);

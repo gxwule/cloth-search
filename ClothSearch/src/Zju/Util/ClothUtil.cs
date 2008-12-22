@@ -78,6 +78,26 @@ namespace Zju.Util
             return mds / n;
         }
 
+        public static float CalcEuclidDistance(float[] v1, float[] v2)
+        {
+            if (v1 == null || v2 == null || v1.Length != v2.Length)
+            {
+                return float.MaxValue;
+            }
+
+            float mds = 0.0f;
+            int n = v1.Length;
+            float t = 0.0f;
+            for (int i = 0; i < n; ++i)
+            {
+                t = v1[i] - v2[i];
+                mds += t * t;
+            }
+
+            return mds / n;
+        }
+
+
         public static float CalcGaborDistance(float[] v1, float[] v2)
         {
             if (v1 == null || v2 == null || v1.Length != v2.Length)
@@ -176,17 +196,72 @@ namespace Zju.Util
         /// And save the features back into the <code>cloth</code> objects.
         /// </summary>
         /// <param name="cloth"></param>
-        public static void ExtractFeatures(Cloth cloth)
+        public static void ExtractFeatures(Cloth cloth, bool isGabor)
         {
             if (String.IsNullOrEmpty(cloth.Path))
             {
                 return;
             }
 
+            // color features
             cloth.RGBSeparateColorVector = ImageMatcherInst.ExtractRGBSeparateColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
+            cloth.RGBColorVector = ImageMatcherInst.ExtractRGBColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
+            cloth.HSVAynsColorVector = ImageMatcherInst.ExtractHSVAynsColorVector(cloth.Path, 0, SearchConstants.IgnoreColors);
+            cloth.HSVColorVector = ImageMatcherInst.ExtractHSVColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
+            cloth.HLSColorVector = ImageMatcherInst.ExtractHLSColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
+
+            // texture features
             cloth.DaubechiesWaveletVector = ImageMatcherInst.ExtractDaubechiesWaveletVector(cloth.Path);
-            cloth.GaborVector = ImageMatcherInst.ExtractGaborVector(cloth.Path);
             cloth.CooccurrenceVector = ImageMatcherInst.ExtractCooccurrenceVector(cloth.Path);
+            if (isGabor)
+            {
+                cloth.GaborVector = ImageMatcherInst.ExtractGaborVector(cloth.Path);
+            }
+        }
+
+        public static void ExtractFeaturesNecessary(Cloth cloth, bool isGabor)
+        {
+            if (String.IsNullOrEmpty(cloth.Path))
+            {
+                return;
+            }
+
+            // color features
+            if (null == cloth.RGBSeparateColorVector)
+            {
+                cloth.RGBSeparateColorVector = ImageMatcherInst.ExtractRGBSeparateColorVector(cloth.Path, 8, SearchConstants.IgnoreColors);
+            }
+            if (null == cloth.RGBColorVector)
+            {
+                cloth.RGBColorVector = ImageMatcherInst.ExtractRGBColorVector(cloth.Path, 4, SearchConstants.IgnoreColors);
+            }
+            if (null == cloth.HSVAynsColorVector)
+            {
+                cloth.HSVAynsColorVector = ImageMatcherInst.ExtractHSVAynsColorVector(cloth.Path, 0, SearchConstants.IgnoreColors);
+            }
+            if (null == cloth.HSVColorVector)
+            {
+                cloth.HSVColorVector = ImageMatcherInst.ExtractHSVColorVector(cloth.Path, 4, SearchConstants.IgnoreColors);
+            }
+            if (null == cloth.HLSColorVector)
+            {
+                cloth.HLSColorVector = ImageMatcherInst.ExtractHLSColorVector(cloth.Path, 4, SearchConstants.IgnoreColors);
+            }
+            
+            // texture features
+            if (null == cloth.DaubechiesWaveletVector)
+            {
+                cloth.DaubechiesWaveletVector = ImageMatcherInst.ExtractDaubechiesWaveletVector(cloth.Path);
+            }
+            if (null == cloth.CooccurrenceVector)
+            {
+                cloth.CooccurrenceVector = ImageMatcherInst.ExtractCooccurrenceVector(cloth.Path);
+            }
+
+            if (isGabor && null == cloth.GaborVector)
+            {
+                cloth.GaborVector = ImageMatcherInst.ExtractGaborVector(cloth.Path);
+            }
         }
 
         /// <summary>
@@ -211,7 +286,7 @@ namespace Zju.Util
             return i - j - 1 > 0 ? picName.Substring(j + 1, i - j - 1) : null;
         }
 
-        public static Cloth GenerateClothObject(string picName)
+        public static Cloth GenerateClothObject(string picName, bool isGabor)
         {
             Cloth cloth = new Cloth();
 
@@ -220,9 +295,29 @@ namespace Zju.Util
             cloth.Name = cloth.Pattern;
 
             //ClothUtil.Log.WriteLine("begin ExtractFeatures");
-            ClothUtil.ExtractFeatures(cloth);
+            ClothUtil.ExtractFeaturesNecessary(cloth, isGabor);
+
+            cloth.ColorNum = getColorNumber(cloth.HSVAynsColorVector, 0.06f);
 
             return cloth;
+        }
+
+        public static int getColorNumber(float[] v, float limit)
+        {
+            if (v == null)
+            {
+                return 0;
+            }
+
+            int count = 0;
+            foreach (float f in v)
+            {
+                if (f >= limit)
+                {
+                    ++count;
+                }
+            }
+            return count;
         }
     }
 }

@@ -1,119 +1,127 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="Zju.Search.BaseParam">
+  <Class Name="Zju.Searcher.BaseParam">
     <Position X="1.75" Y="6.75" Width="1.5" />
     <Compartments>
       <Compartment Name="Properties" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>src\Zju\Search\BaseParam.cs</FileName>
+      <FileName>src\Zju\Searcher\BaseParam.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Zju.Search.PicParam">
+  <Class Name="Zju.Searcher.PicParam">
     <Position X="0.5" Y="8" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
-      <FileName>src\Zju\Search\PicParam.cs</FileName>
+      <FileName>src\Zju\Searcher\PicParam.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Zju.Search.TextParam" Collapsed="true">
+  <Class Name="Zju.Searcher.TextParam" Collapsed="true">
     <Position X="2.75" Y="8" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAgAAA=</HashCode>
-      <FileName>src\Zju\Search\TextParam.cs</FileName>
+      <FileName>src\Zju\Searcher\TextParam.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Zju.Search.BaseSearcher" Collapsed="true">
+  <Class Name="Zju.Searcher.BaseSearcher" Collapsed="true">
     <Position X="9" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BAAAAgAAAAACAAAAAAAAAAAAAAIAAAEAAAAAAAAgAAA=</HashCode>
-      <FileName>src\Zju\Search\BaseSearcher.cs</FileName>
+      <FileName>src\Zju\Searcher\BaseSearcher.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Zju.Search.TextSearcher">
+  <Class Name="Zju.Searcher.TextSearcher">
     <Position X="17" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
-      <FileName>src\Zju\Search\TextSearcher.cs</FileName>
+      <FileName>src\Zju\Searcher\TextSearcher.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Zju.Search.PicSearcher">
+  <Class Name="Zju.Searcher.PicSearcher">
     <Position X="8" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAIAAAAAAAAAAAQAAAAEAAAAEAAAAAABgAAA=</HashCode>
-      <FileName>src\Zju\Search\PicSearcher.cs</FileName>
+      <FileName>src\Zju\Searcher\PicSearcher.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Zju.Search.TextureSearcher">
+  <Class Name="Zju.Searcher.TextureSearcher">
     <Position X="3.5" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>src\Zju\Search\TextureSearcher.cs</FileName>
+      <FileName>src\Zju\Searcher\TextureSearcher.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Zju.Search.ColorSearcher">
+  <Class Name="Zju.Searcher.ColorSearcher">
     <Position X="11.25" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>src\Zju\Search\ColorSearcher.cs</FileName>
+      <FileName>src\Zju\Searcher\ColorSearcher.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Zju.Search.RGBSeparateColorSearcher">
+  <Class Name="Zju.Searcher.RGBSeparateColorSearcher">
     <Position X="8" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
-      <FileName>src\Zju\Search\RGBSeparateColorSearcher.cs</FileName>
+      <FileName>src\Zju\Searcher\RGBSeparateColorSearcher.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Zju.Search.RGBColorSearcher">
+  <Class Name="Zju.Searcher.RGBColorSearcher">
     <Position X="12.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
-      <FileName>src\Zju\Search\RGBColorSearcher.cs</FileName>
+      <FileName>src\Zju\Searcher\RGBColorSearcher.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Zju.Search.HSVColorSearcher">
-    <Position X="14.75" Y="5.25" Width="1.5" />
+  <Class Name="Zju.Searcher.HLSColorSearcher">
+    <Position X="14.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
-      <FileName>src\Zju\Search\HSVColorSearcher.cs</FileName>
+      <FileName>src\Zju\Searcher\HLSColorSearcher.cs</FileName>
+      <NewMemberFileName>src\Zju\Searcher\HSVColorSearcher.cs</NewMemberFileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Zju.Search.HSVAynsColorSearcher">
+  <Class Name="Zju.Searcher.HSVAynsColorSearcher">
     <Position X="10.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
-      <FileName>src\Zju\Search\HSVAynsColorSearcher.cs</FileName>
+      <FileName>src\Zju\Searcher\HSVAynsColorSearcher.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Zju.Search.DaubechiesWaveletSearcher">
+  <Class Name="Zju.Searcher.DaubechiesWaveletSearcher">
     <Position X="3.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
-      <FileName>src\Zju\Search\DaubechiesWaveletSearcher.cs</FileName>
+      <FileName>src\Zju\Searcher\DaubechiesWaveletSearcher.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Zju.Search.CooccurrenceSearcher">
+  <Class Name="Zju.Searcher.CooccurrenceSearcher">
     <Position X="5.75" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
-      <FileName>src\Zju\Search\CooccurrenceSearcher.cs</FileName>
+      <FileName>src\Zju\Searcher\CooccurrenceSearcher.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Zju.Search.GaborSearcher">
+  <Class Name="Zju.Searcher.GaborSearcher">
     <Position X="1.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
-      <FileName>src\Zju\Search\GaborSearcher.cs</FileName>
+      <FileName>src\Zju\Searcher\GaborSearcher.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="Zju.Search.IBaseSearcher" Collapsed="true">
+  <Class Name="Zju.Searcher.HSVColorSearcher" Collapsed="true">
+    <Position X="16.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>src\Zju\Searcher\HSVColorSearcher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Zju.Searcher.IBaseSearcher" Collapsed="true">
     <Position X="19.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
-      <FileName>src\Zju\Search\IBaseSearcher.cs</FileName>
+      <FileName>src\Zju\Searcher\IBaseSearcher.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Font Name="SimSun" Size="9" />

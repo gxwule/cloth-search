@@ -9,7 +9,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Threading;
 using Microsoft.Win32;
-using Zju.Dao;
 using Zju.Domain;
 using Zju.Image;
 using Zju.Service;
@@ -144,7 +143,7 @@ namespace ClothSearch
             //dlgOpenPicFolder.RootFolder = Environment.SpecialFolder.MyPictures;
 
             // It should be done by dependency injection here!!
-            clothLibService = new ClothLibService(new ClothDao());
+            clothLibService = new ClothLibService();
             clothSearchService = new ClothSearchService();
             imageMatcher = ClothUtil.ImageMatcherInst;
 
@@ -281,7 +280,7 @@ namespace ClothSearch
         private void asynImportClothPics(List<String> picNames)
         {
             nFinished = 0;
-            clothLibService.AsynImportClothPics(new ImportArgus(picNames, 1, 1,
+            clothLibService.AsynImportClothPics(new ImportArgus(picNames, 2, 40,
                 new ShouldStop(shouldStopCallback),
                 new IntArgDelegate(asynShowProgressDialogCallback),
                 new IntArgDelegate(asynUpdateProgressWinCallback),
@@ -474,7 +473,7 @@ namespace ClothSearch
             switch (aDesc.AType)
             {
                 case AlgorithmType.Color1:
-                    if (null == keyCloth.RGBSeparateColorVector)
+                    /*if (null == keyCloth.RGBSeparateColorVector)
                     {
                         keyCloth.RGBSeparateColorVector = imageMatcher.ExtractRGBSeparateColorVector(keyCloth.Path, 8, SearchConstants.IgnoreColors);
                     }
@@ -490,9 +489,43 @@ namespace ClothSearch
                         clothSearchService.SetColorMDLimit(SearchConstants.ColorMDLimits[index]);
                     }
                     clothes = clothSearchService.SearchByPicRGBSeparateColor(colorVector);
+                    break;*/
+                    /*if (null == keyCloth.RGBColorVector)
+                    {
+                        keyCloth.RGBColorVector = imageMatcher.ExtractRGBColorVector(keyCloth.Path, 3, SearchConstants.IgnoreColors);
+                    }
+                    float[] colorVector = keyCloth.RGBColorVector;
+                    if (colorVector == null)
+                    {
+                        MessageBox.Show("无法识别指定图片文件, 请检查该文件是否正确.", "提取颜色特征...");
+                        return null;
+                    }
+
+                    if (clothSearchService.GetColorMDLimit() != SearchConstants.ColorMDLimits[index])
+                    {
+                        clothSearchService.SetColorMDLimit(SearchConstants.ColorMDLimits[index]);
+                    }
+                    clothes = clothSearchService.SearchByPicRGBColor(colorVector);*/
+                    /*if (null == keyCloth.HSVAynsColorVector)
+                    {
+                        keyCloth.HSVAynsColorVector = imageMatcher.ExtractHSVAynsColorVector(keyCloth.Path, 0, SearchConstants.IgnoreColors);
+                    }
+                    float[] colorVector = keyCloth.HSVAynsColorVector;
+                    if (colorVector == null)
+                    {
+                        MessageBox.Show("无法识别指定图片文件, 请检查该文件是否正确.", "提取颜色特征...");
+                        return null;
+                    }
+
+                    if (clothSearchService.GetColorMDLimit() != SearchConstants.ColorMDLimits[index])
+                    {
+                        clothSearchService.SetColorMDLimit(SearchConstants.ColorMDLimits[index]);
+                    }
+                    clothes = clothSearchService.SearchByPicHSVAynsColor(colorVector);*/
+                    clothes = clothSearchService.SearchTest(keyCloth);
                     break;
                 case AlgorithmType.Texture1:
-                    if (null == keyCloth.GaborVector)
+                    /*if (null == keyCloth.GaborVector)
                     {
                         keyCloth.GaborVector = imageMatcher.ExtractGaborVector(keyCloth.Path);
                     }
@@ -507,10 +540,11 @@ namespace ClothSearch
                     {
                         clothSearchService.SetGaborMDLimit(SearchConstants.GaborMDLimits[index]);
                     }
-                    clothes = clothSearchService.SearchByPicGabor(gaborVector);
+                    clothes = clothSearchService.SearchByPicGabor(gaborVector);*/
+                    clothes = clothSearchService.SearchTest2(keyCloth);
                     break;
                 case AlgorithmType.Texture2:
-                    if (null == keyCloth.DaubechiesWaveletVector)
+                    /*if (null == keyCloth.DaubechiesWaveletVector)
                     {
                         keyCloth.DaubechiesWaveletVector = imageMatcher.ExtractDaubechiesWaveletVector(keyCloth.Path);
                     }
@@ -525,11 +559,12 @@ namespace ClothSearch
                     {
                         clothSearchService.SetTextureMDLimit(SearchConstants.TextureMDLimits[index]);
                     }
-                    clothes = clothSearchService.SearchByPicDaubechiesWavelet(textureVector);
+                    clothes = clothSearchService.SearchByPicDaubechiesWavelet(textureVector);*/
+                    clothes = clothSearchService.SearchTest3(keyCloth);
                     break;
                 case AlgorithmType.Texture3:
                 default:
-                    if (null == keyCloth.CooccurrenceVector)
+                    /*if (null == keyCloth.CooccurrenceVector)
                     {
                         keyCloth.CooccurrenceVector = imageMatcher.ExtractCooccurrenceVector(keyCloth.Path);
                     }
@@ -544,7 +579,8 @@ namespace ClothSearch
                     {
                         clothSearchService.SetCooccurrenceMDLimit(SearchConstants.CooccurrenceMDLimits[index]);
                     }
-                    clothes = clothSearchService.SearchByPicCooccurrence(cooccurrenceVector);
+                    clothes = clothSearchService.SearchByPicCooccurrence(cooccurrenceVector);*/
+                    clothes = clothSearchService.SearchTest4(keyCloth);
                     break;
             }
 
