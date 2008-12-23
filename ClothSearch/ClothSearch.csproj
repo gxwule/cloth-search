@@ -95,6 +95,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\Zju\Dao\IRegisterDao.cs" />
+    <Compile Include="src\Zju\Dao\RegisterDao.cs" />
+    <Compile Include="src\Zju\Domain\RegisterInfo.cs" />
     <Compile Include="src\Zju\Searcher\ColorSearcher.cs" />
     <Compile Include="src\Zju\Searcher\CooccurrenceSearcher.cs" />
     <Compile Include="src\Zju\Searcher\HLSColorSearcher.cs" />
@@ -112,6 +115,9 @@
     <Compile Include="src\Zju\Searcher\PicParam.cs" />
     <Compile Include="src\Zju\Searcher\TextSearcher.cs" />
     <Compile Include="src\Zju\Searcher\TextureSearcher.cs" />
+    <Compile Include="src\Zju\Service\IRegisterService.cs" />
+    <Compile Include="src\Zju\Service\RegisterService.cs" />
+    <Compile Include="src\Zju\Util\RegisterUtil.cs" />
     <Compile Include="win\AddPicWin.xaml.cs">
       <DependentUpon>AddPicWin.xaml</DependentUpon>
     </Compile>

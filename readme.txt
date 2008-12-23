@@ -1,17 +1,16 @@
---- Release version 0.5.0.0 2008-12-10 -------------------------------------
+1. 把data.rar解压到c:\.
 
-Initial release
+2. 解压ClothSearch.rar, 运行ClothSearch.exe.
 
-libraries needed:
- -opencv: 1.0 used.
- -matlab: 6.0 used, for Gabor texture extract.
- -perst: 3.05 for c# used.
+注意:
+1). 现在的算法没用到matlab, 所以不需要配置matlab.
 
-Featrue extract provided:
- -Color: 
-  -R, G, B separated.
-  -RGB, HSV, HLS
- -Texture:
-  -Cooccurrence texture.
-  -Daubechies wavelet texture.
-  -Gabor texture.
+2). 目前已经对7000多张图片建好索引, 图片的目录为F:\jpg. 只要把图片放到这里就可以直接运行程序搜索了.
+
+如果想自己重新建索引, 需要把c:\data\cloth.dbs删除, 注意不要删掉c:\data\luv.dat. 每次要清空索引都这样做只要删掉cloth.dbs就可以.
+
+3). 基于图片的搜索算法, 1号匹配对特殊图形效果目前还不错, 但不是很稳定, 2号3号也类似; 4号可能对格子稍微好一些. 
+有一个例子, 上次无法搜出的QA6927TF.jpg, QA6927TA.jpg, QA6927TF.jpg这三张, 可以匹配到, QA6925D.jpg背景太浅了, 匹配不到.
+
+
+
