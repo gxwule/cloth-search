@@ -1,3 +1,24 @@
+--- Release version 0.6.1.0 2008-12-23 -------------------------------------
+Second relese with authorization feature.
+
+Only add very simple authorization feature based on Release 0.6.0.0. The authorization information is stored in Perst db and a file as well.
+
+
+--- Release version 0.6.0.0 2008-12-22 -------------------------------------
+Second relese without authorization feature.
+
+libraries needed:
+ -opencv: 1.0 used.
+ -perst: 3.05 for c# used.
+ (matlab is not needed because Gabor textrue algorithm is commented.)
+
+Algorithms:
+ -Algorithm 1: HSVColorSearcher, then DaubechiesWaveletSearcher.
+ -Algorithm 2: HSVColorSearcher.
+ -Algorithm 3: HSVAynsColorSearcher.
+ -Algorithm 4: RGBColorSearcher.
+ 
+
 --- Release version 0.5.0.0 2008-12-10 -------------------------------------
 
 Initial release
