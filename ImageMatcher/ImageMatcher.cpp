@@ -11,14 +11,14 @@
 #pragma comment(lib, "cxcore.lib")
 #pragma comment(lib, "cv.lib")
 #pragma comment(lib, "highgui.lib")
-#pragma comment(lib, "libmmfile.lib")
+/*#pragma comment(lib, "libmmfile.lib")
 #pragma comment(lib, "libmatlb.lib")
 #pragma comment(lib, "libmx.lib")
 #pragma comment(lib, "libmat.lib")
 #pragma comment(lib, "libmatpm.lib")
 #pragma comment(lib, "sgl.lib")
 #pragma comment(lib, "libmwsglm.lib")
-#pragma comment(lib, "libmwservices.lib")
+#pragma comment(lib, "libmwservices.lib")*/
 //#pragma comment(lib, "gaborfilterdll.lib")
 //#pragma comment(lib, "gaborkerneldll.lib")
 
